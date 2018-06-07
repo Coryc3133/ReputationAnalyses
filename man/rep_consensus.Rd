@@ -52,7 +52,8 @@ The function can handle up to n exchangeable triads. It returns a fitted lavaan
 object. See lavaan documentation for more.
 }
 \examples{
-rep_consensus(data = rep_sim_data,
+data("rep_sim_data")
+          rep_consensus(data = rep_sim_data,
                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
 }

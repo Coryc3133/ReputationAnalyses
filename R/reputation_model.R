@@ -37,7 +37,8 @@
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #' @export
-#' @examples rep_consensus(data = rep_sim_data,
+#' @examples data("rep_sim_data")
+#'           rep_consensus(data = rep_sim_data,
 #'                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
 
@@ -163,7 +164,8 @@ rep_consensus <- function(data, p1_reports, p2_reports, n_triads = length(p1_rep
 #' Currently, only values of 1 are supported.
 #'
 #' @export
-#' @examples rep_consensus_accuracy(data = rep_sim_data,
+#' @examples data("rep_sim_data")
+#'           rep_consensus_accuracy(data = rep_sim_data,
 #'                                  p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                  p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                                  target_self = c("C_C_agreeableness", "A_A_agreeableness"))
@@ -349,7 +351,8 @@ rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_
 #' Currently, only values of 1 are supported.
 #'
 #' @export
-#' @examples rep_full_w_3pmeta(data = rep_sim_data,
+#' @examples data("rep_sim_data")
+#'           rep_full_w_3pmeta(data = rep_sim_data,
 #'                             p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
@@ -536,7 +539,8 @@ rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta
 #' Currently, only values of 1 are supported.
 #'
 #' @export
-#' @examples rep_analyses_auto(data = rep_sim_data,
+#' @examples data("rep_sim_data")
+#'           rep_analyses_auto(data = rep_sim_data,
 #'                             p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
 #'
