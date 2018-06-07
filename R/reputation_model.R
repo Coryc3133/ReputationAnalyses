@@ -36,11 +36,7 @@
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import magrittr
-#' @import stringr
 #' @import lavaan
-#' @importFrom lavaan summary
-#'
 #' @export
 #' @examples data("rep_sim_data")
 #'           rep_consensus(data = rep_sim_data,
@@ -168,10 +164,6 @@ rep_consensus <- function(data, p1_reports, p2_reports, n_triads = length(p1_rep
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
-#' @import magrittr
-#' @import stringr
-#' @import lavaan
-#' @importFrom lavaan summary
 #'
 #' @export
 #' @examples data("rep_sim_data")
@@ -360,10 +352,6 @@ rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
-#' @import magrittr
-#' @import stringr
-#' @import lavaan
-#' @importFrom lavaan summary
 #'
 #' @export
 #' @examples data("rep_sim_data")
@@ -553,9 +541,7 @@ rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
-#' @import magrittr
-#' @import stringr
-#' @import lavaan
+#'
 #'
 #' @export
 #' @examples data("rep_sim_data")

@@ -4,11 +4,11 @@ Version: 0.0.0.9000
 Authors@R: person("Cory", "Costello", email = "costell@uoregon.edu", role = c("aut", "cre"))
 Description: This package contains functions to analyze triadic reputational data (T-P1-P2).
              It can work with several different designs (P1-P2, T-P1-P2, T-P1-P2 + third-person meta-perceiotns).
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.5.0), 
+         lavaan (>= 0.6-2.1253), 
+         magrittr,
+         stringr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Imports: lavaan, 
-         magrittr,
-         stringr
