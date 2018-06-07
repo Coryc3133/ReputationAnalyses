@@ -86,7 +86,7 @@ data("rep_sim_data")
                             p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                            p1_meta = c("A_B_C_agreeableness", "C_D_A_agreeableness"),
-                            p2_meta = c("B_A_C_agreeableness", "D_C_A_agreeableness"))
+                            p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+                            p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
 
 }

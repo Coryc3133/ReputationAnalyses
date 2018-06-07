@@ -36,6 +36,11 @@
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
+#' @import magrittr
+#' @import stringr
+#' @import lavaan
+#' @importFrom lavaan summary
+#'
 #' @export
 #' @examples data("rep_sim_data")
 #'           rep_consensus(data = rep_sim_data,
@@ -75,16 +80,16 @@ rep_consensus <- function(data, p1_reports, p2_reports, n_triads = length(p1_rep
         # cross-target correlations
         if(i < n_triads){
           prev_i <- i:1
-          m   <- paste(p1_reports[i], "~~ m*", p2_reports[-prev_i]) %>% str_flatten(collapse = "\n")
-          rec <- paste(p1_reports[i], "~~ rec*", p1_reports[-prev_i]) %>% str_flatten(collapse = "\n")
-          h   <-  paste(p2_reports[i], "~~ h*", p2_reports[-prev_i], "\n") %>% str_flatten(collapse = "\n")
+          m   <- paste(p1_reports[i], "~~ m*", p2_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
+          rec <- paste(p1_reports[i], "~~ rec*", p1_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
+          h   <-  paste(p2_reports[i], "~~ h*", p2_reports[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
           xtrs <- paste(m, rec, h, sep = "\n")
           model <- paste(model, xtrs)}}
-      hc <- paste(p1_reports, "~~ hc*", p2_reports) %>% str_flatten(collapse = "\n")
-      int_p1 <- paste(p1_reports, "~ int_p1*1") %>% str_flatten(collapse = "\n")
-      int_p2 <- paste(p2_reports, "~ int_p2*1") %>% str_flatten(collapse = "\n")
-      v_p1 <- paste(p1_reports, "~~ v_p1*", p1_reports) %>% str_flatten(collapse = "\n")
-      v_p2 <- paste(p2_reports, " ~~ v_p2*", p2_reports) %>% str_flatten(collapse = "\n")
+      hc <- paste(p1_reports, "~~ hc*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      int_p1 <- paste(p1_reports, "~ int_p1*1") %>% stringr::str_flatten(collapse = "\n")
+      int_p2 <- paste(p2_reports, "~ int_p2*1") %>% stringr::str_flatten(collapse = "\n")
+      v_p1 <- paste(p1_reports, "~~ v_p1*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
+      v_p2 <- paste(p2_reports, " ~~ v_p2*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
       #  P1-P2 relative elevation
       p1p2_el <- "p1_p2_rel_el := 1*int_p1 - (1*int_p2)"
 
@@ -163,6 +168,11 @@ rep_consensus <- function(data, p1_reports, p2_reports, n_triads = length(p1_rep
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
+#' @import magrittr
+#' @import stringr
+#' @import lavaan
+#' @importFrom lavaan summary
+#'
 #' @export
 #' @examples data("rep_sim_data")
 #'           rep_consensus_accuracy(data = rep_sim_data,
@@ -213,25 +223,25 @@ rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_
         if(i < n_triads){
           prev_i <- i:1
 
-          m   <- paste(p1_reports[i], "~~ m*", p2_reports[-prev_i]) %>% str_flatten(collapse = "\n")
-          rec <- paste(p1_reports[i], "~~ rec*", p1_reports[-prev_i]) %>% str_flatten(collapse = "\n")
-          h   <-  paste(p2_reports[i], "~~ h*", p2_reports[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          tru_sim <- paste(target_self[i], "~~ tru_sim*", target_self[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          as_sim_3p <- paste(p2_reports[i], "~~ as_sim_3p*", target_self[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          as_sim_1p <- paste(p1_reports[i], "~~ as_sim_1p*", target_self[-prev_i], "\n") %>% str_flatten(collapse = "\n")
+          m   <- paste(p1_reports[i], "~~ m*", p2_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
+          rec <- paste(p1_reports[i], "~~ rec*", p1_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
+          h   <-  paste(p2_reports[i], "~~ h*", p2_reports[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          tru_sim <- paste(target_self[i], "~~ tru_sim*", target_self[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          as_sim_3p <- paste(p2_reports[i], "~~ as_sim_3p*", target_self[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          as_sim_1p <- paste(p1_reports[i], "~~ as_sim_1p*", target_self[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
           xtrs <- paste(m, rec, h, tru_sim, as_sim_3p, as_sim_1p, sep = "\n")
           model <- paste(model, xtrs)}}
 
-      hc <- paste(p1_reports, "~~ hc*", p2_reports) %>% str_flatten(collapse = "\n")
-      ha <- paste(target_self, "~~ ha*", p2_reports) %>% str_flatten(collapse = "\n")
-      da <- paste(target_self, "~~ da*", p1_reports) %>% str_flatten(collapse = "\n")
+      hc <- paste(p1_reports, "~~ hc*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      ha <- paste(target_self, "~~ ha*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      da <- paste(target_self, "~~ da*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
 
-      int_p1 <- paste(p1_reports, "~ int_p1*1") %>% str_flatten(collapse = "\n")
-      int_p2 <- paste(p2_reports, "~ int_p2*1") %>% str_flatten(collapse = "\n")
-      int_self <- paste(target_self, "~ int_self*1") %>% str_flatten(collapse = "\n")
-      v_p1 <- paste(p1_reports, "~~ v_p1*", p1_reports) %>% str_flatten(collapse = "\n")
-      v_p2 <- paste(p2_reports, " ~~ v_p2*", p2_reports) %>% str_flatten(collapse = "\n")
-      v_self <- paste(target_self, " ~~ v_self*", target_self) %>% str_flatten(collapse = "\n")
+      int_p1 <- paste(p1_reports, "~ int_p1*1") %>% stringr::str_flatten(collapse = "\n")
+      int_p2 <- paste(p2_reports, "~ int_p2*1") %>% stringr::str_flatten(collapse = "\n")
+      int_self <- paste(target_self, "~ int_self*1") %>% stringr::str_flatten(collapse = "\n")
+      v_p1 <- paste(p1_reports, "~~ v_p1*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
+      v_p2 <- paste(p2_reports, " ~~ v_p2*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      v_self <- paste(target_self, " ~~ v_self*", target_self) %>% stringr::str_flatten(collapse = "\n")
       #  P1-P2 relative elevation
       p1p2_el <- "p1_p2_rel_el := 1*int_p1 - (1*int_p2)"
       selfp2_el <- "self_p2_rel_el := 1*int_self - (1*int_p2)"
@@ -350,6 +360,11 @@ rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
+#' @import magrittr
+#' @import stringr
+#' @import lavaan
+#' @importFrom lavaan summary
+#'
 #' @export
 #' @examples data("rep_sim_data")
 #'           rep_full_w_3pmeta(data = rep_sim_data,
@@ -418,46 +433,46 @@ rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta
         if(i < n_triads){
           prev_i <- i:1
 
-          m   <- paste(p1_reports[i], "~~ m*", p2_reports[-prev_i]) %>% str_flatten(collapse = "\n")
-          rec <- paste(p1_reports[i], "~~ rec*", p1_reports[-prev_i]) %>% str_flatten(collapse = "\n")
-          h   <-  paste(p2_reports[i], "~~ h*", p2_reports[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          tru_sim <- paste(target_self[i], "~~ tru_sim*", target_self[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          as_sim_3p <- paste(p2_reports[i], "~~ as_sim_3p*", target_self[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          as_sim_1p <- paste(p1_reports[i], "~~ as_sim_1p*", target_self[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          as_sim_p1m <- paste(p1_meta[i], "~~ as_sim_p1m*", target_self[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          ukp1m1 <- paste(p1_meta[i], "~~ ukp1m1*", p1_reports[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          p1meta_sim <- paste(p1_meta[i], "~~ p1meta_sim*", p1_meta[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          ukp2m1 <- paste(p2_meta[i], "~~ ukp2m1*", p2_reports[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          ukp2m2 <- paste(p2_meta[i], "~~ ukp2m2*", target_self[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          ukp2m3 <- paste(p2_meta[i], "~~ ukp2m3*", p1_reports[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          p2meta_sim <- paste(p2_meta[i], "~~ p2meta_sim*", p2_meta[-prev_i], "\n") %>% str_flatten(collapse = "\n")
-          ukm1 <- paste(p1_meta[i], "~~ ukm1*", p2_meta[-prev_i], "\n") %>% str_flatten(collapse = "\n")
+          m   <- paste(p1_reports[i], "~~ m*", p2_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
+          rec <- paste(p1_reports[i], "~~ rec*", p1_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
+          h   <-  paste(p2_reports[i], "~~ h*", p2_reports[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          tru_sim <- paste(target_self[i], "~~ tru_sim*", target_self[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          as_sim_3p <- paste(p2_reports[i], "~~ as_sim_3p*", target_self[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          as_sim_1p <- paste(p1_reports[i], "~~ as_sim_1p*", target_self[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          as_sim_p1m <- paste(p1_meta[i], "~~ as_sim_p1m*", target_self[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          ukp1m1 <- paste(p1_meta[i], "~~ ukp1m1*", p1_reports[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          p1meta_sim <- paste(p1_meta[i], "~~ p1meta_sim*", p1_meta[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          ukp2m1 <- paste(p2_meta[i], "~~ ukp2m1*", p2_reports[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          ukp2m2 <- paste(p2_meta[i], "~~ ukp2m2*", target_self[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          ukp2m3 <- paste(p2_meta[i], "~~ ukp2m3*", p1_reports[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          p2meta_sim <- paste(p2_meta[i], "~~ p2meta_sim*", p2_meta[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          ukm1 <- paste(p1_meta[i], "~~ ukm1*", p2_meta[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
           xtrs <- paste(m, rec, h, tru_sim, as_sim_3p, as_sim_1p,
                         ukp1m1, p1meta_sim, ukp2m1, ukp2m2, ukp2m3, p2meta_sim, ukm1, sep = "\n")
           model <- paste(model, xtrs)}}
 
-      hc <- paste(p1_reports, "~~ hc*", p2_reports) %>% str_flatten(collapse = "\n")
-      ha <- paste(target_self, "~~ ha*", p2_reports) %>% str_flatten(collapse = "\n")
-      da <- paste(target_self, "~~ da*", p1_reports) %>% str_flatten(collapse = "\n")
-      p1ma <- paste(p1_meta, "~~p1ma*", p2_reports) %>% str_flatten(collapse = "\n")
-      p2ma <- paste(p2_meta, "~~p2ma*", p1_reports) %>% str_flatten(collapse = "\n")
-      as_ac1 <- paste(p1_meta, "~~as_ac1*", target_self) %>% str_flatten(collapse = "\n")
-      as_con1 <- paste(p1_meta, "~~as_con1*", p1_reports) %>% str_flatten(collapse = "\n")
-      mp_rec <- paste(p1_meta, "~~mp_rec*", p2_meta) %>% str_flatten(collapse = "\n")
-      as_ac2  <- paste(p2_meta, "~~as_ac2*", target_self) %>% str_flatten(collapse = "\n")
-      as_con2 <- paste(p2_meta, "~~as_con2*", p2_reports) %>% str_flatten(collapse = "\n")
+      hc <- paste(p1_reports, "~~ hc*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      ha <- paste(target_self, "~~ ha*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      da <- paste(target_self, "~~ da*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
+      p1ma <- paste(p1_meta, "~~p1ma*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      p2ma <- paste(p2_meta, "~~p2ma*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
+      as_ac1 <- paste(p1_meta, "~~as_ac1*", target_self) %>% stringr::str_flatten(collapse = "\n")
+      as_con1 <- paste(p1_meta, "~~as_con1*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
+      mp_rec <- paste(p1_meta, "~~mp_rec*", p2_meta) %>% stringr::str_flatten(collapse = "\n")
+      as_ac2  <- paste(p2_meta, "~~as_ac2*", target_self) %>% stringr::str_flatten(collapse = "\n")
+      as_con2 <- paste(p2_meta, "~~as_con2*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
 
-      int_p1 <- paste(p1_reports, "~ int_p1*1") %>% str_flatten(collapse = "\n")
-      int_p2 <- paste(p2_reports, "~ int_p2*1") %>% str_flatten(collapse = "\n")
-      int_self <- paste(target_self, "~ int_self*1") %>% str_flatten(collapse = "\n")
-      int_mp1 <- paste(p1_meta, "~ int_mp1*1") %>% str_flatten(collapse = "\n")
-      int_mp2 <- paste(p2_meta, "~ int_mp2*1") %>% str_flatten(collapse = "\n")
+      int_p1 <- paste(p1_reports, "~ int_p1*1") %>% stringr::str_flatten(collapse = "\n")
+      int_p2 <- paste(p2_reports, "~ int_p2*1") %>% stringr::str_flatten(collapse = "\n")
+      int_self <- paste(target_self, "~ int_self*1") %>% stringr::str_flatten(collapse = "\n")
+      int_mp1 <- paste(p1_meta, "~ int_mp1*1") %>% stringr::str_flatten(collapse = "\n")
+      int_mp2 <- paste(p2_meta, "~ int_mp2*1") %>% stringr::str_flatten(collapse = "\n")
 
-      v_p1 <- paste(p1_reports, "~~ v_p1*", p1_reports) %>% str_flatten(collapse = "\n")
-      v_p2 <- paste(p2_reports, " ~~ v_p2*", p2_reports) %>% str_flatten(collapse = "\n")
-      v_mp1 <- paste(p1_meta, "~~ v_mp1*", p1_meta) %>% str_flatten(collapse = "\n")
-      v_mp2 <- paste(p2_meta, "~~ v_mp2*", p2_meta) %>% str_flatten(collapse = "\n")
-      v_self <- paste(target_self, " ~~ v_self*", target_self) %>% str_flatten(collapse = "\n")
+      v_p1 <- paste(p1_reports, "~~ v_p1*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
+      v_p2 <- paste(p2_reports, " ~~ v_p2*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      v_mp1 <- paste(p1_meta, "~~ v_mp1*", p1_meta) %>% stringr::str_flatten(collapse = "\n")
+      v_mp2 <- paste(p2_meta, "~~ v_mp2*", p2_meta) %>% stringr::str_flatten(collapse = "\n")
+      v_self <- paste(target_self, " ~~ v_self*", target_self) %>% stringr::str_flatten(collapse = "\n")
       #  P1-P2 relative elevation
       p1p2_el <- "p1_p2_rel_el := 1*int_p1 - (1*int_p2)"
       selfp2_el <- "self_p2_rel_el := 1*int_self - (1*int_p2)"
@@ -538,6 +553,10 @@ rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
+#' @import magrittr
+#' @import stringr
+#' @import lavaan
+#'
 #' @export
 #' @examples data("rep_sim_data")
 #'           rep_analyses_auto(data = rep_sim_data,
@@ -553,8 +572,8 @@ rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta
 #'                             p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                             p1_meta = c("A_B_C_agreeableness", "C_D_A_agreeableness"),
-#'                             p2_meta = c("B_A_C_agreeableness", "D_C_A_agreeableness"))
+#'                             p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                             p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
 #'
 rep_analyses_auto <- function(data, p1_reports, p2_reports, target_self = NULL, p1_meta = NULL, p2_meta = NULL,
                     n_triads = length(p1_reports), n_p1s_per_p2s = 1,
