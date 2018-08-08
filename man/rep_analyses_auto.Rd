@@ -11,7 +11,7 @@ rep_analyses_auto(data, p1_reports, p2_reports, target_self = NULL,
 }
 \arguments{
 \item{data}{The dataframe that contains ratings (P1, P2, target self-report, P1, and P2 meta-perceptions).
-Data should wide, with a row for every group of participants.
+Data should be wide, with a row for every group of participants.
 At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.}
 
 \item{p1_reports}{The column(s) that contain P1 reports,
@@ -19,7 +19,7 @@ or ratings made by the person that knows the target directly.
 If more than one is supplied, the order must match the other
 rating types.}
 
-\item{p2_reports}{The column(s) that contain P1 reports,
+\item{p2_reports}{The column(s) that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 If more than one is supplied, the order must match the other
 rating types.}
@@ -73,20 +73,20 @@ object. See lavaan documentation for more.
 }
 \examples{
 data("rep_sim_data")
-          rep_analyses_auto(data = rep_sim_data,
-                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
+ rep_analyses_auto(data = rep_sim_data,
+                  p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                  p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
 
-          rep_analyses_auto(data = rep_sim_data,
-                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                            target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+ rep_analyses_auto(data = rep_sim_data,
+                  p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                  p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                  target_self = c("C_C_agreeableness", "A_A_agreeableness"))
 
-          rep_analyses_auto(data = rep_sim_data,
-                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                            target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                            p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-                            p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
+ rep_analyses_auto(data = rep_sim_data,
+                  p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                  p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                  target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                  p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+                  p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
 
 }

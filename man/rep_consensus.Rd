@@ -9,7 +9,7 @@ rep_consensus(data, p1_reports, p2_reports, n_triads = length(p1_reports),
 }
 \arguments{
 \item{data}{The dataframe that contains P1 and P2 ratings.
-Data should wide, with a row for every group of participants.
+Data should be wide, with a row for every group of participants.
 At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.}
 
 \item{p1_reports}{The column(s) that contain P1 reports,
@@ -17,7 +17,7 @@ or ratings made by the person that knows the target directly.
 If more than one is supplied, the order must match the other
 rating types.}
 
-\item{p2_reports}{The column(s) that contain P1 reports,
+\item{p2_reports}{The column(s) that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 If more than one is supplied, the order must match the other
 rating types.}
@@ -31,29 +31,33 @@ Currently, only values of 1 are supported.}
 \item{n_p2s_per_p1s}{The number of P2s for every P1;. This defaults to 1.
 Currently, only values of 1 are supported.}
 }
+\value{
+The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
+}
 \description{
 This takes a vector of P1 and P2 reports and fits
 a model estimating the possible hearsay reputation parameters.
 Those parameters are:
-hc - hearsay consensus; the correlation between P1(T) & P2(T)
-int_p1 - Intercept for P1(T)
-int_p2 - Intercept for P2(T)
-v_p1 - variance for P1(T)
-v_p2 - variance for P2(T)
-p1_p2_rel_el - P1-P2 Relative Elevation (i.e., Mean P1(T) - Mean P2(T))
+\describe{
+\item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
+\item{int_p1}{Intercept for P1(T)}
+\item{int_p2}{Intercept for P2(T)}
+\item{v_p1}{variance for P1(T)}
+\item{v_p2}{variance for P2(T)}
+\item{p1_p2_rel_el}{P1-P2 Relative Elevation (i.e., Mean P1(T) - Mean P2(T))}
 }
-\details{
-If n exchangeable triads > 1:
-rec - direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))
-h - hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))
-m - unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))
-
-The function can handle up to n exchangeable triads. It returns a fitted lavaan
-object. See lavaan documentation for more.
+\emph{If n exchangeable triads > 1:}
+\describe{
+\item{rec}{direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))}
+\item{h}{hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))}
+\item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
+}
+The function can handle up to n exchangeable triads.
 }
 \examples{
 data("rep_sim_data")
           rep_consensus(data = rep_sim_data,
                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
+
 }

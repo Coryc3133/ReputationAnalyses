@@ -11,7 +11,7 @@ rep_full_w_3pmeta(data, p1_reports, p2_reports, target_self, p1_meta, p2_meta,
 }
 \arguments{
 \item{data}{The dataframe that contains ratings (P1, P2, target self-report, P1, and P2 meta-perceptions).
-Data should wide, with a row for every group of participants.
+Data should be wide, with a row for every group of participants.
 At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.}
 
 \item{p1_reports}{The column(s) that contain P1 reports,
@@ -19,7 +19,7 @@ or ratings made by the person that knows the target directly.
 If more than one is supplied, the order must match the other
 rating types.}
 
-\item{p2_reports}{The column(s) that contain P1 reports,
+\item{p2_reports}{The column(s) that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 If more than one is supplied, the order must match the other
 rating types.}
@@ -59,59 +59,59 @@ Currently, only values of 1 are supported.}
 \item{n_ts_per_p2s}{The number of targets for every P2;. This defaults to 1.
 Currently, only values of 1 are supported.}
 }
+\value{
+The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
+}
 \description{
 This takes a vector of P1-, P2-, target self-reports, and
 third-person meta-perceptions (for P1 and P2) and fits
 a model estimating the possible hearsay reputation parameters.
 Those parameters are:
-hc - hearsay consensus; the correlation between P1(T) & P2(T)
-ha - hearsay accuracy; the correation between P2(T) & T(T)
-da - direct accuracy; the correlation between P1(T) & T(T)
-p1ma - P1 Meta-Accuracy; the correlation between P1(P2(T)) & P2(T)
-p2ma - P2 Meta-Accuracy; the correlation between P2(P1(T)) & P1(T)
-as_ac1 -  P1 Assumed Accuracy; the correlation between P1(P2(T)) & T(T)
-as_con1 - P1 Assumed Consensus; the correlation between P1(P2(T)) & P1(T)
-mp_rec -  Meta-Perception Reciprocity; the correlation between P1(P2(T)) & P2(P1(T))
-as_ac2  - P2 Assumed Accuracy; the correlation between P2(P1(T)) & T(T)
-as_con2 - P2 Assumed Consensus; the correlation between P2(P1(T)) & P2(T)
-int_p1 - Intercept for P1(T)
-int_p2 - Intercept for P2(T)
-int_self - Intercept for T(T)
-int_mp1 - Intercept for P1(P2(T))
-int_mp2 - Intercept for P2(P1(T))
-v_p1 - variance for P1(T)
-v_p2 - variance for P2(T)
-v_self - variance for T(T)
-v_mp1 - variance for P1(P2(T))
-v_mp2 - variance for P2(P1(T))
-p1_p2_rel_el - P1-P2 Relative Elevation (i.e., Mean P1(T) - Mean P2(T))
-self_p2_rel_el - Self-P2 Relative Elevation (i.e., Mean T(T) - Mean P2(T))
-self_p1_rel_el - Self-P1 Relative Elevation (i.e., Mean T(T) - Mean P1(T))
-p1_meta_rel_el - P1 Meta Relative Elevation (i.e., mean P2(T) - Mean P1(P2(T)))
-p2_meta_rel_el - P2 Meta Relative Elevation (i.e., mean P1(T) - Mean P2(P1(T)))
-If n exchangeable triads > 1:
-rec - direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))
-h - hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))
-m - unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))
-tru_sim - True Similarity; the correlation between targets' self-reports. (e.g., A(A) <-> C(C))
-as_sim_3p - Third-person assumed similarity; correlation between P2(T) and P1's self-report (e.g., B(C) <- A(A))
-as_sim_1p - First-person assumed similarity (i.e., interpersonal assumed similarity); correlation between
-            P1(T) and P1's self-report (e.g., A(C) <-> A(A))
-as_sim_p1m - P1 Meta-assumed similarity (e.g., A(B(C)) <-> A(A))
-ukp1m1 - unknown p1-meta 1 - P1 meta-perception with opposite P1-report (e.g., A(B(C)) <-> C(A))).
-p1meta_sim - P1 Meta-Similarity - correlation between
-             exchangeable P1 meta-perceptions (e.g., A(B(C)) <-> C(D(A))).
-ukp2m1 - unknown P2-meta 1 - P2 Meta-perception with exchangeable P2-reports (e.g., B(A(C)) <-> D(A))
-ukp2m2 - unknown P2-meta 2 - P2 Meta-perception with exchangeable target self-report (e.g., B(A(C) <-> A(A)))
-ukp2m3 - unknown P2-meta 3 - P2 Meta-perception with exchangeable P1-reports (e.g., B(A(C)) <-> C(A))
-p2meta_sim - P2 Meta-Similarity - correlation between
-             exchangeable P2 meta-perceptions (e.g., B(A(C)) <-> D(C(A))).
-ukm1 - unknown Meta-perception - P1 Meta-perception with exchangeable P2 Meta-Perception
-                                 (e.g., A(B(C)) <-> D(C(A)))
+\describe{
+\item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
+\item{ha}{hearsay accuracy; the correation between P2(T) & T(T)}
+\item{da}{direct accuracy; the correlation between P1(T) & T(T)}
+\item{p1ma}{P1 Meta-Accuracy; the correlation between P1(P2(T)) & P2(T)}
+\item{p2ma}{P2 Meta-Accuracy; the correlation between P2(P1(T)) & P1(T)}
+\item{as_ac1}{ P1 Assumed Accuracy; the correlation between P1(P2(T)) & T(T)}
+\item{as_con1}{P1 Assumed Consensus; the correlation between P1(P2(T)) & P1(T)}
+\item{mp_rec}{ Meta-Perception Reciprocity; the correlation between P1(P2(T)) & P2(P1(T))}
+\item{as_ac2 }{P2 Assumed Accuracy; the correlation between P2(P1(T)) & T(T)}
+\item{as_con2}{P2 Assumed Consensus; the correlation between P2(P1(T)) & P2(T)}
+\item{int_p1}{Intercept for P1(T)}
+\item{int_p2}{Intercept for P2(T)}
+\item{int_self}{Intercept for T(T)}
+\item{int_mp1}{Intercept for P1(P2(T))}
+\item{int_mp2}{Intercept for P2(P1(T))}
+\item{v_p1}{variance for P1(T)}
+\item{v_p2}{variance for P2(T)}
+\item{v_self}{variance for T(T)}
+\item{v_mp1}{variance for P1(P2(T))}
+\item{v_mp2}{variance for P2(P1(T))}
+\item{p1_p2_rel_el}{P1-P2 Relative Elevation (i.e., Mean P1(T) - Mean P2(T))}
+\item{self_p2_rel_el}{Self-P2 Relative Elevation (i.e., Mean T(T) - Mean P2(T))}
+\item{self_p1_rel_el}{Self-P1 Relative Elevation (i.e., Mean T(T) - Mean P1(T))}
+\item{p1_meta_rel_el}{P1 Meta Relative Elevation (i.e., mean P2(T) - Mean P1(P2(T)))}
+\item{p2_meta_rel_el}{P2 Meta Relative Elevation (i.e., mean P1(T) - Mean P2(P1(T)))}
 }
-\details{
-The function can handle up to n exchangeable triads. It returns a fitted lavaan
-object. See lavaan documentation for more.
+\emph{If n exchangeable triads > 1:}
+\describe{
+{rec}{direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))}
+{h}{hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))}
+{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
+{tru_sim}{True Similarity; the correlation between targets' self-reports. (e.g., A(A) <-> C(C))}
+{as_sim_3p}{Third-person assumed similarity; correlation between P2(T) and P1's self-report (e.g., B(C) <- A(A))}
+{as_sim_1p}{First-person assumed similarity (i.e., interpersonal assumed similarity); correlation between P1(T) and P1's self-report (e.g., A(C) <-> A(A))}
+{as_sim_p1m}{P1 Meta-assumed similarity (e.g., A(B(C)) <-> A(A))}
+{ukp1m1}{unknown p1-meta 1}{P1 meta-perception with opposite P1-report (e.g., A(B(C)) <-> C(A))).}
+{p1meta_sim}{P1 Meta-Similarity}{correlation between exchangeable P1 meta-perceptions (e.g., A(B(C)) <-> C(D(A))).}
+{ukp2m1}{unknown P2-meta 1}{P2 Meta-perception with exchangeable P2-reports (e.g., B(A(C)) <-> D(A))}
+{ukp2m2}{unknown P2-meta 2}{P2 Meta-perception with exchangeable target self-report (e.g., B(A(C) <-> A(A)))}
+{ukp2m3}{unknown P2-meta 3}{P2 Meta-perception with exchangeable P1-reports (e.g., B(A(C)) <-> C(A))}
+{p2meta_sim}{P2 Meta-Similarity}{correlation between exchangeable P2 meta-perceptions (e.g., B(A(C)) <-> D(C(A))).}
+{ukm1}{unknown Meta-perception}{P1 Meta-perception with exchangeable P2 Meta-Perception (e.g., A(B(C)) <-> D(C(A)))}
+}
+The function can handle up to n exchangeable triads.
 }
 \examples{
 data("rep_sim_data")
