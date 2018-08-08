@@ -14,12 +14,12 @@ At a minimum, it must contain two columns: one for P1 reports and one for P2 rep
 
 \item{p1_reports}{The column(s) that contain P1 reports,
 or ratings made by the person that knows the target directly.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{p2_reports}{The column(s) that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by

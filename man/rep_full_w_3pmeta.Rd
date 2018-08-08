@@ -12,30 +12,31 @@ rep_full_w_3pmeta(data, p1_reports, p2_reports, target_self, p1_meta, p2_meta,
 \arguments{
 \item{data}{The dataframe that contains ratings (P1, P2, target self-report, P1, and P2 meta-perceptions).
 Data should be wide, with a row for every group of participants.
-At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.}
+At a minimum, it must contain 5 columns: 1 for each of the five rating types (P1-, P2-, self-,
+P1-meta-, P2-meta-perceptions).}
 
 \item{p1_reports}{The column(s) that contain P1 reports,
 or ratings made by the person that knows the target directly.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{p2_reports}{The column(s) that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{target_self}{The column(s) that contain target self-reports.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{p1_meta}{The column(s) that contain P1 3rd person Meta-perceptions,
 or P1's ratings of how they think P2 sees the target.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{p2_meta}{The column(s) that contain P2 3rd person Meta-perceptions,
 or P2's ratings of how they think P1 sees the target.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by

@@ -4,31 +4,30 @@
 \alias{rep_id_mods_generic}
 \title{Individual level Moderators (Generic)}
 \usage{
-rep_id_mods_generic(data, rating_1, cent_rating_2, cent_id_mod_variable,
-  interaction_term, n_triads = length(rating_1), n_r1_per_r2 = 1,
-  n_r2_per_r1 = 1)
+rep_id_mods_generic(data, rating_1, rating_2, id_mod_variable, interaction_term,
+  n_triads = length(rating_1), n_r1_per_r2 = 1, n_r2_per_r1 = 1)
 }
 \arguments{
-\item{data}{The dataframe that contains P1 and P2 ratings.
+\item{data}{The dataframe that contains the ratings, moderator variable, and the interaction term.
 Data should be wide, with a row for every group of participants.
-At a minimum, it must contain four columns: one for P1 reports, one for mean-centered P2 reports,
+At a minimum, it must contain four columns: two for ratings (of the same target),
 one for the mean-centered moderator variable, and one for the interaction term.}
 
 \item{rating_1}{The column(s) that contain the first rating variable. This might be P1 reports
 if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
-If more than one is supplied, the order must match the other rating types.}
+If more than one is supplied, the target-wise order must match across variables.}
 
-\item{cent_rating_2}{The column(s) that second rating variable. For hearsay consensus or accuracy,
-this would be P2 reports.}
+\item{rating_2}{The column(s) that second rating variable. For hearsay consensus or accuracy,
+this would be P2 reports. If more than one is supplied, the target-wise order must match across variables.}
 
-\item{cent_id_mod_variable}{The column(s) that contain the individual-level moderator of interest.
-If more than one is supplied from multiple exchangeable triads,
+\item{id_mod_variable}{The column(s) that contain the individual-level moderator of interest.
+If more than one is supplied from multiple exchangeable dyads/triads,
 the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 to facilitate interpretability.}
 
 \item{interaction_term}{The column(s) that contain the interaction term, or the product of the
 mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
-exchangeable triads, the order must match the order of the ratings.}
+exchangeable dyads/triads, the target-wise order must match the order of the ratings.}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by
 counting the number of P1 reports. This parameter rarely needs to be changed.}
@@ -41,8 +40,9 @@ counting the number of P1 reports. This parameter rarely needs to be changed.}
 The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 }
 \description{
-This is a generic function for setting up moderator analyses for reputational analyses with n
-exchangeable triads.
+This is a generic function for individual-level moderators on two distinguishable ratings on the same target.
+This could be P1- and P2- reports, P2- and self-reports, P1- and self-reports, or any other sets of
+distinguishable ratings.
 }
 \details{
 The parameters for the individual-level moderator analyses are:
@@ -77,10 +77,10 @@ data("rep_sim_data")
                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 
-          rep_id_mods_consensus(data = moderator_data,
+          rep_id_mods_generic(data = moderator_data,
                                 p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                cent_p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
-                                cent_id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+                                p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+                                id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 
 }

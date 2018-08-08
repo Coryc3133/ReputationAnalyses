@@ -16,30 +16,30 @@ At a minimum, it must contain two columns: one for P1 reports and one for P2 rep
 
 \item{p1_reports}{The column(s) that contain P1 reports,
 or ratings made by the person that knows the target directly.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{p2_reports}{The column(s) that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{target_self}{The column(s) that contain target self-reports.
-If more than one is supplied, the order must match the other
-rating types. The default is NULL.}
+\item{target_self}{Optional. The column(s) that contain target self-reports.
+If more than one is supplied, the target-wise order must match the other
+rating types.}
 
-\item{p1_meta}{The column(s) that contain P1 3rd person Meta-perceptions,
+\item{p1_meta}{Optional. The column(s) that contain P1 3rd person Meta-perceptions,
 or P1's ratings of how they think P2 sees the target.
-If more than one is supplied, the order must match the other
-rating types. The default is NULL}
+If more than one is supplied, the target-wise order must match the other
+rating types.}
 
-\item{p2_meta}{The column(s) that contain P2 3rd person Meta-perceptions,
+\item{p2_meta}{Optional. The column(s) that contain P2 3rd person Meta-perceptions,
 or P2's ratings of how they think P1 sees the target.
-If more than one is supplied, the order must match the other
-rating types. The default is NULL.}
+If more than one is supplied, the target-wise order must match the other
+rating types.}
 
 \item{n_triads}{The number of exhangeable triads in each group. By default, this is determined by
-counting the number of P1 reports. It is rare that this parameter would need to be changed.}
+counting the number of P1 reports. It is rare that this parameter would need to be changed manually.}
 
 \item{n_p1s_per_p2s}{The number of P1s for every P2. This defaults to 1.
 Currently, only values of 1 are supported.}
@@ -59,17 +59,20 @@ Currently, only values of 1 are supported.}
 \item{n_ts_per_p2s}{The number of targets for every P2;. This defaults to 1.
 Currently, only values of 1 are supported.}
 }
+\value{
+The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
+}
 \description{
 This is a wrapper function around the reputation model functions.
 }
 \details{
 This chooses a function depending on which
-vectors sre supplied. At a minimum, it requires a P1- & P2-ratings. It can
+variables sre supplied. At a minimum, it requires a P1- & P2-ratings. It can
 optionally take target self-reports and third-person meta-perceptions (for P1 and P2).
-It fits a model estimating the possible hearsay reputation parameters.
+It fits a model estimating the possible hearsay reputation parameters given the input.
+See specific model functions for which parameters are estimated for each model.
 
-The function can handle up to n exchangeable triads. It returns a fitted lavaan
-object. See lavaan documentation for more.
+The function can handle up to n exchangeable triads.
 }
 \examples{
 data("rep_sim_data")
@@ -88,5 +91,4 @@ data("rep_sim_data")
                   target_self = c("C_C_agreeableness", "A_A_agreeableness"),
                   p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
                   p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
-
 }

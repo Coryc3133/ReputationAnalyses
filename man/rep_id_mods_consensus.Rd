@@ -4,34 +4,34 @@
 \alias{rep_id_mods_consensus}
 \title{Individual level Moderators of Hearsay Consensus}
 \usage{
-rep_id_mods_consensus(data, p1_reports, cent_p2_reports, cent_id_mod_variable,
+rep_id_mods_consensus(data, p1_reports, p2_reports, id_mod_variable,
   interaction_term, n_triads = length(p1_reports), n_p1s_per_p2s = 1,
   n_p2s_per_p1s = 1)
 }
 \arguments{
-\item{data}{The dataframe that contains P1 and P2 ratings.
+\item{data}{The dataframe that contains the ratings, moderator variable, and the interaction term.
 Data should be wide, with a row for every group of participants.
 At a minimum, it must contain four columns: one for P1 reports, one for mean-centered P2 reports,
 one for the mean-centered moderator variable, and one for the interaction term.}
 
 \item{p1_reports}{The column(s) that contain P1 reports,
 or ratings made by the person that knows the target directly.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{cent_p2_reports}{The column(s) that contain P2 reports,
+\item{p2_reports}{The column(s) that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
-If more than one is supplied, the order must match the other rating types.}
+If more than one is supplied, the target-wise order must match the other rating types.}
 
-\item{cent_id_mod_variable}{The column(s) that contain the individual-level moderator of interest.
+\item{id_mod_variable}{The column(s) that contain the individual-level moderator of interest.
 If more than one is supplied from multiple exchangeable triads,
 the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 to facilitate interpretability.}
 
 \item{interaction_term}{The column(s) that contain the interaction term, or the product of the
 mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
-exchangeable triads, the order must match the order of the ratings.}
+exchangeable triads, the target-wise order must match the order of the ratings.}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by
 counting the number of P1 reports. This parameter rarely needs to be changed.}
@@ -86,8 +86,8 @@ data("rep_sim_data")
 
           rep_id_mods_consensus(data = moderator_data,
                                 p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                cent_p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
-                                cent_id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+                                p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+                                id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 
 }

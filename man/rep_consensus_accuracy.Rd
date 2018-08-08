@@ -10,22 +10,23 @@ rep_consensus_accuracy(data, p1_reports, p2_reports, target_self,
   n_ts_per_p2s = 1)
 }
 \arguments{
-\item{data}{The dataframe that contains P1 and P2 ratings.
+\item{data}{The dataframe.
 Data should be wide, with a row for every group of participants.
-At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.}
+At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
+one for targets' self-ratings..}
 
 \item{p1_reports}{The column(s) that contain P1 reports,
 or ratings made by the person that knows the target directly.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{p2_reports}{The column(s) that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{target_self}{The column(s) that contain target self-reports.
-If more than one is supplied, the order must match the other
+If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by
