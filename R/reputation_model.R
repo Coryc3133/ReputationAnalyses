@@ -721,8 +721,8 @@ rep_id_mods_generic <- function(data, rating_1, rating_2, id_mod_variable,
     print(paste("Returning Results for", model_type, ". If this is not the model you intended to run, please check the data and variables you supplied."))
     cat(paste("design:\nnumber of exchangeable triads =", n_triads))
     return(fitted_model)
-    if(round(mean(rowMeans(data[,rating_2], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
-    if(round(mean(rowMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,rating_2], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
     }}
 
 #' Individual level Moderators of Hearsay Consensus
@@ -865,8 +865,8 @@ rep_id_mods_consensus <- function(data, p1_reports, p2_reports, id_mod_variable,
     cat(paste("design:\nnumber of exchangeable triads =", n_triads, "\n",
               "number of P1s per P2s", n_p1s_per_p2s, "\n",
               "number of P2s per P1s", n_p2s_per_p1s, "\n"))
-    if(round(mean(rowMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
-    if(round(mean(rowMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
     return(fitted_model)
     }
 if(n_p1s_per_p2s > 1){warning("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
@@ -1012,8 +1012,8 @@ rep_id_mods_accuracy <- function(data, target_self, p2_reports, id_mod_variable,
     cat(paste("design:\nnumber of exchangeable triads =", n_triads, "\n",
               "number of Ts per P2s", n_ts_per_p2s, "\n",
               "number of P2s per Ts", n_p2s_per_ts, "\n"))
-    if(round(mean(rowMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
-    if(round(mean(rowMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
     return(fitted_model)
     }
   if(n_ts_per_p2s > 1){warning("I'm sorry, this function can only handle designs with 1 T per P2; check back for changes")}
