@@ -4,8 +4,9 @@
 \alias{rep_consensus}
 \title{Reputation Consensus Model}
 \usage{
-rep_consensus(data, p1_reports, p2_reports, n_triads = length(p1_reports),
-  n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)
+rep_consensus(data, p1_reports, p2_reports,
+  n_triads = length(p1_reports), n_p1s_per_p2s = 1,
+  n_p2s_per_p1s = 1)
 }
 \arguments{
 \item{data}{The dataframe that contains P1 and P2 ratings.

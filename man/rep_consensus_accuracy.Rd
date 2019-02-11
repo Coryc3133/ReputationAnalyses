@@ -5,9 +5,9 @@
 \title{Reputation Consensus & Accuracy Model}
 \usage{
 rep_consensus_accuracy(data, p1_reports, p2_reports, target_self,
-  n_triads = length(p1_reports), n_p1s_per_p2s = 1, n_p2s_per_p1s = 1,
-  n_p1s_per_ts = 1, n_p2s_per_ts = 1, n_ts_per_p1s = 1,
-  n_ts_per_p2s = 1)
+  n_triads = length(p1_reports), n_p1s_per_p2s = 1,
+  n_p2s_per_p1s = 1, n_p1s_per_ts = 1, n_p2s_per_ts = 1,
+  n_ts_per_p1s = 1, n_ts_per_p2s = 1)
 }
 \arguments{
 \item{data}{The dataframe.

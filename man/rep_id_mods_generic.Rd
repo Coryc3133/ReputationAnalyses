@@ -4,8 +4,9 @@
 \alias{rep_id_mods_generic}
 \title{Individual level Moderators (Generic)}
 \usage{
-rep_id_mods_generic(data, rating_1, rating_2, id_mod_variable, interaction_term,
-  n_triads = length(rating_1), n_r1_per_r2 = 1, n_r2_per_r1 = 1)
+rep_id_mods_generic(data, rating_1, rating_2, id_mod_variable,
+  interaction_term, n_triads = length(rating_1), n_r1_per_r2 = 1,
+  n_r2_per_r1 = 1)
 }
 \arguments{
 \item{data}{The dataframe that contains the ratings, moderator variable, and the interaction term.

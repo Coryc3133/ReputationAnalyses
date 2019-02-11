@@ -4,10 +4,10 @@
 \alias{rep_full_w_3pmeta}
 \title{Reputation Consensus, Accuracy, and 3rd-Person Meta-Perception Model}
 \usage{
-rep_full_w_3pmeta(data, p1_reports, p2_reports, target_self, p1_meta, p2_meta,
-  n_triads = length(p1_reports), n_p1s_per_p2s = 1, n_p2s_per_p1s = 1,
-  n_p1s_per_ts = 1, n_p2s_per_ts = 1, n_ts_per_p1s = 1,
-  n_ts_per_p2s = 1)
+rep_full_w_3pmeta(data, p1_reports, p2_reports, target_self, p1_meta,
+  p2_meta, n_triads = length(p1_reports), n_p1s_per_p2s = 1,
+  n_p2s_per_p1s = 1, n_p1s_per_ts = 1, n_p2s_per_ts = 1,
+  n_ts_per_p1s = 1, n_ts_per_p2s = 1)
 }
 \arguments{
 \item{data}{The dataframe that contains ratings (P1, P2, target self-report, P1, and P2 meta-perceptions).
@@ -97,20 +97,20 @@ Those parameters are:
 }
 \emph{If n exchangeable triads > 1:}
 \describe{
-{rec}{direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))}
-{h}{hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))}
-{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
-{tru_sim}{True Similarity; the correlation between targets' self-reports. (e.g., A(A) <-> C(C))}
-{as_sim_3p}{Third-person assumed similarity; correlation between P2(T) and P1's self-report (e.g., B(C) <- A(A))}
-{as_sim_1p}{First-person assumed similarity (i.e., interpersonal assumed similarity); correlation between P1(T) and P1's self-report (e.g., A(C) <-> A(A))}
-{as_sim_p1m}{P1 Meta-assumed similarity (e.g., A(B(C)) <-> A(A))}
-{ukp1m1}{unknown p1-meta 1}{P1 meta-perception with opposite P1-report (e.g., A(B(C)) <-> C(A))).}
-{p1meta_sim}{P1 Meta-Similarity}{correlation between exchangeable P1 meta-perceptions (e.g., A(B(C)) <-> C(D(A))).}
-{ukp2m1}{unknown P2-meta 1}{P2 Meta-perception with exchangeable P2-reports (e.g., B(A(C)) <-> D(A))}
-{ukp2m2}{unknown P2-meta 2}{P2 Meta-perception with exchangeable target self-report (e.g., B(A(C) <-> A(A)))}
-{ukp2m3}{unknown P2-meta 3}{P2 Meta-perception with exchangeable P1-reports (e.g., B(A(C)) <-> C(A))}
-{p2meta_sim}{P2 Meta-Similarity}{correlation between exchangeable P2 meta-perceptions (e.g., B(A(C)) <-> D(C(A))).}
-{ukm1}{unknown Meta-perception}{P1 Meta-perception with exchangeable P2 Meta-Perception (e.g., A(B(C)) <-> D(C(A)))}
+\item{rec}{direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))}
+\item{h}{hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))}
+\item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
+\item{tru_sim}{True Similarity; the correlation between targets' self-reports. (e.g., A(A) <-> C(C))}
+\item{as_sim_3p}{Third-person assumed similarity; correlation between P2(T) and P1's self-report (e.g., B(C) <- A(A))}
+\item{as_sim_1p}{First-person assumed similarity (i.e., interpersonal assumed similarity); correlation between P1(T) and P1's self-report (e.g., A(C) <-> A(A))}
+\item{as_sim_p1m}{P1 Meta-assumed similarity (e.g., A(B(C)) <-> A(A))}
+\item{ukp1m1}{unknown p1-meta 1}{P1 meta-perception with opposite P1-report (e.g., A(B(C)) <-> C(A))).}
+\item{p1meta_sim}{P1 Meta-Similarity}{correlation between exchangeable P1 meta-perceptions (e.g., A(B(C)) <-> C(D(A))).}
+\item{ukp2m1}{unknown P2-meta 1}{P2 Meta-perception with exchangeable P2-reports (e.g., B(A(C)) <-> D(A))}
+\item{ukp2m2}{unknown P2-meta 2}{P2 Meta-perception with exchangeable target self-report (e.g., B(A(C) <-> A(A)))}
+\item{ukp2m3}{unknown P2-meta 3}{P2 Meta-perception with exchangeable P1-reports (e.g., B(A(C)) <-> C(A))}
+\item{p2meta_sim}{P2 Meta-Similarity}{correlation between exchangeable P2 meta-perceptions (e.g., B(A(C)) <-> D(C(A))).}
+\item{ukm1}{unknown Meta-perception}{P1 Meta-perception with exchangeable P2 Meta-Perception (e.g., A(B(C)) <-> D(C(A)))}
 }
 The function can handle up to n exchangeable triads.
 }
@@ -120,6 +120,6 @@ data("rep_sim_data")
                             p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                            p1_meta = c("A_B_C_agreeableness", "C_D_A_agreeableness"),
-                            p2_meta = c("B_A_C_agreeableness", "D_C_A_agreeableness"))
+                            p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+                            p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
 }
