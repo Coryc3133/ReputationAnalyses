@@ -20,11 +20,10 @@ The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{
 }
 \description{
 This takes output from one of the reputational analysis models
-(e.g., rep_analyses_auto) and returns a list of length two. The first element of the list is a
- a tibble of differential (correlational) parameters like the output of `ez_elevation_table()`.
- The second element is a list containing  the two tibbles returned by `ez_differential_table()`,
- which are the table of elevation results and the table of descriptives (means and SDs, pooling
- across exchangeable roles).
+(e.g., rep_analyses_auto) and returns a list of length three. The first element of the list is a
+ a tibble of differential (correlational) parameters.
+ The second element is a table of elevation results. The third element is a tibble containing
+ the table of descriptives (means and SDs, pooling across exchangeable roles).
 }
 \examples{
 data("rep_sim_data")

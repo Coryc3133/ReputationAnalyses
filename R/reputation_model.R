@@ -1435,11 +1435,11 @@ ez_elevation_table <- function(rep_model){
                                     p2_p1t_sd = mp2_sd)}
 
   rep_descrips <- rep_descrips %>%
-    gather(variable, value) %>%
-    separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
-    mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
+    tidyr::gather(variable, value) %>%
+    tidyr::separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
+    dplyr::mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
            target = stringr::str_replace(target, "p2t", "p2_t")) %>%
-    spread(stat, value)
+    tidyr::spread(stat, value)
 
 
   return(list(elevation_table = rep_elevation_table,
@@ -1448,11 +1448,10 @@ ez_elevation_table <- function(rep_model){
 #' Easy Differential & Elevation Tables
 #'
 #' This takes output from one of the reputational analysis models
-#' (e.g., rep_analyses_auto) and returns a list of length two. The first element of the list is a
-#'  a tibble of differential (correlational) parameters like the output of `ez_elevation_table()`.
-#'  The second element is a list containing  the two tibbles returned by `ez_differential_table()`,
-#'  which are the table of elevation results and the table of descriptives (means and SDs, pooling
-#'  across exchangeable roles).
+#' (e.g., rep_analyses_auto) and returns a list of length three. The first element of the list is a
+#'  a tibble of differential (correlational) parameters.
+#'  The second element is a table of elevation results. The third element is a tibble containing
+#'  the table of descriptives (means and SDs, pooling across exchangeable roles).
 #'
 #' @param rep_model The results from one of the ReputationAnalyses
 #' Models (e.g., rep_analyses_auto).
@@ -1499,9 +1498,12 @@ ez_elevation_table <- function(rep_model){
 
 ez_tables <- function(rep_model, what = "main"){
   differential_table <- ez_differential_table(rep_model = rep_model, what = what)
-  elevation_tables <- ez_elevation_table(rep_model = rep_model)
+  elevation_table <- ez_elevation_table(rep_model = rep_model)[[1]]
+  pooled_means_sd <- ez_elevation_table(rep_model = rep_model)[[2]]
+
   return(list(differential_table = differential_table,
-              elevation_tables = elevation_tables))
+              elevation_table = elevation_table,
+              pooled_means_sd = pooled_means_sd))
 }
 
 #' Easily Plot Differential Results
@@ -1565,11 +1567,11 @@ ez_differential_plot <- function(agree_rep_model, what = "main"){
                                                    "Direct Accuracy",
                                                    "Hearsay Accuracy",
                                                    "Hearsay Consensus")) %>%
-    ggplot(aes(x = parameter, y = r)) +
-    geom_pointrange(aes(ymin = ci_lower, ymax = ci_upper)) +
-    geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
-    coord_flip() +
-    theme_minimal() +
-    labs(title = "Differential Reputation Results",
-         x = NULL)}
+    ggplot2::ggplot(ggplot2::aes(x = parameter, y = r)) +
+    ggplot2::geom_pointrange(ggplot2::aes(ymin = ci_lower, ymax = ci_upper)) +
+    ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
+    ggplot2::coord_flip() +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(title = "Differential Reputation Results",
+                  x = NULL)}
 
