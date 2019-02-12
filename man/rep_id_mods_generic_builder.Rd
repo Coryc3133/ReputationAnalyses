@@ -85,6 +85,7 @@ data("rep_sim_data")
                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
          # view model
          cat(agree_pt_mod_model$model)
+
          # view model Information
          agree_pt_mod_model$rep_model_info
 

@@ -86,16 +86,19 @@ data("rep_sim_data")
                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 
+# Fitting by supplying variable/column names
 agree_pt_mod <- rep_id_mods_consensus(data = moderator_data,
                                     p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                     p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                     id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                     interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
-# alternatively
+
+# alternatively, build the model frst
 agree_pt_mod_model <- rep_id_mods_consensus_builder (p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                     p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                                    id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                                    interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
+# Then fit the model you just built
 agree_pt_mod <- rep_id_mods_consensus(data = moderator_data,
                                     model = agree_pt_mod_model)
 

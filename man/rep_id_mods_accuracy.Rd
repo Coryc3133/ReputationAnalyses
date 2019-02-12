@@ -4,15 +4,18 @@
 \alias{rep_id_mods_accuracy}
 \title{Individual level Moderators of Hearsay Accuracy}
 \usage{
-rep_id_mods_accuracy(data, target_self, p2_reports, id_mod_variable,
-  interaction_term, n_triads = length(target_self), n_ts_per_p2s = 1,
-  n_p2s_per_ts = 1)
+rep_id_mods_accuracy(data, model = NULL, target_self, p2_reports,
+  id_mod_variable, interaction_term, n_triads = length(target_self),
+  n_ts_per_p2s = 1, n_p2s_per_ts = 1)
 }
 \arguments{
 \item{data}{The dataframe that contains the ratings, moderator variable, and the interaction term.
 Data should be wide, with a row for every group of participants.
 At a minimum, it must contain four columns: one for target self-reports, one for mean-centered P2 reports,
 one for the mean-centered moderator variable, and one for the interaction term.}
+
+\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+is supplied, no additional arguments need to be specified.}
 
 \item{target_self}{The column(s) that contain target self-reports.
 If more than one is supplied, the order must match the other
@@ -45,10 +48,10 @@ Currently, only values of 1 are supported.}
 The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 }
 \description{
-This takes the variables needed to assess an individual-level moderator on hearsay acuracy, and fits
-a model estimating the corresponding parameters. At a minimum, it requires target self-reports, P2-reports,
-an individual-level moderator, and the interaction term.
-Note that the P2-reports and moderator variable should be mean-centered.
+This function fits a model for individual-level moderator on hearsay accuracy.
+It requires a dataframe and either a model from the relevant model builder
+function or names of columns for self-reports, p2_reports, and id_mod_variable.
+The estimated parameters are:
 }
 \details{
 The parameters for the individual-level moderator analyses are:
@@ -83,10 +86,22 @@ data("rep_sim_data")
                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 
-          rep_id_mods_accuracy(data = moderator_data,
+# Fitting by supplying variable/column names
+agree_pt_mods_hearacc <- rep_id_mods_accuracy(data = moderator_data,
                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
+
+# Alternatively, first build the model
+agree_pt_mods_hearacc_model <- rep_id_mods_accuracy_builder(data = moderator_data,
+                                target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+                                id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+                                interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
+
+# Then fit the model you just built
+ agree_pt_mods_hearacc <- rep_id_mods_accuracy(data = moderator_data,
+                                               model = agree_pt_mods_hearacc_model)
 
 }

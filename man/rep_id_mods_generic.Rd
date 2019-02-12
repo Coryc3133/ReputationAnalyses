@@ -81,17 +81,19 @@ data("rep_sim_data")
                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 
+       # fit model by specifying the variables / column names
        agree_pt_mod <- rep_id_mods_generic(data = moderator_data,
                                 rating_1 = c("A_C_agreeableness", "C_A_agreeableness"),
                                 rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 
-       # alternatively
+       # alternatively, you can 'build a model' first
         agree_pt_mod_model <- rep_id_mods_generic_builder (rating_1 = c("A_C_agreeableness", "C_A_agreeableness"),
                                                            rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                                            id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                                            interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
+       # Then pass the built model on to the fit function
         agree_pt_mod <- rep_id_mods_generic(data = moderator_data,
                                            model = agree_pt_mod_model)
 
