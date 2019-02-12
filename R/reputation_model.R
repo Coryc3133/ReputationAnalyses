@@ -38,7 +38,7 @@
 #' @export
 #' @examples
 #'          # build the model
-#'           agree_consensus_model <- rep_consensus_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'           agree_consensus_model <- rep_consensus_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
 #'
 #'          # view the model
@@ -53,7 +53,7 @@
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
 
-rep_consensus_build_model <- function(p1_reports, p2_reports, n_triads = length(p1_reports),
+rep_consensus_builder <- function(p1_reports, p2_reports, n_triads = length(p1_reports),
                                       n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(n_triads > 0 &
      n_p1s_per_p2s == 1 &
@@ -159,7 +159,7 @@ rep_consensus_build_model <- function(p1_reports, p2_reports, n_triads = length(
 #'                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
 #'          # alternatively
 #'          # build the model
-#'           agree_consensus_model <- rep_consensus_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'           agree_consensus_model <- rep_consensus_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                              p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
 #'          # then fit it
 #'          agree_consensus <- rep_consensus(data = rep_sim_data,
@@ -171,7 +171,7 @@ rep_consensus_build_model <- function(p1_reports, p2_reports, n_triads = length(
 rep_consensus <- function(data, model = NULL, p1_reports, p2_reports, n_triads = length(p1_reports),
                           n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(is.null(model)){
-  rep_consensus_model <- rep_consensus_build_model(p1_reports, p2_reports, n_triads = length(p1_reports),
+  rep_consensus_model <- rep_consensus_builder(p1_reports, p2_reports, n_triads = length(p1_reports),
                             n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)}
 
   else{rep_consensus_model <- model}
@@ -217,7 +217,7 @@ rep_consensus <- function(data, model = NULL, p1_reports, p2_reports, n_triads =
 #' @import lavaan
 #' @export
 #' @examples
-#' agree_con_acc_model <- rep_consensus_accuracy_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#' agree_con_acc_model <- rep_consensus_accuracy_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                                                            target_self = c("C_C_agreeableness", "A_A_agreeableness"))
 #' # view model
@@ -233,7 +233,7 @@ rep_consensus <- function(data, model = NULL, p1_reports, p2_reports, n_triads =
 #' of p1s per p2s, and the number of p2s per p1s, the number of p2s per target, and the number of targets per p2s,
 #' the number of targets per p1s, and the number of p1s per target.
 
-rep_consensus_accuracy_build_model <- function(p1_reports, p2_reports, target_self, n_triads = length(p1_reports),
+rep_consensus_accuracy_builder <- function(p1_reports, p2_reports, target_self, n_triads = length(p1_reports),
                                                n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
                                                n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
   if(n_triads > 0 &
@@ -392,7 +392,7 @@ rep_consensus_accuracy_build_model <- function(p1_reports, p2_reports, target_se
 #'                                                   p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                                                   target_self = c("C_C_agreeableness", "A_A_agreeableness"))
 #'          # alternatively
-#'          agree_con_acc_model <- rep_consensus_accuracy_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'          agree_con_acc_model <- rep_consensus_accuracy_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                                    p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                                                                    target_self = c("C_C_agreeableness", "A_A_agreeableness"))
 #'
@@ -404,7 +404,7 @@ rep_consensus_accuracy <- function(data, model = NULL, p1_reports, p2_reports, t
                           n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
                           n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
   if(is.null(model)){
-    rep_consensus_accuracy_model <- rep_consensus_accuracy_build_model(p1_reports, p2_reports, target_self,
+    rep_consensus_accuracy_model <- rep_consensus_accuracy_builder(p1_reports, p2_reports, target_self,
                                                               n_triads = length(p1_reports),
                                                               n_p1s_per_p2s = 1, n_p2s_per_p1s = 1,
                                                               n_p1s_per_ts = 1,n_p2s_per_ts = 1,
@@ -503,7 +503,7 @@ rep_consensus_accuracy <- function(data, model = NULL, p1_reports, p2_reports, t
 #' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
-#'           rep_full_3pmeta_model <- rep_full_w_3pmeta_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'           rep_full_3pmeta_model <- rep_full_w_3pmeta_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                             p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
@@ -515,7 +515,7 @@ rep_consensus_accuracy <- function(data, model = NULL, p1_reports, p2_reports, t
 #' of p1s per p2s, and the number of p2s per p1s, the number of p2s per target, and the number of targets per p2s,
 #' the number of targets per p1s, and the number of p1s per target.
 
-rep_full_w_3pmeta_build_model <- function(p1_reports, p2_reports, target_self, p1_meta, p2_meta,
+rep_full_w_3pmeta_builder <- function(p1_reports, p2_reports, target_self, p1_meta, p2_meta,
                                           n_triads = length(p1_reports), n_p1s_per_p2s = 1,
                                           n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
                                           n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
@@ -746,7 +746,7 @@ rep_full_w_3pmeta_build_model <- function(p1_reports, p2_reports, target_self, p
 #'                             p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
 #'          # alternatively:
 #'
-#'          agree_full_model <- rep_full_w_3pmeta_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'          agree_full_model <- rep_full_w_3pmeta_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                                                            target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                                            p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
@@ -760,7 +760,7 @@ rep_full_w_3pmeta <- function(data, model = NULL, p1_reports, p2_reports, target
                               n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
                               n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
   if(is.null(model)){
-    rep_full_w_3pmeta_model <- rep_full_w_3pmeta_build_model(p1_reports, p2_reports, target_self,
+    rep_full_w_3pmeta_model <- rep_full_w_3pmeta_builder(p1_reports, p2_reports, target_self,
                                                              p1_meta, p2_meta,
                                                              n_triads = length(p1_reports),
                                                              n_p1s_per_p2s = 1, n_p2s_per_p1s = 1,

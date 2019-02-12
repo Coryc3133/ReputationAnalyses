@@ -67,7 +67,7 @@ data("rep_sim_data")
                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
          # alternatively
          # build the model
-          agree_consensus_model <- rep_consensus_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+          agree_consensus_model <- rep_consensus_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                              p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
          # then fit it
          agree_consensus <- rep_consensus(data = rep_sim_data,
