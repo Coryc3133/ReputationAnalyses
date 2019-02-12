@@ -67,7 +67,7 @@ This is a wrapper function around the reputation model functions.
 }
 \details{
 This chooses a function depending on which
-variables sre supplied. At a minimum, it requires a P1- & P2-ratings. It can
+variables are supplied. At a minimum, it requires a P1- & P2-ratings. It can
 optionally take target self-reports and third-person meta-perceptions (for P1 and P2).
 It fits a model estimating the possible hearsay reputation parameters given the input.
 See specific model functions for which parameters are estimated for each model.

@@ -4,8 +4,8 @@
 \alias{rep_consensus_accuracy}
 \title{Reputation Consensus & Accuracy Model}
 \usage{
-rep_consensus_accuracy(data, p1_reports, p2_reports, target_self,
-  n_triads = length(p1_reports), n_p1s_per_p2s = 1,
+rep_consensus_accuracy(data, model = NULL, p1_reports, p2_reports,
+  target_self, n_triads = length(p1_reports), n_p1s_per_p2s = 1,
   n_p2s_per_p1s = 1, n_p1s_per_ts = 1, n_p2s_per_ts = 1,
   n_ts_per_p1s = 1, n_ts_per_p2s = 1)
 }
@@ -13,7 +13,10 @@ rep_consensus_accuracy(data, p1_reports, p2_reports, target_self,
 \item{data}{The dataframe.
 Data should be wide, with a row for every group of participants.
 At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
-one for targets' self-ratings..}
+one for targets' self-ratings.}
+
+\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+is supplied, no additional arguments need to be specified.}
 
 \item{p1_reports}{The column(s) that contain P1 reports,
 or ratings made by the person that knows the target directly.
@@ -54,8 +57,9 @@ Currently, only values of 1 are supported.}
 The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 }
 \description{
-This takes a vector of P1-, P2-, and target self-reports and fits
-a model estimating the possible hearsay reputation parameters.
+This takes a dataset containing P1-, P2-, and target self-reports and either the
+names of columns containing those reports or a model from one of the ReputationAnalyses
+model builder function, and fits a model estimating the possible hearsay reputation parameters.
 Those parameters are:
 \describe{
 \item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
@@ -84,9 +88,16 @@ The function can handle up to n exchangeable triads.
 }
 \examples{
 data("rep_sim_data")
-          rep_consensus_accuracy(data = rep_sim_data,
-                                 p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                 p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+          agree_con_acc <- rep_consensus_accuracy(data = rep_sim_data,
+                                                  p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                  p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                  target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+         # alternatively
+         agree_con_acc_model <- rep_consensus_accuracy_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                                   p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                                   target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+
+         agree_con_acc <- rep_consensus_accuracy(data = rep_sim_data,
+                                                 model = agree_con_acc_model)
 
 }
