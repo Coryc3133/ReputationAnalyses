@@ -1,9 +1,9 @@
-# rep_consensus documentation
+# This file contains the functions for building and fitting the unmoderated reputation models.
 
-#' Reputation Consensus Model
+#' Reputation Consensus Model Builder
 #'
-#' This takes a vector of P1 and P2 reports and fits
-#' a model estimating the possible hearsay reputation parameters.
+#' This takes a vector of P1 and P2 reports and builds
+#' a model of lavaan syntax for estimating the possible hearsay reputation parameters.
 #' Those parameters are:
 #' \describe{
 #' \item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
@@ -20,9 +20,6 @@
 #' \item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param data The dataframe that contains P1 and P2 ratings.
-#' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.
 #' @param p1_reports The column(s) that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
@@ -39,15 +36,25 @@
 #' Currently, only values of 1 are supported.
 #' @import lavaan
 #' @export
-#' @examples data("rep_sim_data")
-#'           rep_consensus(data = rep_sim_data,
-#'                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
+#' @examples
+#'          # build the model
+#'           agree_consensus_model <- rep_consensus_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
 #'
-#' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
+#'          # view the model
+#'          agree_consensus_model$model
+#'
+#'          # view the model information
+#'          # agree_consensus_model$rep_model_info
+#'
+#' @return The function returns a list containing an
+#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' in lavaan syntax. Model information
+#' includes the type of model, the number of exchangeable triads, and the number
+#' of p1s per p2s, and the number of p2s per p1s.
 
-rep_consensus <- function(data, p1_reports, p2_reports, n_triads = length(p1_reports),
-                          n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
+rep_consensus_build_model <- function(p1_reports, p2_reports, n_triads = length(p1_reports),
+                                      n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(n_triads > 0 &
      n_p1s_per_p2s == 1 &
      n_p2s_per_p1s == 1){
@@ -93,56 +100,44 @@ rep_consensus <- function(data, p1_reports, p2_reports, n_triads = length(p1_rep
       p1p2_el <- "p1_p2_rel_el := 1*int_p1 - (1*int_p2)"
 
       model <- paste(hc, model,  int_p1, int_p2, v_p1, v_p2, p1p2_el, sep = "\n")}
-
-  # fit model and print some informaiton about it
-  fitted_model <- lavaan::sem(model, data = data, missing = "FIML")
-  model_type <- "Simple Hearsay Consensus (P1-P2)"
-  print(paste("Returning Results for", model_type, ". If this is not the model you intended to run, please check the data and variables you supplied."))
-  cat(paste("design:\nnumber of exchangeable triads =", n_triads, "\n",
-              "number of P1s per P2s", n_p1s_per_p2s, "\n",
-              "number of P2s per P1s", n_p2s_per_p1s))
-
-  return(fitted_model) }
+ # Put the model info together.
+  rep_model_info <- tibble::as_tibble(list(model_type = "Simple Hearsay Consensus (P1-P2)",
+                                         ex_triads = n_triads,
+                                         p1s_per_p2s = n_p1s_per_p2s,
+                                         p2s_per_p1s = n_p2s_per_p1s))
+  return(list(model = model,
+              rep_model_info = rep_model_info)) }
   if(n_p1s_per_p2s > 1){print("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
   if(n_p2s_per_p1s > 1){print("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
 }
-
-# rep_consensus documentation
-
-#' Reputation Consensus & Accuracy Model
+#' Reputation Consensus Model
 #'
-#' This takes a vector of P1-, P2-, and target self-reports and fits
-#' a model estimating the possible hearsay reputation parameters.
-#' Those parameters are:
+#' This fits a model estimating the possible hearsay reputation parameters from
+#' a combination of P1- and P2-reports (no self-reports or accuracy criterion). It requires a
+#' dataframe and either a model from the relevant model builder function or names of columns
+#' with P1- and P2- ratings.
+#' The estimated parameters are:
 #' \describe{
 #' \item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
-#' \item{ha}{hearsay accuracy; the correation between P2(T) & T(T)}
-#' \item{da}{direct accuracy; the correlation between P1(T) & T(T)}
 #' \item{int_p1}{Intercept for P1(T)}
 #' \item{int_p2}{Intercept for P2(T)}
-#' \item{int_self}{Intercept for T(T)}
 #' \item{v_p1}{variance for P1(T)}
 #' \item{v_p2}{variance for P2(T)}
-#' \item{v_self}{variance for T(T)}
 #' \item{p1_p2_rel_el}{P1-P2 Relative Elevation (i.e., Mean P1(T) - Mean P2(T))}
-#' \item{self_p2_rel_el}{Self-P2 Relative Elevation (i.e., Mean T(T) - Mean P2(T))}
-#' \item{self_p1_rel_el}{Self-P1 Relative Elevation (i.e., Mean T(T) - Mean P1(T))}
 #' }
 #' \emph{If n exchangeable triads > 1:}
 #' \describe{
 #' \item{rec}{direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))}
 #' \item{h}{hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))}
 #' \item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
-#' \item{tru_sim}{True Similarity; the correlation between targets' self-reports. (e.g., A(A) <-> C(C))}
-#' \item{as_sim_3p}{Third-person assumed similarity; correlation between P2(T) and P1's self-report (e.g., B(C) <- A(A))}
-#' \item{as_sim_1p}{First-person assumed similarity (i.e., interpersonal assumed similarity); correlation betweenP1(T) and P1's self-report (e.g., A(C) <-> A(A))}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param data The dataframe.
+#' @param data The dataframe that contains P1 and P2 ratings.
 #' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
-#' one for targets' self-ratings..
-#' @param  p1_reports The column(s) that contain P1 reports,
+#' At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.
+#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' is supplied, no additional arguments need to be specified.
+#' @param p1_reports The column(s) that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
@@ -150,36 +145,97 @@ rep_consensus <- function(data, p1_reports, p2_reports, n_triads = length(p1_rep
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param target_self The column(s) that contain target self-reports.
-#' If more than one is supplied, the target-wise order must match the other
-#' rating types.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
-#' counting the number of P1 reports. It is rare that this parameter would need to be changed.
+#' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_p1s_per_p2s The number of P1s for every P2. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @param n_p1s_per_ts The number of P1s for every target;. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_p2s_per_ts The number of P2s for every target;. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_ts_per_p1s The number of targets for every P1;. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#'
-#'
+#' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
-#'           rep_consensus_accuracy(data = rep_sim_data,
-#'                                  p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                  p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                                  target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+#'           agree_consensus <- rep_consensus(data = rep_sim_data,
+#'                                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
+#'          # alternatively
+#'          # build the model
+#'           agree_consensus_model <- rep_consensus_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                              p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
+#'          # then fit it
+#'          agree_consensus <- rep_consensus(data = rep_sim_data,
+#'                                           agree_consensus_model)
+#'
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
-rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_triads = length(p1_reports),
-                          n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
-                          n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
+
+rep_consensus <- function(data, model = NULL, p1_reports, p2_reports, n_triads = length(p1_reports),
+                          n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
+  if(is.null(model)){
+  rep_consensus_model <- rep_consensus_build_model(p1_reports, p2_reports, n_triads = length(p1_reports),
+                            n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)}
+
+  else{rep_consensus_model <- model}
+    fitted_model <- lavaan::sem(rep_consensus_model$model, data = data, missing = "FIML")
+    return(fitted_model)}
+
+# rep_consensus_accuracy documentation
+
+#' Reputation Consensus & Accuracy Model Builder
+#'
+#' This takes a vector of P1-, P2-, and self-reports and builds
+#' a model of lavaan syntax for estimating the possible hearsay reputation parameters.
+#' Those parameters are:
+#' \describe{
+#' \item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
+#' \item{int_p1}{Intercept for P1(T)}
+#' \item{int_p2}{Intercept for P2(T)}
+#' \item{v_p1}{variance for P1(T)}
+#' \item{v_p2}{variance for P2(T)}
+#' \item{p1_p2_rel_el}{P1-P2 Relative Elevation (i.e., Mean P1(T) - Mean P2(T))}
+#' }
+#' \emph{If n exchangeable triads > 1:}
+#' \describe{
+#' \item{rec}{direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))}
+#' \item{h}{hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))}
+#' \item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
+#' }
+#' The function can handle up to n exchangeable triads.
+#' @param p1_reports The column(s) that contain P1 reports,
+#' or ratings made by the person that knows the target directly.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param p2_reports The column(s) that contain P2 reports,
+#' or ratings made by the person that knows the target indirectly through the corresponding P1.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
+#' counting the number of P1 reports. This parameter rarely needs to be changed.
+#' @param n_p1s_per_p2s The number of P1s for every P2. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @import lavaan
+#' @export
+#' @examples
+#' agree_con_acc_model <- rep_consensus_accuracy_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                            target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+#' # view model
+#' agree_con_acc_model$model
+#'
+#' # View model information
+#' agree_con_acc_model$rep_model_info
+#'
+#' @return The function returns a list containing an
+#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' in lavaan syntax.  Model information
+#' includes the type of model, the number of exchangeable triads, and the number
+#' of p1s per p2s, and the number of p2s per p1s, the number of p2s per target, and the number of targets per p2s,
+#' the number of targets per p1s, and the number of p1s per target.
+
+rep_consensus_accuracy_build_model <- function(p1_reports, p2_reports, target_self, n_triads = length(p1_reports),
+                                               n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
+                                               n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
   if(n_triads > 0 &
      n_p1s_per_p2s == 1 &
      n_p2s_per_p1s == 1 &
@@ -247,19 +303,17 @@ rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_
 
       model <- paste(hc, ha, da, model,  int_self, int_p1,
                      int_p2, v_self, v_p1, v_p2, p1p2_el, selfp2_el, selfp1_el, sep = "\n")}
-    # fit model and print some informaiton about it
-    fitted_model <- lavaan::sem(model, data = data, missing = "FIML")
-    model_type <- "Full Triadic Model: Hearsay Consensus and Accuracy"
-    print(paste("Returning Results for", model_type, ". If this is not the model you intended to run, please check the data and variables you supplied."))
-    cat(paste("design:\nnumber of exchangeable triads =", n_triads, "\n",
-              "number of P1s per P2s", n_p1s_per_p2s, "\n",
-              "number of P2s per P1s", n_p2s_per_p1s, "\n",
-              "number of p1s per targets", n_p1s_per_ts, "\n",
-              "number of p2s per targets", n_p2s_per_ts, "\n",
-              "number of targets per p1s", n_ts_per_p1s, "\n",
-              "number of targets per p2s", n_ts_per_p2s, "\n"))
 
-    return(fitted_model) }
+    rep_model_info <- tibble::as_tibble(list(model_type = "Full Triadic Model: Hearsay Consensus and Accuracy",
+                                             ex_triads = n_triads,
+                                             p1s_per_p2s = n_p1s_per_p2s,
+                                             p2s_per_p1s = n_p2s_per_p1s,
+                                             p1s_per_ts = n_p1s_per_ts,
+                                             p2s_per_ts = n_p2s_per_ts,
+                                             ts_per_p1s = n_ts_per_p1s,
+                                             ts_per_p2s = n_ts_per_p2s))
+    return(list(model = model,
+                rep_model_info = rep_model_info)) }
   if(n_p1s_per_p2s > 1){print("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
   if(n_p2s_per_p1s > 1){print("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
   if(n_ts_per_p1s  > 1){print("I'm sorry, this function can only handle designs with 1 target per P1; check back for changes")}
@@ -268,11 +322,105 @@ rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_
   if(n_p2s_per_ts > 1){print("I'm sorry, this function can only handle designs with 1 P2 per target; check back for changes")}
 }
 
-#' Reputation Consensus, Accuracy, and 3rd-Person Meta-Perception Model
+#' Reputation Consensus & Accuracy Model
+#'
+#' This takes a dataset containing P1-, P2-, and target self-reports and either the
+#' names of columns containing those reports or a model from one of the ReputationAnalyses
+#' model builder function, and fits a model estimating the possible hearsay reputation parameters.
+#' Those parameters are:
+#' \describe{
+#' \item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
+#' \item{ha}{hearsay accuracy; the correation between P2(T) & T(T)}
+#' \item{da}{direct accuracy; the correlation between P1(T) & T(T)}
+#' \item{int_p1}{Intercept for P1(T)}
+#' \item{int_p2}{Intercept for P2(T)}
+#' \item{int_self}{Intercept for T(T)}
+#' \item{v_p1}{variance for P1(T)}
+#' \item{v_p2}{variance for P2(T)}
+#' \item{v_self}{variance for T(T)}
+#' \item{p1_p2_rel_el}{P1-P2 Relative Elevation (i.e., Mean P1(T) - Mean P2(T))}
+#' \item{self_p2_rel_el}{Self-P2 Relative Elevation (i.e., Mean T(T) - Mean P2(T))}
+#' \item{self_p1_rel_el}{Self-P1 Relative Elevation (i.e., Mean T(T) - Mean P1(T))}
+#' }
+#' \emph{If n exchangeable triads > 1:}
+#' \describe{
+#' \item{rec}{direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))}
+#' \item{h}{hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))}
+#' \item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
+#' \item{tru_sim}{True Similarity; the correlation between targets' self-reports. (e.g., A(A) <-> C(C))}
+#' \item{as_sim_3p}{Third-person assumed similarity; correlation between P2(T) and P1's self-report (e.g., B(C) <- A(A))}
+#' \item{as_sim_1p}{First-person assumed similarity (i.e., interpersonal assumed similarity); correlation betweenP1(T) and P1's self-report (e.g., A(C) <-> A(A))}
+#' }
+#' The function can handle up to n exchangeable triads.
+#' @param data The dataframe.
+#' Data should be wide, with a row for every group of participants.
+#' At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
+#' one for targets' self-ratings.
+#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' is supplied, no additional arguments need to be specified.
+#' @param  p1_reports The column(s) that contain P1 reports,
+#' or ratings made by the person that knows the target directly.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param p2_reports The column(s) that contain P2 reports,
+#' or ratings made by the person that knows the target indirectly through the corresponding P1.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param target_self The column(s) that contain target self-reports.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
+#' counting the number of P1 reports. It is rare that this parameter would need to be changed.
+#' @param n_p1s_per_p2s The number of P1s for every P2. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_p1s_per_ts The number of P1s for every target;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_p2s_per_ts The number of P2s for every target;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_ts_per_p1s The number of targets for every P1;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#'
+#' @import lavaan
+#' @export
+#' @examples data("rep_sim_data")
+#'           agree_con_acc <- rep_consensus_accuracy(data = rep_sim_data,
+#'                                                   p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                   p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                   target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+#'          # alternatively
+#'          agree_con_acc_model <- rep_consensus_accuracy_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                                    p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                                    target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+#'
+#'          agree_con_acc <- rep_consensus_accuracy(data = rep_sim_data,
+#'                                                  model = agree_con_acc_model)
+#'
+#' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
+rep_consensus_accuracy <- function(data, model = NULL, p1_reports, p2_reports, target_self, n_triads = length(p1_reports),
+                          n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
+                          n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
+  if(is.null(model)){
+    rep_consensus_accuracy_model <- rep_consensus_accuracy_build_model(p1_reports, p2_reports, target_self,
+                                                              n_triads = length(p1_reports),
+                                                              n_p1s_per_p2s = 1, n_p2s_per_p1s = 1,
+                                                              n_p1s_per_ts = 1,n_p2s_per_ts = 1,
+                                                              n_ts_per_p1s = 1, n_ts_per_p2s = 1)
+  }
+  else{rep_consensus_accuracy_model <- model}
+  fitted_model <- lavaan::sem(rep_consensus_accuracy_model$model, data = data, missing = "FIML")
+  return(fitted_model)
+}
+
+
+#' Reputation Consensus, Accuracy, and 3rd-Person Meta-Perception Model Builder
 #'
 #' This takes a vector of P1-, P2-, target self-reports, and
-#' third-person meta-perceptions (for P1 and P2) and fits
-#' a model estimating the possible hearsay reputation parameters.
+#' third-person meta-perceptions (for P1 and P2) and builds
+#' a model estimating the possible hearsay reputation parameters in lavaan syntax.
 #' Those parameters are:
 #' \describe{
 #' \item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
@@ -316,13 +464,9 @@ rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_
 #' \item{ukp2m2}{unknown P2-meta 2}{P2 Meta-perception with exchangeable target self-report (e.g., B(A(C) <-> A(A)))}
 #' \item{ukp2m3}{unknown P2-meta 3}{P2 Meta-perception with exchangeable P1-reports (e.g., B(A(C)) <-> C(A))}
 #' \item{p2meta_sim}{P2 Meta-Similarity}{correlation between exchangeable P2 meta-perceptions (e.g., B(A(C)) <-> D(C(A))).}
-#' \item{ukm1}{unknown Meta-perception}{P1 Meta-perception with exchangeable P2 Meta-Perception (e.g., A(B(C)) <-> D(C(A)))}
-#'}
+#' \item{ukm1}{unknown Meta-perception}{P1 Meta-perception with exchangeable P2 Meta-Perception (e.g., A(B(C)) <-> D(C(A)))}}
+#'
 #' The function can handle up to n exchangeable triads.
-#' @param data The dataframe that contains ratings (P1, P2, target self-report, P1, and P2 meta-perceptions).
-#' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain 5 columns: 1 for each of the five rating types (P1-, P2-, self-,
-#' P1-meta-, P2-meta-perceptions).
 #' @param  p1_reports The column(s) that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
@@ -356,20 +500,25 @@ rep_consensus_accuracy <- function(data, p1_reports, p2_reports, target_self, n_
 #' Currently, only values of 1 are supported.
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
+#' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
-#'           rep_full_w_3pmeta(data = rep_sim_data,
-#'                             p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'           rep_full_3pmeta_model <- rep_full_w_3pmeta_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                             p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
 #'                             p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
-#' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
+#' @return The function returns a list containing an
+#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' in lavaan syntax. Model information
+#' includes the type of model, the number of exchangeable triads, and the number
+#' of p1s per p2s, and the number of p2s per p1s, the number of p2s per target, and the number of targets per p2s,
+#' the number of targets per p1s, and the number of p1s per target.
 
-rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta, p2_meta,
-                              n_triads = length(p1_reports), n_p1s_per_p2s = 1,
-                              n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
-                              n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
+rep_full_w_3pmeta_build_model <- function(p1_reports, p2_reports, target_self, p1_meta, p2_meta,
+                                          n_triads = length(p1_reports), n_p1s_per_p2s = 1,
+                                          n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
+                                          n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
   if(n_triads > 0 &
      n_p1s_per_p2s == 1 &
      n_p2s_per_p1s == 1 &
@@ -409,7 +558,7 @@ rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta
               paste(p2_meta, "~~ v_mp2*", p2_meta),
 
               # P1-P2 relative elevation
-              "p1_p2_rel_el := 1*int_p1 - (1*int_p2)",
+              "p1_p2_rel_el   := 1*int_p1 - (1*int_p2)",
               "self_p2_rel_el := 1*int_self - (1*int_p2)",
               "self_p1_rel_el := 1*int_self - (1*int_p1)",
               "p1_meta_rel_el := 1*int_p2 - (1*int_mp1)",
@@ -477,18 +626,17 @@ rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta
                      p1p2_el, selfp2_el, selfp1_el, p1_meta_el, p2_meta_el,
                      sep = "\n")}
     # fit model and print some informaiton about it
-    fitted_model <- lavaan::sem(model, data = data, missing = "FIML")
-    model_type <- "Full Triadic Model: Hearsay Consensus and Accuracy"
-    print(paste("Returning Results for", model_type, ". If this is not the model you intended to run, please check the data and variables you supplied."))
-    cat(paste("design:\nnumber of exchangeable triads =", n_triads, "\n",
-              "number of P1s per P2s", n_p1s_per_p2s, "\n",
-              "number of P2s per P1s", n_p2s_per_p1s, "\n",
-              "number of p1s per targets", n_p1s_per_ts, "\n",
-              "number of p2s per targets", n_p2s_per_ts, "\n",
-              "number of targets per p1s", n_ts_per_p1s, "\n",
-              "number of targets per p2s", n_ts_per_p2s, "\n"))
+    rep_model_info <- tibble::as_tibble(list(model_type = "Full Triadic Model with 3rd Person Meta-Perceptions",
+                                             ex_triads = n_triads,
+                                             p1s_per_p2s = n_p1s_per_p2s,
+                                             p2s_per_p1s = n_p2s_per_p1s,
+                                             p1s_per_ts = n_p1s_per_ts,
+                                             p2s_per_ts = n_p2s_per_ts,
+                                             ts_per_p1s = n_ts_per_p1s,
+                                             ts_per_p2s = n_ts_per_p2s))
 
-    return(fitted_model) }
+    return(list(model = model,
+                rep_model_info = rep_model_info))}
   if(n_p1s_per_p2s > 1){print("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
   if(n_p2s_per_p1s > 1){print("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
   if(n_ts_per_p1s  > 1){print("I'm sorry, this function can only handle designs with 1 target per P1; check back for changes")}
@@ -497,12 +645,139 @@ rep_full_w_3pmeta <- function(data, p1_reports, p2_reports, target_self, p1_meta
   if(n_p2s_per_ts > 1){print("I'm sorry, this function can only handle designs with 1 P2 per target; check back for changes")}
 }
 
+#' Reputation Consensus, Accuracy, and 3rd-Person Meta-Perception Model
+#'
+#' This fits a model estimating the possible hearsay reputation parameters for
+#' a design with P1-, P2-, target-self-reports, and P1- and P2-Meta-perception reports. It requires a
+#' dataset with those ratings, and either a model from the relevant model builder function or the names
+#' of the columns with each rating type.
+#' The estimated parameters are:
+#' \describe{
+#' \item{hc}{hearsay consensus; the correlation between P1(T) & P2(T)}
+#' \item{ha}{hearsay accuracy; the correation between P2(T) & T(T)}
+#' \item{da}{direct accuracy; the correlation between P1(T) & T(T)}
+#' \item{p1ma}{P1 Meta-Accuracy; the correlation between P1(P2(T)) & P2(T)}
+#' \item{p2ma}{P2 Meta-Accuracy; the correlation between P2(P1(T)) & P1(T)}
+#' \item{as_ac1}{ P1 Assumed Accuracy; the correlation between P1(P2(T)) & T(T)}
+#' \item{as_con1}{P1 Assumed Consensus; the correlation between P1(P2(T)) & P1(T)}
+#' \item{mp_rec}{ Meta-Perception Reciprocity; the correlation between P1(P2(T)) & P2(P1(T))}
+#' \item{as_ac2 }{P2 Assumed Accuracy; the correlation between P2(P1(T)) & T(T)}
+#' \item{as_con2}{P2 Assumed Consensus; the correlation between P2(P1(T)) & P2(T)}
+#' \item{int_p1}{Intercept for P1(T)}
+#' \item{int_p2}{Intercept for P2(T)}
+#' \item{int_self}{Intercept for T(T)}
+#' \item{int_mp1}{Intercept for P1(P2(T))}
+#' \item{int_mp2}{Intercept for P2(P1(T))}
+#' \item{v_p1}{variance for P1(T)}
+#' \item{v_p2}{variance for P2(T)}
+#' \item{v_self}{variance for T(T)}
+#' \item{v_mp1}{variance for P1(P2(T))}
+#' \item{v_mp2}{variance for P2(P1(T))}
+#' \item{p1_p2_rel_el}{P1-P2 Relative Elevation (i.e., Mean P1(T) - Mean P2(T))}
+#' \item{self_p2_rel_el}{Self-P2 Relative Elevation (i.e., Mean T(T) - Mean P2(T))}
+#' \item{self_p1_rel_el}{Self-P1 Relative Elevation (i.e., Mean T(T) - Mean P1(T))}
+#' \item{p1_meta_rel_el}{P1 Meta Relative Elevation (i.e., mean P2(T) - Mean P1(P2(T)))}
+#' \item{p2_meta_rel_el}{P2 Meta Relative Elevation (i.e., mean P1(T) - Mean P2(P1(T)))}
+#' }
+#' \emph{If n exchangeable triads > 1:}
+#' \describe{
+#' \item{rec}{direct reciprocity; the correlation between opposit P1(T)s (e.g., A(C) <-> C(A))}
+#' \item{h}{hearsay reciprocity; the correlation between exchangeable P2(T)s (e.g., B(C) <-> D(A))}
+#' \item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
+#' \item{tru_sim}{True Similarity; the correlation between targets' self-reports. (e.g., A(A) <-> C(C))}
+#' \item{as_sim_3p}{Third-person assumed similarity; correlation between P2(T) and P1's self-report (e.g., B(C) <- A(A))}
+#' \item{as_sim_1p}{First-person assumed similarity (i.e., interpersonal assumed similarity); correlation between P1(T) and P1's self-report (e.g., A(C) <-> A(A))}
+#' \item{as_sim_p1m}{P1 Meta-assumed similarity (e.g., A(B(C)) <-> A(A))}
+#' \item{ukp1m1}{unknown p1-meta 1}{P1 meta-perception with opposite P1-report (e.g., A(B(C)) <-> C(A))).}
+#' \item{p1meta_sim}{P1 Meta-Similarity}{correlation between exchangeable P1 meta-perceptions (e.g., A(B(C)) <-> C(D(A))).}
+#' \item{ukp2m1}{unknown P2-meta 1}{P2 Meta-perception with exchangeable P2-reports (e.g., B(A(C)) <-> D(A))}
+#' \item{ukp2m2}{unknown P2-meta 2}{P2 Meta-perception with exchangeable target self-report (e.g., B(A(C) <-> A(A)))}
+#' \item{ukp2m3}{unknown P2-meta 3}{P2 Meta-perception with exchangeable P1-reports (e.g., B(A(C)) <-> C(A))}
+#' \item{p2meta_sim}{P2 Meta-Similarity}{correlation between exchangeable P2 meta-perceptions (e.g., B(A(C)) <-> D(C(A))).}
+#' \item{ukm1}{unknown Meta-perception}{P1 Meta-perception with exchangeable P2 Meta-Perception (e.g., A(B(C)) <-> D(C(A)))}
+#'}
+#' The function can handle up to n exchangeable triads.
+#' @param data The dataframe that contains ratings (P1, P2, target self-report, P1, and P2 meta-perceptions).
+#' Data should be wide, with a row for every group of participants.
+#' At a minimum, it must contain 5 columns: 1 for each of the five rating types (P1-, P2-, self-,
+#' P1-meta-, P2-meta-perceptions).
+#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' is supplied, no additional arguments need to be specified.
+#' @param  p1_reports The column(s) that contain P1 reports,
+#' or ratings made by the person that knows the target directly.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param p2_reports The column(s) that contain P2 reports,
+#' or ratings made by the person that knows the target indirectly through the corresponding P1.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param target_self The column(s) that contain target self-reports.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param  p1_meta The column(s) that contain P1 3rd person Meta-perceptions,
+#' or P1's ratings of how they think P2 sees the target.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param p2_meta The column(s) that contain P2 3rd person Meta-perceptions,
+#' or P2's ratings of how they think P1 sees the target.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
+#' counting the number of P1 reports. It is rare that this parameter would need to be changed.
+#' @param n_p1s_per_p2s The number of P1s for every P2. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_p1s_per_ts The number of P1s for every target;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_p2s_per_ts The number of P2s for every target;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_ts_per_p1s The number of targets for every P1;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @export
+#' @examples data("rep_sim_data")
+#'           agree_full <- rep_full_w_3pmeta(data = rep_sim_data,
+#'                             p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                             p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                             p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
+#'          # alternatively:
+#'
+#'          agree_full_model <- rep_full_w_3pmeta_build_model(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                            target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                            p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                                                            p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
+#'          agree_full <- rep_full_w_3pmeta(data = rep_sim_data,
+#'                                          model = agree_full_model)
+#' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
+
+rep_full_w_3pmeta <- function(data, model = NULL, p1_reports, p2_reports, target_self, p1_meta, p2_meta,
+                              n_triads = length(p1_reports), n_p1s_per_p2s = 1,
+                              n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
+                              n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
+  if(is.null(model)){
+    rep_full_w_3pmeta_model <- rep_full_w_3pmeta_build_model(p1_reports, p2_reports, target_self,
+                                                             p1_meta, p2_meta,
+                                                             n_triads = length(p1_reports),
+                                                             n_p1s_per_p2s = 1, n_p2s_per_p1s = 1,
+                                                             n_p1s_per_ts = 1,n_p2s_per_ts = 1,
+                                                             n_ts_per_p1s = 1, n_ts_per_p2s = 1)
+  }
+  else{rep_full_w_3pmeta_model <- model}
+  fitted_model <- lavaan::sem(rep_full_w_3pmeta_model$model, data = data, missing = "FIML")
+  return(fitted_model)
+}
+
 #' Reputation Analyses (automatic)
 #'
 #' This is a wrapper function around the reputation model functions.
 #'
 #' This chooses a function depending on which
-#' variables sre supplied. At a minimum, it requires a P1- & P2-ratings. It can
+#' variables are supplied. At a minimum, it requires a P1- & P2-ratings. It can
 #' optionally take target self-reports and third-person meta-perceptions (for P1 and P2).
 #' It fits a model estimating the possible hearsay reputation parameters given the input.
 #' See specific model functions for which parameters are estimated for each model.
@@ -587,991 +862,4 @@ rep_analyses_auto <- function(data, p1_reports, p2_reports, target_self = NULL, 
   else {stop("You did not supply a workable combination of variables.")}
   return(fitted_model)
 }
-
-#' Individual level Moderators (Generic)
-#'
-#' This is a generic function for individual-level moderators on two distinguishable ratings on the same target.
-#' This could be P1- and P2- reports, P2- and self-reports, P1- and self-reports, or any other sets of
-#' distinguishable ratings.
-#'
-#' The parameters for the individual-level moderator analyses are:
-#'
-#' \describe{
-#' \item{rating_me}{main effect of other rating; this should correspond to correlation between ratings at average
-#' level of moderator variable (if data were properly mean-centered).}
-#' \item{mod_me}{The meain effect of the moderator variable; it can be interpreted as the difference in
-#' rating_1 to differences in the individual-level moderator variable.}
-#' \item{interaction}{This is the interaction term. It indicates the extent to which
-#' the correlation between ratings depends on the moderator variable}
-#' \item{v_rating_1}{variance for first rating}
-#' \item{v_rating_2}{variance for second rating}
-#' \item{v_mod}{variance for moderator variable}
-#' \item{v_interaction}{variance for interaction term}
-#' \item{int_rating_1}{intercept for first rating}
-#' \item{int_rating_2}{intercept for second rating}
-#' \item{int_mod}{intercept for moderator variable}
-#' \item{int_interaction}{intercept for interaction term}
-#' }
-#' The function can handle up to n exchangeable triads.
-#' @param data The dataframe that contains the ratings, moderator variable, and the interaction term.
-#' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain four columns: two for ratings (of the same target),
-#' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param  rating_1 The column(s) that contain the first rating variable. This might be P1 reports
-#' if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
-#' If more than one is supplied, the target-wise order must match across variables.
-#' @param rating_2 The column(s) that second rating variable. For hearsay consensus or accuracy,
-#' this would be P2 reports. If more than one is supplied, the target-wise order must match across variables.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
-#' If more than one is supplied from multiple exchangeable dyads/triads,
-#' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
-#' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
-#' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
-#' exchangeable dyads/triads, the target-wise order must match the order of the ratings.
-#' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
-#' counting the number of P1 reports. This parameter rarely needs to be changed.
-#' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
-#' @param n_r1_per_r2 The number of second ratings for each first rating. Currently, only 1:1 is supported.
-#' @import lavaan
-#' @export
-#' @examples data("rep_sim_data")
-#'           # Prepare data
-#'           library(tidyverse)
-#'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
-#'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
-#'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
-#'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
-#'                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
-#'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
-#'
-#'           rep_id_mods_generic(data = moderator_data,
-#'                                 p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
-#'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
-#'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
-#'
-#' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
-
-rep_id_mods_generic <- function(data, rating_1, rating_2, id_mod_variable,
-                                  interaction_term, n_triads = length(rating_1),
-                                  n_r1_per_r2 = 1,n_r2_per_r1 = 1){
-  if(n_triads > 0 &
-     n_r1_per_r2 == 1 &
-     n_r2_per_r1 == 1){
-
-    # code for 1 triad is simpler
-    if(n_triads == 1){
-
-      model <-
-        # moderated regression model
-        paste(paste(rating_1, "~", "rating_me*", rating_2, "+",
-                    "mod_me*", id_mod_variable, "+",
-                    "interaction*", interaction_term),
-
-              # variances
-              paste(rating_1, "~~ v_rating_1*", rating_1),
-
-              paste(rating_2, " ~~ v_rating_2*", rating_2),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-
-              # intercepts
-              paste(rating_1, "~ v_rating_1*1"),
-
-              paste(rating_2, " ~ v_rating_2*1"),
-
-              paste(id_mod_variable, "~ v_mod*1"),
-
-              paste(interaction_term, "~ iny_interaction*1"),
-
-              sep = "\n")
-    }
-    if(n_triads > 1){
-      model <-
-        # moderated regression model
-        paste(paste(rating_1, "~", "hc_me*", rating_2, "+",
-                    "mod_me*", id_mod_variable, "+",
-                    "interaction*", interaction_term),
-
-              # variances
-              paste(rating_1, "~~ v_rating_1*", rating_1),
-
-              paste(rating_2, " ~~ v_rating_2*", rating_2),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-              # intercepts
-              paste(rating_1, "~ v_rating_1*1"),
-
-              paste(rating_2, " ~ v_rating_2*1"),
-
-              paste(id_mod_variable, "~ v_mod*1"),
-
-              paste(interaction_term, "~ iny_interaction*1"),
-              sep = "\n")
-    }
-    # fit model and print some informaiton about it
-    fitted_model <- lavaan::sem(model, data = data, missing = "FIML")
-    model_type <- "Individual-level moderator (generic function)"
-    print(paste("Returning Results for", model_type, ". If this is not the model you intended to run, please check the data and variables you supplied."))
-    cat(paste("design:\nnumber of exchangeable triads =", n_triads))
-    return(fitted_model)
-    if(round(mean(colMeans(data[,rating_2], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
-    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
-    }}
-
-#' Individual level Moderators of Hearsay Consensus
-#'
-#' This takes the variables needed to assess an individual-level moderator on hearsay consensus, and fits
-#' a model estimating the corresponding parameters. At a minimum, it requires P1-reports, P2-reports,
-#' an individual-level moderator, and the interaction term. Note that the P2-reports and moderator variable should
-#' be mean-centered.
-#'
-#' The parameters for the individual-level moderator analyses are:
-#'
-#' \describe{
-#' \item{hc_me}{hearsay consensus main effect; this should correspond to hearsay consensus at average
-#' level of moderator variable (if data were properly mean-centered).}
-#' \item{mod_me}{The meain effect of the moderator variable; it can be interpreted as the difference in
-#' P1-reports related to differences in the individual-level moderator variable.}
-#' \item{interaction}{This is the interaction term. It indicates the extent to which hearsay consensus,
-#' depends on the moderator variable}
-#' \item{v_p1}{variance for P1(T)}
-#' \item{v_p2}{variance for P2(T)}
-#' \item{v_mod}{variance for moderator variable}
-#' \item{v_interaction}{variance for interaction term}
-#' \item{int_p1}{intercept for P1(T)}
-#' \item{int_p2}{intercept for P2(T)}
-#' \item{int_mod}{intercept for moderator variable}
-#' \item{int_interaction}{intercept for interaction term}
-#' }
-#' The function can handle up to n exchangeable triads.
-#' @param data The dataframe that contains the ratings, moderator variable, and the interaction term.
-#' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain four columns: one for P1 reports, one for mean-centered P2 reports,
-#' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param  p1_reports The column(s) that contain P1 reports,
-#' or ratings made by the person that knows the target directly.
-#' If more than one is supplied, the target-wise order must match the other
-#' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
-#' or ratings made by the person that knows the target indirectly through the corresponding P1.
-#' Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
-#' If more than one is supplied, the target-wise order must match the other rating types.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
-#' If more than one is supplied from multiple exchangeable triads,
-#' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
-#' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
-#' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
-#' exchangeable triads, the target-wise order must match the order of the ratings.
-#' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
-#' counting the number of P1 reports. This parameter rarely needs to be changed.
-#' @param n_p1s_per_p2s The number of P1s for every P2. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @import lavaan
-#' @export
-#' @examples data("rep_sim_data")
-#'           # Prepare data
-#'           library(tidyverse)
-#'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
-#'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
-#'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
-#'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
-#'                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
-#'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
-#'
-#'           rep_id_mods_consensus(data = moderator_data,
-#'                                 p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
-#'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
-#'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
-#'
-#' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
-
-rep_id_mods_consensus <- function(data, p1_reports, p2_reports, id_mod_variable,
-                                  interaction_term, n_triads = length(p1_reports),
-                                  n_p1s_per_p2s = 1,n_p2s_per_p1s = 1){
-  if(n_triads > 0 &
-     n_p1s_per_p2s == 1 &
-     n_p2s_per_p1s == 1){
-
-    # code for 1 triad is simpler
-    if(n_triads == 1){
-
-      model <-
-        # moderated regression model
-        paste(paste(p1_reports, "~", "hc_me*", p2_reports, "+",
-              "mod_me*", id_mod_variable, "+",
-              "interaction*", interaction_term),
-
-              # variances
-              paste(p1_reports, "~~ v_p1*", p1_reports),
-
-              paste(p2_reports, " ~~ v_p2*", p2_reports),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-
-              # intercepts
-              paste(p1_reports, "~ int_p1*1"),
-
-              paste(p2_reports, " ~ int_p2*1"),
-
-              paste(id_mod_variable, "~ int_mod*1"),
-
-              paste(interaction_term, "~ int_interaction*1"),
-              sep = "\n")
-    }
-    if(n_triads > 1){
-      model <-
-        # moderated regression model
-        paste(paste(p1_reports, "~", "hc_me*", p2_reports, "+",
-                    "mod_me*", id_mod_variable, "+",
-                    "interaction*", interaction_term),
-
-              # variances
-              paste(p1_reports, "~~ v_p1*", p1_reports),
-
-              paste(p2_reports, " ~~ v_p2*", p2_reports),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-
-              # intercepts
-              paste(p1_reports, "~ int_p1*1"),
-
-              paste(p2_reports, " ~ int_p2*1"),
-
-              paste(id_mod_variable, "~ int_mod*1"),
-
-              paste(interaction_term, "~ int_interaction*1"),
-              sep = "\n")
-    }
-    # fit model and print some informaiton about it
-    fitted_model <- lavaan::sem(model, data = data, missing = "FIML")
-    model_type <- "Individual-level moderator on Hearsay Consensus"
-    print(paste("Returning Results for", model_type, ". If this is not the model you intended to run, please check the data and variables you supplied."))
-    cat(paste("design:\nnumber of exchangeable triads =", n_triads, "\n",
-              "number of P1s per P2s", n_p1s_per_p2s, "\n",
-              "number of P2s per P1s", n_p2s_per_p1s, "\n"))
-    if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
-    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
-    return(fitted_model)
-    }
-if(n_p1s_per_p2s > 1){warning("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
-if(n_p2s_per_p1s > 1){warning("I'm sorry, this function can only handle designs with 1 P2 per P1; check back for changes")}
-}
-
-#' Individual level Moderators of Hearsay Accuracy
-#'
-#' This takes the variables needed to assess an individual-level moderator on hearsay acuracy, and fits
-#' a model estimating the corresponding parameters. At a minimum, it requires target self-reports, P2-reports,
-#' an individual-level moderator, and the interaction term.
-#' Note that the P2-reports and moderator variable should be mean-centered.
-#'
-#' The parameters for the individual-level moderator analyses are:
-#'
-#' \describe{
-#' \item{ha_me}{hearsay accuracy main effect; this should correspond to hearsay accuracy at average
-#' level of moderator variable (if data were properly mean-centered).}
-#' \item{mod_me}{The meain effect of the moderator variable; it can be interpreted as the difference in
-#' target self-reports related to differences in the individual-level moderator variable.}
-#' \item{interaction}{This is the interaction term. It indicates the extent to which hearsay accuracy,
-#' depends on the moderator variable}
-#' \item{v_t}{variance for T(T)}
-#' \item{v_p2}{variance for P2(T)}
-#' \item{v_mod}{variance for moderator variable}
-#' \item{v_interaction}{variance for interaction term}
-#' \item{int_t}{intercept for T(T)}
-#' \item{int_p2}{intercept for P2(T)}
-#' \item{int_mod}{intercept for moderator variable}
-#' \item{int_interaction}{intercept for interaction term}
-#' }
-#' The function can handle up to n exchangeable triads.
-#' @param data The dataframe that contains the ratings, moderator variable, and the interaction term.
-#' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain four columns: one for target self-reports, one for mean-centered P2 reports,
-#' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param target_self The column(s) that contain target self-reports.
-#' If more than one is supplied, the order must match the other
-#' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
-#' or ratings made by the person that knows the target indirectly through the corresponding P1.
-#' Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
-#' If more than one is supplied, the target-wise order must match the other rating types.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
-#' If more than one is supplied from multiple exchangeable triads,
-#' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
-#' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
-#' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
-#' exchangeable triads, the target-wise order must match the order of the ratings.
-#' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
-#' counting the number of target self-reports. This parameter rarely needs to be changed.
-#' @param n_ts_per_p2s The number of targets that each P2 rated. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_p2s_per_ts The number of P2s that rated each target;. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @import lavaan
-#' @export
-#' @examples data("rep_sim_data")
-#'           # Prepare data
-#'           library(tidyverse)
-#'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
-#'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
-#'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
-#'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
-#'                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
-#'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
-#'
-#'           rep_id_mods_accuracy(data = moderator_data,
-#'                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
-#'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
-#'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
-#'
-#' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
-
-rep_id_mods_accuracy <- function(data, target_self, p2_reports, id_mod_variable,
-                                  interaction_term, n_triads = length(target_self),
-                                  n_ts_per_p2s = 1, n_p2s_per_ts = 1){
-  if(n_triads > 0 &
-     n_ts_per_p2s == 1 &
-     n_p2s_per_ts == 1){
-
-    # code for 1 triad is simpler
-    if(n_triads == 1){
-
-      model <-
-        # moderated regression model
-        paste(paste(target_self, "~", "ha_me*", p2_reports, "+",
-                    "mod_me*", id_mod_variable, "+",
-                    "interaction*", interaction_term),
-
-              # variances
-              paste(target_self, "~~ v_t*", target_self),
-
-              paste(p2_reports, " ~~ v_p2*", p2_reports),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-
-              # intercepts
-              paste(target_self, "~ int_t*1"),
-
-              paste(p2_reports, " ~ int_p2*1"),
-
-              paste(id_mod_variable, "~ int_mod*1"),
-
-              paste(interaction_term, "~ int_interaction*1"),
-              sep = "\n")
-    }
-    if(n_triads > 1){
-      model <-
-        # moderated regression model
-        paste(paste(target_self, "~", "ha_me*", p2_reports, "+",
-                    "mod_me*", id_mod_variable, "+",
-                    "interaction*", interaction_term),
-
-              # variances
-              paste(target_self, "~~ v_t*", target_self),
-
-              paste(p2_reports, " ~~ v_p2*", p2_reports),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-
-              # intercepts
-              paste(target_self, "~ int_t*1"),
-
-              paste(p2_reports, " ~ int_p2*1"),
-
-              paste(id_mod_variable, "~ int_mod*1"),
-
-              paste(interaction_term, "~ int_interaction*1"),
-              sep = "\n")
-    }
-    # fit model and print some informaiton about it
-    fitted_model <- lavaan::sem(model, data = data, missing = "FIML")
-    model_type <- "Individual-level moderator on Hearsay Accuracy"
-    print(paste("Returning Results for", model_type, ". If this is not the model you intended to run, please check the data and variables you supplied."))
-    cat(paste("design:\nnumber of exchangeable triads =", n_triads, "\n",
-              "number of Ts per P2s", n_ts_per_p2s, "\n",
-              "number of P2s per Ts", n_p2s_per_ts, "\n"))
-    if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
-    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
-    return(fitted_model)
-    }
-  if(n_ts_per_p2s > 1){warning("I'm sorry, this function can only handle designs with 1 T per P2; check back for changes")}
-  if(n_p2s_per_ts > 1){warning("I'm sorry, this function can only handle designs with 1 P2 per T; check back for changes")}
-}
-
-#' Individual level Moderators (automatic)
-#'
-#' This is a wrapper function around the Individual-level moderator functions.
-#'
-#' This chooses a function depending on which
-#' variables are supplied. At a minimum, it requires two ratings,
-#' an individual-level moderator variable, and the interaction term.
-#'
-#' The estimated parameters depend upon which variables are supplied.
-#'
-#' The function can handle up to n exchangeable triads.
-#' @param data The dataframe that contains the ratings, moderator variable, and the interaction term.
-#' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain four columns: two ratings (one which is mean-centered),
-#' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param target_self The column(s) that contain target self-reports.
-#' If more than one is supplied, the target-wise order must match the other
-#' rating types.
-#' @param p1_reports The column(s) that contain P1 reports,
-#' or ratings made by the person that knows the target directly.
-#' If more than one is supplied, the target-wise order must match the other
-#' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
-#' or ratings made by the person that knows the target indirectly through the corresponding P1.
-#' Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
-#' If more than one is supplied, the target-wise order must match the other rating types.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
-#' If more than one is supplied from multiple exchangeable triads,
-#' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
-#' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
-#' mean-centered rating (often P2-reports) and the mean-centered moderator variable.
-#' If more than one is supplied from multiple exchangeable triads,
-#' the target-wise order must match the order of the ratings.
-#' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
-#' the method used by whichever specific model funciton is called.
-#' For consensus, this is done by counting P1-reports; foraccuracy, this is done by counting
-#' target self-reports. This parameter rarely needs to be changed.
-#' @param n_ts_per_p2s The number of targets that each P2 rated. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_p2s_per_ts The number of P2s that rated each target;. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_p1s_per_p2s The number of P1s for every P2. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
-#' Currently, only values of 1 are supported.
-#' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
-#' @param n_r1_per_r2 The number of second ratings for each first rating. Currently, only 1:1 is supported.
-#' @import tidyverse
-#' @export
-#' @examples data("rep_sim_data")
-#' # Prepare data
-#' library(tidyverse)
-#' moderator_data <- rep_sim_data %>%
-#' mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
-#'        D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
-#'        B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
-#'        D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
-#'        B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
-#'        D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
-#'
-#' # Example for hearsay accuracy
-#' rep_id_mods_auto(data = moderator_data,
-#'                  target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                  p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
-#'                  id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
-#'                  interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
-#'
-#' # Example for hearsay consensus
-#' rep_id_mods_auto(data = moderator_data,
-#'                  p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                  p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
-#'                  id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
-#'                  interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
-#'
-#' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
-
-rep_id_mods_auto <- function(data, target_self = NULL, p1_reports = NULL, p2_reports = NULL,
-                             id_mod_variable = NULL, interaction_term = NULL,
-                             n_triads = NULL, n_ts_per_p2s = 1, n_p2s_per_ts = 1,
-                             n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_r1_per_r2 = 1, n_r2_per_r1 = 1){
-# Check What variables are entered
-  if(is.null(id_mod_variable)){
-    stop("You need to enter a individual-level moderator for this function to run.
-          Either enter a moderator variable or use one of the non-moderator functions.")
-    }
-  # setup for hearsay consensus moderation model
-  if(is.null(target_self) &
-         !is.null(p1_reports) &
-         !is.null(p2_reports) &
-         !is.null(id_mod_variable)){
-    fitted_model <- rep_id_mods_consensus(data = data, p1_reports = p1_reports,
-                                          p2_reports = p2_reports,
-                                          id_mod_variable = id_mod_variable,
-                                          interaction_term = interaction_term,
-                                          n_triads = length(p1_reports),
-                                          n_p1s_per_p2s = n_p1s_per_p2s, n_p2s_per_p1s = n_p2s_per_p1s)
-
-  }
-  # setup for hearsay accuracy moderation model
-  else if(is.null(p1_reports) &
-          !is.null(target_self) &
-          !is.null(p2_reports) &
-          !is.null(id_mod_variable)){
-    fitted_model <- rep_id_mods_accuracy(data = data, target_self = target_self,
-                                         p2_reports = p2_reports,
-                                         id_mod_variable = id_mod_variable,
-                                         interaction_term = interaction_term,
-                                         n_triads = length(target_self),
-                                         n_ts_per_p2s = n_ts_per_p2s, n_p2s_per_ts = n_p2s_per_ts)
-    }
-  # setup for direct accuracy moderation model
-  else if(is.null(p2_reports) &
-          !is.null(target_self) &
-          !is.null(p1_reports) &
-          !is.null(id_mod_variable)){
-    fitted_model <- rep_id_mods_generic(data = data, rating_1 = target_self, rating_2 = p1_reports,
-                                        id_mod_variable = id_mod_variable,
-                                        interaction_term = interaction_term,
-                                        n_triads = length(rating_1),
-                                        n_r1_per_r2 = n_r1_per_r2, n_r2_per_r1 = n_r1_per_r2)
-    } else{
-      stop("There is no default for the variables you entered.")
-  }
-}
-
-#' Easily Table Differential Results
-#'
-#' This takes output from one of the reputational analysis models
-#' (e.g., rep_analyses_auto) and returns a tibble of differential
-#' (correlational) parameters. It works with any combination of P1-,
-#' P2-, and 3rd person Meta-perceptions.
-#'
-#' The function can handle up to n exchangeable triads.
-#' @param rep_model The results from one of the ReputationAnalyses
-#' Models (e.g., rep_analyses_auto).
-#' @param what The parameters you want in the table. Current options are
-#' main and all. If what = "main", then just the 'main' model parameters are provided.
-#' This will include, when avaiable, hearsay consensus, hearsay accuracy,
-#' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
-#' @import tidyverse
-#' @export
-#' @examples data("rep_sim_data")
-#'      # Consensus only Model
-#'           agree_rep_consensus <- rep_analyses_auto(data = rep_sim_data,
-#'                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
-#'
-#'           ez_differential_table(agree_rep_consensus, what = "main")
-#'
-#'           ez_differential_table(agree_rep_consensus, what = "all")
-#'
-#'        # Consensus & Accuracy
-#'
-#'           agree_rep_con_acc <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"))
-#'
-#'           ez_differential_table(agree_rep_con_acc, what = "main")
-#'
-#'           ez_differential_table(agree_rep_con_acc, what = "all")
-#'
-#'       # Consensus, Accuracy, 3rd  Person Meta
-#'
-#'          agree_rep_all <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                        p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                        p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
-#'
-#'          ez_differential_table(agree_rep_all, what = "main")
-#'
-#'           ez_differential_table(agree_rep_all, what = "all")
-#'
-#' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
-
-ez_differential_table <- function(rep_model,
-                                  what = "main"){
-  # First save out labels
-  # we need these to remove the repeats (from equality constraints)
-  labels <-
-    rep_model@ParTable %>%
-    tibble::as_tibble() %>%
-    dplyr::select(lhs, op, rhs, label)
-
-  # Main parameters only
-  if(what == "main"){
-  rep_paramter_table <- rep_model %>%
-    standardizedsolution() %>%
-    tibble::as_tibble() %>%
-    dplyr::full_join(labels) %>%
-    dplyr::distinct(label, .keep_all = TRUE) %>%
-    dplyr::filter(label == "hc" |
-                  label == "ha" |
-                  label == "da" |
-                  label == "p1ma"|
-                  label == "p2ma") %>%
-      # give them their substantive labels
-    dplyr::mutate(parameter = ifelse(label == "ha", "hearsay accuracy",
-                              ifelse(label == "hc", "hearsay consensus",
-                              ifelse(label == "da", "direct accuracy",
-                              ifelse(label == "p1ma", "P1 Meta-Accuracy",
-                              ifelse(label == "p2ma", "P2 Meta-Accuracy", NA)))))) %>%
-      dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-      dplyr::rename(r = est.std,
-                    ci_lower = ci.lower,
-                    ci_upper = ci.upper)}
-  if(what == "all"){
-  rep_paramter_table <- rep_model %>%
-    standardizedsolution() %>%
-    tibble::as_tibble() %>%
-    dplyr::full_join(labels) %>%
-    dplyr::distinct(label, .keep_all = TRUE) %>%
-    dplyr::filter(label == "ha"|
-                  label == "hc"|
-                  label == "da"|
-                  label == "p1ma"|
-                  label == "p2ma"|
-                  label == "as_ac1"|
-                  label == "as_con1"|
-                  label == "mp_rec"|
-                  label == "as_ac2"|
-                  label == "as_con2"|
-                  label == "rec"|
-                  label == "h"|
-                  label == "m"|
-                  label == "tru_sim"|
-                  label == "as_sim_3p"|
-                  label == "as_sim_1p"|
-                  label == "as_sim_p1m"|
-                  label == "ukp1m1"|
-                  label == "p1meta_sim"|
-                  label == "ukp2m1"|
-                  label == "ukp2m3"|
-                  label == "p2meta_sim"|
-                  label == "ukm1") %>%
-      # give them their substantive labels
-    dplyr::mutate(parameter = ifelse(label == "ha", "hearsay accuracy",
-                              ifelse(label == "hc", "hearsay consensus",
-                              ifelse(label == "da", "direct accuracy",
-                              ifelse(label == "p1ma", "P1 Meta-Accuracy",
-                              ifelse(label == "p2ma", "P2 Meta-Accuracy",
-                              ifelse(label == "as_ac1", "P1 Assumed Accuracy",
-                              ifelse(label == "as_con1", "P1 Assumed Consensus",
-                              ifelse(label == "mp_rec", "P1-P2 Meta-Perception Reciprocity",
-                              ifelse(label == "as_ac2", "P2 Assumed Accuracy",
-                              ifelse(label == "as_con2", "P2 Assumed Consensus",
-                              ifelse(label == "rec", "direct reciprocity",
-                              ifelse(label == "h", "hearsay reciprocity",
-                              ifelse(label == "m", "P2(T) <-> opposite P1(T)",
-                              ifelse(label == "tru_sim", "True Target Similarity",
-                              ifelse(label == "as_sim_3p", "Third-Person Assumed Similarity",
-                              ifelse(label == "as_sim_1p", "First-Person Assumed Similarity",
-                              ifelse(label == "as_sim_p1m", "P1 Meta- Assumed Similarity",
-                              ifelse(label == "ukp1m1", "P1 Meta <-> opposite P1-Report",
-                              ifelse(label == "p1meta_sim", "P1 meta-similarity",
-                              ifelse(label == "ukp2m1", "P2 Meta <-> opposite target self-report",
-                              ifelse(label == "ukp2m3", "P2 meta <-> opposite P1-report",
-                              ifelse(label == "p2meta_sim", "P2 Meta-similarity",
-                              ifelse(label == "ukm1", "P1 Meta <-> opposite P2 Meta", NA)))))))))))))))))))))))) %>%
-    dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-    dplyr::rename(r = est.std,
-                  ci_lower = ci.lower,
-                  ci_upper = ci.upper)}
-  return(rep_paramter_table)}
-
-#' Easily Table Elevation Results
-#'
-#' This takes output from one of the reputational analysis models
-#' (e.g., rep_analyses_auto) and returns a list of two tibbles corresponding to
-#' elevation (mean-differences) estimates and the relevant pooled Means and SDs respectively.
-#' The elevation table contains the raw difference, 95% CI around the raw difference,
-#' z scores, p values, and a cohen's d (difference / pooled SD). It has only 1 parameter.
-#'
-#' @param rep_model The results from one of the ReputationAnalyses
-#' Models (e.g., rep_analyses_auto).
-#' @import lavaan tidyverse
-#' @export
-#' @examples data("rep_sim_data")
-#'
-#'        # Consensus only Model
-#'           agree_rep_consensus <- rep_analyses_auto(data = rep_sim_data,
-#'                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
-#'
-#'           ez_elevation_table(agree_rep_consensus)
-#'
-#'        # Consensus & Accuracy
-#'
-#'           agree_rep_con_acc <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"))
-#'
-#'           ez_elevation_table(agree_rep_con_acc)
-#'
-#'       # Consensus, Accuracy, 3rd  Person Meta
-#'
-#'          agree_rep_all <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                        p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                        p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
-#'
-#'          ez_elevation_table(agree_rep_all)
-#'
-#' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
-
-ez_elevation_table <- function(rep_model){
-
-  rep_elevation_table <- rep_model %>%
-      parameterestimates() %>%
-      tibble::as_tibble() %>%
-      dplyr::distinct(label, .keep_all = TRUE) %>%
-      dplyr::filter(label == "p1_p2_rel_el"|
-                    label == "self_p2_rel_el"|
-                    label == "self_p1_rel_el"|
-                    label == "p1_meta_rel_el"|
-                    label == "p2_meta_rel_el"|
-                    # and get the variances for calculating a
-                    # cohen's d
-                    stringr::str_detect(label, "v_") |
-                    stringr::str_detect(label, "int_")) %>%
-      dplyr::select(label, est) %>%
-      tidyr::spread(label, est)
-  # calculate d's
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
-      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                    p1_p2_std_d = p1_p2_rel_el / sqrt((v_p1 + v_p2) / 2))}
-
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p2_rel_el"))) > 0){
-      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                    self_p2_std_d = self_p2_rel_el / sqrt((v_self + v_p2) / 2))}
-
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p1_rel_el"))) > 0){
-      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                    self_p1_std_d = self_p1_rel_el / sqrt((v_self + v_p1) / 2))}
-
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_meta_rel_el"))) > 0){
-      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                    p1_meta_std_d = p1_meta_rel_el / sqrt((v_mp1 + v_p2) / 2))}
-
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p2_meta_rel_el"))) > 0){
-      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                    p2_meta_std_d = p2_meta_rel_el / sqrt((v_mp2 + v_p1) / 2))}
-
-  rep_elevation_table <- rep_elevation_table %>%
-    dplyr::select(dplyr::ends_with("std_d")) %>%
-    tidyr::gather(label, cohen_d) %>%
-    dplyr::mutate(label = stringr::str_replace_all(label, "std_d", "rel_el")) %>%
-    dplyr::left_join(parameterestimates(rep_model)) %>%
-      # give them their substantive labels
-      dplyr::mutate(parameter = ifelse(label == "p1_p2_rel_el", "P1-P2 Relative Elevation",
-                                ifelse(label == "self_p2_rel_el", "Self-P2 Relative Elevation",
-                                ifelse(label == "self_p1_rel_el", "Self-P1 Relative Elevation",
-                                ifelse(label == "p1_meta_rel_el", "P1 Meta-Elevation",
-                                ifelse(label == "p2_meta_rel_el", "P2 Meta-Elevation", NA)))))) %>%
-    dplyr::select(parameter, est, ci.lower, ci.upper, cohen_d, z, pvalue) %>%
-      dplyr::rename(raw_diff = est,
-                    ci_lower = ci.lower,
-                    ci_upper = ci.upper)
-
-  rep_descrips <- rep_model %>%
-    parameterestimates() %>%
-    dplyr::distinct(label, .keep_all = TRUE) %>%
-    dplyr::select(label, est) %>%
-    tidyr::spread(label, est)
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  self_sd = sqrt(v_self))}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p1"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  p1_sd = sqrt(v_p1))}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p2"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  p2_sd = sqrt(v_p2))}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  mp1_sd = sqrt(v_mp1))}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  mp2_sd = sqrt(v_mp2))}
-
-  rep_descrips <- rep_descrips %>%
-    dplyr::select(dplyr::starts_with("int"), dplyr::ends_with("sd"))
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
-      rep_descrips <- dplyr::rename(rep_descrips,
-                                    p1_t_mean = int_p1,
-                                    p1_t_sd = p1_sd,
-                                    p2_t_mean = int_p2,
-                                    p2_t_sd = p2_sd)}
-
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
-      rep_descrips <- dplyr::rename(rep_descrips,
-                                    t_t_mean  = int_self,
-                                    t_t_sd    = self_sd)}
-
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
-      rep_descrips <- dplyr::rename(rep_descrips,
-                                    p1_p2t_mean = int_mp1,
-                                    p1_p2t_sd = mp1_sd)}
-    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
-      rep_descrips <- dplyr::rename(rep_descrips,
-                                    p2_p1t_mean = int_mp2,
-                                    p2_p1t_sd = mp2_sd)}
-
-  rep_descrips <- rep_descrips %>%
-    tidyr::gather(variable, value) %>%
-    tidyr::separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
-    dplyr::mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
-           target = stringr::str_replace(target, "p2t", "p2_t")) %>%
-    tidyr::spread(stat, value)
-
-
-  return(list(elevation_table = rep_elevation_table,
-              pooled_means_sd = rep_descrips))}
-
-#' Easy Differential & Elevation Tables
-#'
-#' This takes output from one of the reputational analysis models
-#' (e.g., rep_analyses_auto) and returns a list of length three. The first element of the list is a
-#'  a tibble of differential (correlational) parameters.
-#'  The second element is a table of elevation results. The third element is a tibble containing
-#'  the table of descriptives (means and SDs, pooling across exchangeable roles).
-#'
-#' @param rep_model The results from one of the ReputationAnalyses
-#' Models (e.g., rep_analyses_auto).
-#' @param what The parameters you want in the differential table. Current options are
-#' main and all. If what = "main", then just the 'main' model parameters are provided.
-#' This will include, when avaiable, hearsay consensus, hearsay accuracy,
-#' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
-#'
-#' @import lavaan tidyverse
-#' @export
-#' @examples data("rep_sim_data")
-#'
-#'        # Consensus only Model
-#'           agree_rep_consensus <- rep_analyses_auto(data = rep_sim_data,
-#'                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
-#'
-#'           ez_tables(agree_rep_consensus, what = "main")
-#'           ez_tables(agree_rep_consensus, what = "all")
-#'
-#'        # Consensus & Accuracy
-#'
-#'           agree_rep_con_acc <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"))
-#'
-#'           ez_tables(agree_rep_con_acc, what = "main")
-#'           ez_tables(agree_rep_con_acc, what = "all")
-#'
-#'       # Consensus, Accuracy, 3rd  Person Meta
-#'
-#'          agree_rep_all <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                        p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                        p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
-#'
-#'          ez_tables(agree_rep_all, what = "main")
-#'          ez_tables(agree_rep_all, what = "all")
-#'
-#' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
-
-ez_tables <- function(rep_model, what = "main"){
-  differential_table <- ez_differential_table(rep_model = rep_model, what = what)
-  elevation_table <- ez_elevation_table(rep_model = rep_model)[[1]]
-  pooled_means_sd <- ez_elevation_table(rep_model = rep_model)[[2]]
-
-  return(list(differential_table = differential_table,
-              elevation_table = elevation_table,
-              pooled_means_sd = pooled_means_sd))
-}
-
-#' Easily Plot Differential Results
-#'
-#' This takes output from one of the reputational analysis models
-#' (e.g., rep_analyses_auto) and returns a plot of differential
-#' (correlational) parameters. It works with any combination of P1-,
-#' P2-, and 3rd person Meta-perceptions. it returns a `ggplot()` object, and
-#' can thus be edited with ggplot2 functions.
-#'
-#' The function can handle up to n exchangeable triads.
-#' @param rep_model The results from one of the ReputationAnalyses
-#' Models (e.g., rep_analyses_auto).
-#' @param what The parameters you want in the plot Current options are
-#' main and all. If what = "main", then just the 'main' model parameters are provided.
-#' This will include, when avaiable, hearsay consensus, hearsay accuracy,
-#' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
-#' @import tidyverse
-#' @export
-#' @examples data("rep_sim_data")
-#'      # Consensus only Model
-#'           agree_rep_consensus <- rep_analyses_auto(data = rep_sim_data,
-#'                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
-#'
-#'           ez_differential_plot(agree_rep_consensus, what = "main")
-#'
-#'           ez_differential_plot(agree_rep_consensus, what = "all")
-#'
-#'        # Consensus & Accuracy
-#'
-#'           agree_rep_con_acc <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"))
-#'
-#'           ez_differential_plot(agree_rep_con_acc, what = "main")
-#'
-#'           ez_differential_plot(agree_rep_con_acc, what = "all")
-#'
-#'       # Consensus, Accuracy, 3rd  Person Meta
-#'
-#'          agree_rep_all <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                        p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                        p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
-#'
-#'          ez_differential_plot(agree_rep_all, what = "main")
-#'
-#'           ez_differential_plot(agree_rep_all, what = "all")
-#'
-#' @return The function returns an object of class \code{\link[ggplot2::ggplot()]{ggplot}}.
-ez_differential_plot <- function(agree_rep_model, what = "main"){
-  ez_tables(agree_rep_model, what = what)$differential_table %>%
-    dplyr::mutate(parameter = stringr::str_to_title(parameter),
-                  parameter = forcats::fct_relevel(parameter,
-                                                   "P2 Meta-Accuracy",
-                                                   "P1 Meta-Accuracy",
-                                                   "Direct Accuracy",
-                                                   "Hearsay Accuracy",
-                                                   "Hearsay Consensus")) %>%
-    ggplot2::ggplot(ggplot2::aes(x = parameter, y = r)) +
-    ggplot2::geom_pointrange(ggplot2::aes(ymin = ci_lower, ymax = ci_upper)) +
-    ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
-    ggplot2::coord_flip() +
-    ggplot2::theme_minimal() +
-    ggplot2::labs(title = "Differential Reputation Results",
-                  x = NULL)}
 
