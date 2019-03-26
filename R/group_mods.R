@@ -89,14 +89,8 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups, n_tr
 
               paste(p2_reports, "~~", param_labs["v_p2"], "*", p2_reports, "\n"), sep = "\n") %>%
         stringr::str_flatten(collaps = "\n")
-
-      # define relative elevation for each group
-      # and paste that into the model.
-      for(i in 1:n_groups){
-        rel_el <- paste(rel_el_labs[[1]][i,], ":=", "1*", int_labs[[1]][i,], "- (1*", int_labs[[2]][i,], ")")
-        model <- paste(model, rel_el, sep = "\n")}
-      # Put the model info together.
     }
+    # code for 2 triads
     if(n_triads > 1 &
        n_p1s_per_p2s == 1 &
        n_p2s_per_p1s == 1){
@@ -106,21 +100,26 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups, n_tr
         # cross-target correlations
         if(i < n_triads){
           prev_i <- i:1
-          m   <- paste(p1_reports[i], "~~ m*", p2_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
-          rec <- paste(p1_reports[i], "~~ rec*", p1_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
-          h   <-  paste(p2_reports[i], "~~ h*", p2_reports[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
+          m   <- paste(p1_reports[i], param_labs["m"], "*", p2_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
+          rec <- paste(p1_reports[i], param_labs["rec"], "*", p1_reports[-prev_i]) %>% stringr::str_flatten(collapse = "\n")
+          h   <-  paste(p2_reports[i],param_labs["h"], "*", p2_reports[-prev_i], "\n") %>% stringr::str_flatten(collapse = "\n")
           xtrs <- paste(m, rec, h, sep = "\n")
           model <- paste(model, xtrs)}}
-      hc <- paste(p1_reports, "~~ hc*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
-      int_p1 <- paste(p1_reports, "~ int_p1*1") %>% stringr::str_flatten(collapse = "\n")
-      int_p2 <- paste(p2_reports, "~ int_p2*1") %>% stringr::str_flatten(collapse = "\n")
-      v_p1 <- paste(p1_reports, "~~ v_p1*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
-      v_p2 <- paste(p2_reports, " ~~ v_p2*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
-      #  P1-P2 relative elevation
-      p1p2_el <- "p1_p2_rel_el := 1*int_p1 - (1*int_p2)"
+      hc <- paste(p1_reports, param_labs["hc"], "*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
+      int_p1 <- paste(p1_reports, "~", param_labs["int_p1"], "*1") %>% stringr::str_flatten(collapse = "\n")
+      int_p2 <- paste(p2_reports, "~", param_labs["int_p2"], "*1") %>% stringr::str_flatten(collapse = "\n")
+      v_p1 <- paste(p1_reports, "~~", param_labs["v_p1"], "*", p1_reports) %>% stringr::str_flatten(collapse = "\n")
+      v_p2 <- paste(p2_reports, "~~", param_labs["v_p2"], "*", p2_reports) %>% stringr::str_flatten(collapse = "\n")
 
-      model <- paste(hc, model,  int_p1, int_p2, v_p1, v_p2, p1p2_el, sep = "\n")
-      }
+      model <- paste(hc, model,  int_p1, int_p2, v_p1, v_p2, sep = "\n")
+    }
+    # define relative elevation for each group
+    # and paste that into the model.
+    for(i in 1:n_groups){
+      rel_el <- paste(rel_el_labs[[1]][i,], ":=", "1*", int_labs[[1]][i,], "- (1*", int_labs[[2]][i,], ")")
+      model <- paste(model, rel_el, sep = "\n")
+    }
+    # Put the model info together.
     rep_model_info <- tibble::as_tibble(list(model_type = "Simple Hearsay Consensus (P1-P2) with Group Moderator",
                                              ex_triads = n_triads,
                                              n_groups = n_groups,
