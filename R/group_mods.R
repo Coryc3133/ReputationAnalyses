@@ -1,30 +1,22 @@
-rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups, n_triads = length(p1_reports),
+rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NULL, n_triads = length(p1_reports),
                                             n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
-
+  if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
+                            If you don't have a group moderator, try rep_consensus if you have no moderator or
+                            rep_id_mods_consensus if you have an individual difference moderator.")
+    }
+  else{
   if(n_triads > 0 &
      n_p1s_per_p2s == 1 &
      n_p2s_per_p1s == 1){
     rep_consensus_model <- rep_consensus_builder(p1_reports, p2_reports, n_triads = length(p1_reports),
                                                n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)
-    #group1 <- lavaanify(rep_consensus_model)
-    # get key linking relation to label
-    #relation_label <- lavaanify(rep_consensus_model$model) %>%
-     # dplyr::select(lhs, op, rhs, label)
-
-    #lavaanify(rep_consensus_model$model) %>%
-     # dplyr::select(-label) %>%
-      #dplyr::left_join(relation_label_key)
-
-    #orig_param_table <- lavaanify(rep_consensus_model$model, ngroups = length(groups))
-
-    #single_group_labs <- orig_param_table %>%
-    #  distinct(label)
-
-    #equal_param_table <- orig_param_label %>%
-    #  mutate(label = single_group_labs)
-
+    # get number of groups
     n_groups <- length(groups)
 
+    # make vector of parameter labels
+    # this combines the parameter labels used
+    # in unmoderated model with the group labels
+    # specified in the function call.
     param_labs <- rep_consensus_model$model %>%
       lavaanify() %>%
       dplyr::select(label) %>%
@@ -129,4 +121,5 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups, n_tr
                 rep_model_info = rep_model_info))}
   if(n_p1s_per_p2s > 1){print("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
   if(n_p2s_per_p1s > 1){print("I'm sorry, this function can only handle designs with 1 P1 per P2; check back for changes")}
+    }
 }
