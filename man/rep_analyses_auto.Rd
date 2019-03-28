@@ -14,26 +14,26 @@ rep_analyses_auto(data, p1_reports, p2_reports, target_self = NULL,
 Data should be wide, with a row for every group of participants.
 At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.}
 
-\item{p1_reports}{The column(s) that contain P1 reports,
+\item{p1_reports}{Quoted column names that contain P1 reports,
 or ratings made by the person that knows the target directly.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p2_reports}{The column(s) that contain P2 reports,
+\item{p2_reports}{Quoted column names that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{target_self}{Optional. The column(s) that contain target self-reports.
+\item{target_self}{Optional. Quoted column names that contain target self-reports.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p1_meta}{Optional. The column(s) that contain P1 3rd person Meta-perceptions,
+\item{p1_meta}{Optional. Quoted column names that contain P1 3rd person Meta-perceptions,
 or P1's ratings of how they think P2 sees the target.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p2_meta}{Optional. The column(s) that contain P2 3rd person Meta-perceptions,
+\item{p2_meta}{Optional. Quoted column names that contain P2 3rd person Meta-perceptions,
 or P2's ratings of how they think P1 sees the target.
 If more than one is supplied, the target-wise order must match the other
 rating types.}

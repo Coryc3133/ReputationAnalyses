@@ -18,26 +18,26 @@ P1-meta-, P2-meta-perceptions).}
 \item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
 is supplied, no additional arguments need to be specified.}
 
-\item{p1_reports}{The column(s) that contain P1 reports,
+\item{p1_reports}{Quoted column names that contain P1 reports,
 or ratings made by the person that knows the target directly.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p2_reports}{The column(s) that contain P2 reports,
+\item{p2_reports}{Quoted column names that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{target_self}{The column(s) that contain target self-reports.
+\item{target_self}{Quoted column names that contain target self-reports.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p1_meta}{The column(s) that contain P1 3rd person Meta-perceptions,
+\item{p1_meta}{Quoted column names that contain P1 3rd person Meta-perceptions,
 or P1's ratings of how they think P2 sees the target.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p2_meta}{The column(s) that contain P2 3rd person Meta-perceptions,
+\item{p2_meta}{Quoted column names that contain P2 3rd person Meta-perceptions,
 or P2's ratings of how they think P1 sees the target.
 If more than one is supplied, the target-wise order must match the other
 rating types.}

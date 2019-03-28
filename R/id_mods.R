@@ -24,16 +24,16 @@
 #' \item{int_interaction}{intercept for interaction term}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param  rating_1 The column(s) that contain the first rating variable. This might be P1 reports
+#' @param  rating_1 Quoted column names that contain  the first rating variable. This might be P1 reports
 #' if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
 #' If more than one is supplied, the target-wise order must match across variables.
-#' @param rating_2 The column(s) that second rating variable. For hearsay consensus or accuracy,
+#' @param rating_2 Quoted column names that contain second rating variable. For hearsay consensus or accuracy,
 #' this would be P2 reports. If more than one is supplied, the target-wise order must match across variables.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
+#' @param id_mod_variable Quoted column names that contain the individual-level moderator of interest.
 #' If more than one is supplied from multiple exchangeable dyads/triads,
 #' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 #' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
+#' @param interaction_term Quoted column names that contain the interaction term, or the product of the
 #' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
 #' exchangeable dyads/triads, the target-wise order must match the order of the ratings.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
@@ -172,16 +172,16 @@ rep_id_mods_generic_builder <- function(rating_1, rating_2, id_mod_variable,
 #' one for the mean-centered moderator variable, and one for the interaction term.
 #' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
 #' is supplied, no additional arguments need to be specified.
-#' @param  rating_1 The column(s) that contain the first rating variable. This might be P1 reports
+#' @param  rating_1 Quoted column names that contain  the first rating variable. This might be P1 reports
 #' if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
 #' If more than one is supplied, the target-wise order must match across variables.
-#' @param rating_2 The column(s) that second rating variable. For hearsay consensus or accuracy,
+#' @param rating_2 Quoted column names that contain second rating variable. For hearsay consensus or accuracy,
 #' this would be P2 reports. If more than one is supplied, the target-wise order must match across variables.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
+#' @param id_mod_variable Quoted column names that contain the individual-level moderator of interest.
 #' If more than one is supplied from multiple exchangeable dyads/triads,
 #' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 #' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
+#' @param interaction_term Quoted column names that contain the interaction term, or the product of the
 #' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
 #' exchangeable dyads/triads, the target-wise order must match the order of the ratings.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
@@ -266,19 +266,19 @@ rep_id_mods_generic <- function(data, model = NULL, rating_1, rating_2,
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain four columns: one for P1 reports, one for mean-centered P2 reports,
 #' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param  p1_reports The column(s) that contain P1 reports,
+#' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
 #' If more than one is supplied, the target-wise order must match the other rating types.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
+#' @param id_mod_variable Quoted column names that contain the individual-level moderator of interest.
 #' If more than one is supplied from multiple exchangeable triads,
 #' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 #' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
+#' @param interaction_term Quoted column names that contain the interaction term, or the product of the
 #' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
 #' exchangeable triads, the target-wise order must match the order of the ratings.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
@@ -422,19 +422,19 @@ rep_id_mods_consensus_builder <- function(data, p1_reports, p2_reports, id_mod_v
 #' one for the mean-centered moderator variable, and one for the interaction term.
 #' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
 #' is supplied, no additional arguments need to be specified.
-#' @param  p1_reports The column(s) that contain P1 reports,
+#' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
 #' If more than one is supplied, the target-wise order must match the other rating types.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
+#' @param id_mod_variable Quoted column names that contain the individual-level moderator of interest.
 #' If more than one is supplied from multiple exchangeable triads,
 #' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 #' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
+#' @param interaction_term Quoted column names that contain the interaction term, or the product of the
 #' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
 #' exchangeable triads, the target-wise order must match the order of the ratings.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
@@ -517,18 +517,18 @@ rep_id_mods_consensus <- function(data, model = NULL, p1_reports, p2_reports, id
 #' \item{int_interaction}{intercept for interaction term}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param target_self The column(s) that contain target self-reports.
+#' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
 #' If more than one is supplied, the target-wise order must match the other rating types.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
+#' @param id_mod_variable Quoted column names that contain the individual-level moderator of interest.
 #' If more than one is supplied from multiple exchangeable triads,
 #' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 #' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
+#' @param interaction_term Quoted column names that contain the interaction term, or the product of the
 #' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
 #' exchangeable triads, the target-wise order must match the order of the ratings.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
@@ -669,18 +669,18 @@ rep_id_mods_accuracy_builder <- function(target_self, p2_reports, id_mod_variabl
 #' one for the mean-centered moderator variable, and one for the interaction term.
 #' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
 #' is supplied, no additional arguments need to be specified.
-#' @param target_self The column(s) that contain target self-reports.
+#' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
 #' If more than one is supplied, the target-wise order must match the other rating types.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
+#' @param id_mod_variable Quoted column names that contain the individual-level moderator of interest.
 #' If more than one is supplied from multiple exchangeable triads,
 #' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 #' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
+#' @param interaction_term Quoted column names that contain the interaction term, or the product of the
 #' mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
 #' exchangeable triads, the target-wise order must match the order of the ratings.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
@@ -754,22 +754,22 @@ rep_id_mods_accuracy <- function(data, model = NULL, target_self, p2_reports, id
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain four columns: two ratings (one which is mean-centered),
 #' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param target_self The column(s) that contain target self-reports.
+#' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p1_reports The column(s) that contain P1 reports,
+#' @param p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
 #' If more than one is supplied, the target-wise order must match the other rating types.
-#' @param id_mod_variable The column(s) that contain the individual-level moderator of interest.
+#' @param id_mod_variable Quoted column names that contain the individual-level moderator of interest.
 #' If more than one is supplied from multiple exchangeable triads,
 #' the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 #' to facilitate interpretability.
-#' @param interaction_term The column(s) that contain the interaction term, or the product of the
+#' @param interaction_term Quoted column names that contain the interaction term, or the product of the
 #' mean-centered rating (often P2-reports) and the mean-centered moderator variable.
 #' If more than one is supplied from multiple exchangeable triads,
 #' the target-wise order must match the order of the ratings.

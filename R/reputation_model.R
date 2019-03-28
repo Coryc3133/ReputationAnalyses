@@ -20,11 +20,11 @@
 #' \item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param p1_reports The column(s) that contain P1 reports,
+#' @param p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
@@ -137,11 +137,11 @@ rep_consensus_builder <- function(p1_reports, p2_reports, n_triads = length(p1_r
 #' At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.
 #' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
 #' is supplied, no additional arguments need to be specified.
-#' @param p1_reports The column(s) that contain P1 reports,
+#' @param p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
@@ -200,12 +200,15 @@ rep_consensus <- function(data, model = NULL, p1_reports, p2_reports, n_triads =
 #' \item{m}{unnamed parameter; The correlation between P2(T) and the opposite P1(T) in a group. (e.g., B(C) <-> C(A))}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param p1_reports The column(s) that contain P1 reports,
+#' @param p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
+#' If more than one is supplied, the target-wise order must match the other
+#' rating types.
+#' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
@@ -358,15 +361,15 @@ rep_consensus_accuracy_builder <- function(p1_reports, p2_reports, target_self, 
 #' one for targets' self-ratings.
 #' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
 #' is supplied, no additional arguments need to be specified.
-#' @param  p1_reports The column(s) that contain P1 reports,
+#' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param target_self The column(s) that contain target self-reports.
+#' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
@@ -467,22 +470,22 @@ rep_consensus_accuracy <- function(data, model = NULL, p1_reports, p2_reports, t
 #' \item{ukm1}{unknown Meta-perception}{P1 Meta-perception with exchangeable P2 Meta-Perception (e.g., A(B(C)) <-> D(C(A)))}}
 #'
 #' The function can handle up to n exchangeable triads.
-#' @param  p1_reports The column(s) that contain P1 reports,
+#' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param target_self The column(s) that contain target self-reports.
+#' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param  p1_meta The column(s) that contain P1 3rd person Meta-perceptions,
+#' @param  p1_meta Quoted column names that contain P1 3rd person Meta-perceptions,
 #' or P1's ratings of how they think P2 sees the target.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_meta The column(s) that contain P2 3rd person Meta-perceptions,
+#' @param p2_meta Quoted column names that contain P2 3rd person Meta-perceptions,
 #' or P2's ratings of how they think P1 sees the target.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
@@ -703,22 +706,22 @@ rep_full_w_3pmeta_builder <- function(p1_reports, p2_reports, target_self, p1_me
 #' P1-meta-, P2-meta-perceptions).
 #' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
 #' is supplied, no additional arguments need to be specified.
-#' @param  p1_reports The column(s) that contain P1 reports,
+#' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param target_self The column(s) that contain target self-reports.
+#' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param  p1_meta The column(s) that contain P1 3rd person Meta-perceptions,
+#' @param  p1_meta Quoted column names that contain P1 3rd person Meta-perceptions,
 #' or P1's ratings of how they think P2 sees the target.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_meta The column(s) that contain P2 3rd person Meta-perceptions,
+#' @param p2_meta Quoted column names that contain P2 3rd person Meta-perceptions,
 #' or P2's ratings of how they think P1 sees the target.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
@@ -787,22 +790,22 @@ rep_full_w_3pmeta <- function(data, model = NULL, p1_reports, p2_reports, target
 #' @param data The dataframe that contains ratings (P1, P2, target self-report, P1, and P2 meta-perceptions).
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.
-#' @param  p1_reports The column(s) that contain P1 reports,
+#' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_reports The column(s) that contain P2 reports,
+#' @param p2_reports Quoted column names that contain P2 reports,
 #' or ratings made by the person that knows the target indirectly through the corresponding P1.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param target_self Optional. The column(s) that contain target self-reports.
+#' @param target_self Optional. Quoted column names that contain target self-reports.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param  p1_meta Optional. The column(s) that contain P1 3rd person Meta-perceptions,
+#' @param  p1_meta Optional. Quoted column names that contain P1 3rd person Meta-perceptions,
 #' or P1's ratings of how they think P2 sees the target.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
-#' @param p2_meta Optional. The column(s) that contain P2 3rd person Meta-perceptions,
+#' @param p2_meta Optional. Quoted column names that contain P2 3rd person Meta-perceptions,
 #' or P2's ratings of how they think P1 sees the target.
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.

@@ -18,17 +18,17 @@ one for targets' self-ratings.}
 \item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
 is supplied, no additional arguments need to be specified.}
 
-\item{p1_reports}{The column(s) that contain P1 reports,
+\item{p1_reports}{Quoted column names that contain P1 reports,
 or ratings made by the person that knows the target directly.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p2_reports}{The column(s) that contain P2 reports,
+\item{p2_reports}{Quoted column names that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{target_self}{The column(s) that contain target self-reports.
+\item{target_self}{Quoted column names that contain target self-reports.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 

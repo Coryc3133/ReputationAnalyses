@@ -9,12 +9,12 @@ rep_consensus_builder(p1_reports, p2_reports,
   n_p2s_per_p1s = 1)
 }
 \arguments{
-\item{p1_reports}{The column(s) that contain P1 reports,
+\item{p1_reports}{Quoted column names that contain P1 reports,
 or ratings made by the person that knows the target directly.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p2_reports}{The column(s) that contain P2 reports,
+\item{p2_reports}{Quoted column names that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 If more than one is supplied, the target-wise order must match the other
 rating types.}

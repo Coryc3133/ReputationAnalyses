@@ -16,26 +16,26 @@ Data should be wide, with a row for every group of participants.
 At a minimum, it must contain four columns: two ratings (one which is mean-centered),
 one for the mean-centered moderator variable, and one for the interaction term.}
 
-\item{target_self}{The column(s) that contain target self-reports.
+\item{target_self}{Quoted column names that contain target self-reports.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p1_reports}{The column(s) that contain P1 reports,
+\item{p1_reports}{Quoted column names that contain P1 reports,
 or ratings made by the person that knows the target directly.
 If more than one is supplied, the target-wise order must match the other
 rating types.}
 
-\item{p2_reports}{The column(s) that contain P2 reports,
+\item{p2_reports}{Quoted column names that contain P2 reports,
 or ratings made by the person that knows the target indirectly through the corresponding P1.
 Ratings should be grand-mean-centered to increase the interpretibility of the model parameters.
 If more than one is supplied, the target-wise order must match the other rating types.}
 
-\item{id_mod_variable}{The column(s) that contain the individual-level moderator of interest.
+\item{id_mod_variable}{Quoted column names that contain the individual-level moderator of interest.
 If more than one is supplied from multiple exchangeable triads,
 the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 to facilitate interpretability.}
 
-\item{interaction_term}{The column(s) that contain the interaction term, or the product of the
+\item{interaction_term}{Quoted column names that contain the interaction term, or the product of the
 mean-centered rating (often P2-reports) and the mean-centered moderator variable.
 If more than one is supplied from multiple exchangeable triads,
 the target-wise order must match the order of the ratings.}

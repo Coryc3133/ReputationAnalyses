@@ -9,19 +9,19 @@ rep_id_mods_generic_builder(rating_1, rating_2, id_mod_variable,
   n_r2_per_r1 = 1)
 }
 \arguments{
-\item{rating_1}{The column(s) that contain the first rating variable. This might be P1 reports
+\item{rating_1}{Quoted column names that contain  the first rating variable. This might be P1 reports
 if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
 If more than one is supplied, the target-wise order must match across variables.}
 
-\item{rating_2}{The column(s) that second rating variable. For hearsay consensus or accuracy,
+\item{rating_2}{Quoted column names that contain second rating variable. For hearsay consensus or accuracy,
 this would be P2 reports. If more than one is supplied, the target-wise order must match across variables.}
 
-\item{id_mod_variable}{The column(s) that contain the individual-level moderator of interest.
+\item{id_mod_variable}{Quoted column names that contain the individual-level moderator of interest.
 If more than one is supplied from multiple exchangeable dyads/triads,
 the order must match the order of the ratings. Like P2-reports, the variable should be mean-centered
 to facilitate interpretability.}
 
-\item{interaction_term}{The column(s) that contain the interaction term, or the product of the
+\item{interaction_term}{Quoted column names that contain the interaction term, or the product of the
 mean-centered P2-report and the mean-centered moderator variable. If more than one is supplied from multiple
 exchangeable dyads/triads, the target-wise order must match the order of the ratings.}
 
