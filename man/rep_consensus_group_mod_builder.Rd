@@ -60,16 +60,3 @@ Those parameters are:
 }
 The function can handle up to n exchangeable triads.
 }
-\examples{
- # build the model
-  agree_consensus_model_grpmod <- rep_consensus_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-  p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-  groups = rep_sim_data$condition)
-
- # view the model
- agree_consensus_model_grpmod$model
-
- # view the model information
- # agree_consensus_model_grpmod$rep_model_info
-
-}
