@@ -5,7 +5,7 @@
 \title{Reputation Consensus with Group Moderator Model Builder}
 \usage{
 rep_consensus_group_mod_builder(p1_reports, p2_reports, groups = NULL,
-  n_triads = length(p1_reports), n_p1s_per_p2s = 1,
+  use_labs = TRUE, n_triads = length(p1_reports), n_p1s_per_p2s = 1,
   n_p2s_per_p1s = 1)
 }
 \arguments{
@@ -20,6 +20,9 @@ If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{groups}{Vector of quoted group labels (from group-level categorical moderator).}
+
+\item{use_labs}{Logical indicating whether or not to use the group labels to create the parameter labels.
+If FALSE, generic labels (grp1 to grpk, where k is the number of groups) are used.}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by
 counting the number of P1 reports. This parameter rarely needs to be changed.}

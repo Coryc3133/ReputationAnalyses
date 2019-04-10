@@ -5,8 +5,8 @@
 \title{Reputation Consensus & Accuracy with Group Moderator Model Builder}
 \usage{
 rep_con_acc_group_mod_builder(p1_reports, p2_reports, target_self,
-  groups = NULL, n_triads = length(p1_reports), n_p1s_per_p2s = 1,
-  n_p2s_per_p1s = 1)
+  groups = NULL, use_labs = TRUE, n_triads = length(p1_reports),
+  n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)
 }
 \arguments{
 \item{p1_reports}{Quoted column names that contain P1 reports,
@@ -24,6 +24,9 @@ If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{groups}{Vector of quoted group labels (from group-level categorical moderator).}
+
+\item{use_labs}{Logical indicating whether or not to use the group labels to create the parameter labels.
+If FALSE, generic labels (grp1 to grpk, where k is the number of groups) are used.}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by
 counting the number of P1 reports. It is rare that this parameter would need to be changed.}

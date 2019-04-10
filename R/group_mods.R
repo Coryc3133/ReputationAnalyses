@@ -32,6 +32,8 @@
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
 #' @param groups Vector of quoted group labels (from group-level categorical moderator).
+#' @param use_labs Logical indicating whether or not to use the group labels to create the parameter labels.
+#' If FALSE, generic labels (grp1 to grpk, where k is the number of groups) are used.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_p1s_per_p2s The number of P1s for every P2. This defaults to 1.
@@ -57,7 +59,8 @@
 #' and a string object of the model in lavaan syntax. Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
-rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NULL, n_triads = length(p1_reports),
+rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NULL, use_labs = TRUE,
+                                            n_triads = length(p1_reports),
                                             n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                             If you don't have a group moderator, try rep_consensus if you have no moderator or
@@ -66,7 +69,22 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
   else{
     # get number of groups
     n_groups <- length(groups)
-    groups <- paste0("grp", 1:n_groups)
+    if(length(unique(groups)) != n_groups){stop("You provided one or more non-unique group labels. Each group labeel provided needs to be unique.")}
+
+    # Create labels
+    # if use_labs is true, then labels are made
+    # based on the group labels used in groups =
+    # argument.
+    # removing _ to make it clearer that whole string is part of label
+    # should make model syntax a little cleaner
+    if(use_labs == TRUE){
+      groups <- str_remove_all(groups, "_")
+      if(sum(str_count(groups)) > 5){message("group labels exceed 5 characters; parameter labels may be very verbose.")}
+      }
+    if(use_labs == FALSE){
+      groups <- paste0("grp", 1:n_groups)
+      }
+
     if(n_triads > 0 &
        n_p1s_per_p2s == 1 &
        n_p2s_per_p1s == 1){
@@ -308,6 +326,8 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports, 
 #' If more than one is supplied, the target-wise order must match the other
 #' rating types.
 #' @param groups Vector of quoted group labels (from group-level categorical moderator).
+#' @param use_labs Logical indicating whether or not to use the group labels to create the parameter labels.
+#' If FALSE, generic labels (grp1 to grpk, where k is the number of groups) are used.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
 #' counting the number of P1 reports. It is rare that this parameter would need to be changed.
 #' @param n_p1s_per_p2s The number of P1s for every P2. This defaults to 1.
@@ -344,8 +364,9 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports, 
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
 rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
-                                           groups = NULL, n_triads = length(p1_reports),
-                                            n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
+                                          groups = NULL, use_labs = TRUE,
+                                          n_triads = length(p1_reports),
+                                          n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                               If you don't have a group moderator, try rep_consensus if you have no moderator or
                               rep_id_mods_consensus if you have an individual difference moderator.")
@@ -353,7 +374,19 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
   else{
     # get number of groups
     n_groups <- length(groups)
-    groups <- paste0("grp", 1:n_groups)
+    # Create labels
+    # if use_labs is true, then labels are made
+    # based on the group labels used in groups =
+    # argument.
+    # removing _ to make it clearer that whole string is part of label
+    # should make model syntax a little cleaner
+    if(use_labs == TRUE){
+      groups <- str_remove_all(groups, "_")
+      if(sum(str_count(groups)) > 5){message("group labels exceed 5 characters; parameter labels may be very verbose.")}
+    }
+    if(use_labs == FALSE){
+      groups <- paste0("grp", 1:n_groups)
+    }
     if(n_triads > 0 &
        n_p1s_per_p2s == 1 &
        n_p2s_per_p1s == 1){
