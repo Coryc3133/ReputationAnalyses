@@ -5,8 +5,9 @@
 \title{Reputation Consensus with Group Moderator Model}
 \usage{
 rep_consensus_group_mod(data, model = NULL, p1_reports, p2_reports,
-  group_mod = NULL, n_triads = length(p1_reports), n_p1s_per_p2s = 1,
-  n_p2s_per_p1s = 1)
+  group_mod = NULL, use_labs = TRUE, groups_eql = NULL,
+  params_eql = "none", n_triads = length(p1_reports),
+  n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)
 }
 \arguments{
 \item{data}{The dataframe that contains P1 & P2 ratings and the group-level moderator.
@@ -24,6 +25,17 @@ If more than one is supplied, the target-wise order must match the other
 rating types.}
 
 \item{group_mod}{The quoted column name that contains a group-level categorical moderator.}
+
+\item{use_labs}{Logical indicating whether or not to use the group labels to create the parameter labels.
+If FALSE, generic labels (grp1 to grpk, where k is the number of groups) are used.}
+
+\item{groups_eql}{Optional. Groups that you want to constrain to be equal across some or all parameters. If
+you have use_labs set to TRUE, provide a vector of group labels corresponding to the groups you want to constrain to be equal. If you
+have use_labs set to FALSE, provide a vector of numbers corresponding to the position of the groups you want to constrain to be equal.}
+
+\item{params_eql}{Optional. Parameters that you want to constrain to be equal across the groups specified in groups_eql. You can provide
+one or more specific parameters (e.g., "hc" for hearsay consensus), or use one of several built-in options including "all" which constrains
+all parameters to be equal across groups and "main" which constrains just the hearsay consensus to be equal across groups (in this model).}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by
 counting the number of P1 reports. This parameter rarely needs to be changed.}
