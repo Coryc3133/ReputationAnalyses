@@ -54,7 +54,7 @@
 #'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
 #'           # Buld Model
-#'           agree_pt_mod_model <- rep_id_mods_generic_builder (rating_1 = c("A_C_agreeableness", "C_A_agreeableness"),
+#'           agree_pt_mod_model <- rep_generic_id_mods_builder (rating_1 = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                 rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
@@ -71,15 +71,12 @@
 #' of p1s per p2s, and the number of p2s per p1s.
 
 
-rep_id_mods_generic_builder <- function(rating_1, rating_2, id_mod_variable,
+rep_generic_id_mods_builder <- function(rating_1, rating_2, id_mod_variable,
                                         interaction_term, n_triads = length(rating_1),
                                         n_r1_per_r2 = 1, n_r2_per_r1 = 1){
   if(n_triads > 0 &
      n_r1_per_r2 == 1 &
      n_r2_per_r1 == 1){
-
-    # code for 1 triad is simpler
-    if(n_triads == 1){
 
       model <-
         # moderated regression model
@@ -106,32 +103,6 @@ rep_id_mods_generic_builder <- function(rating_1, rating_2, id_mod_variable,
               paste(interaction_term, "~ int_interaction*1"),
 
               sep = "\n")
-    }
-    if(n_triads > 1){
-      model <-
-        # moderated regression model
-        paste(paste(rating_1, "~", "hc_me*", rating_2, "+",
-                    "mod_me*", id_mod_variable, "+",
-                    "interaction*", interaction_term),
-
-              # variances
-              paste(rating_1, "~~ v_rating_1*", rating_1),
-
-              paste(rating_2, " ~~ v_rating_2*", rating_2),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-              # intercepts
-              paste(rating_1, "~ int_rating_1*1"),
-
-              paste(rating_2, " ~ int_rating_2*1"),
-
-              paste(id_mod_variable, "~ int_mod*1"),
-
-              paste(interaction_term, "~ int_interaction*1"),
-              sep = "\n")
-    }
     # Put the model info together.
     rep_model_info <- tibble::as_tibble(list(model_type =  "Individual-level moderator (generic function)",
                                              ex_triads = n_triads,
@@ -202,29 +173,29 @@ rep_id_mods_generic_builder <- function(rating_1, rating_2, id_mod_variable,
 #'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
 #'        # fit model by specifying the variables / column names
-#'        agree_pt_mod <- rep_id_mods_generic(data = moderator_data,
+#'        agree_pt_mod <- rep_generic_id_mods(data = moderator_data,
 #'                                 rating_1 = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                 rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #'
 #'        # alternatively, you can 'build a model' first
-#'         agree_pt_mod_model <- rep_id_mods_generic_builder (rating_1 = c("A_C_agreeableness", "C_A_agreeableness"),
+#'         agree_pt_mod_model <- rep_generic_id_mods_builder (rating_1 = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                            rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                                            id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                                            interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #'        # Then pass the built model on to the fit function
-#'         agree_pt_mod <- rep_id_mods_generic(data = moderator_data,
+#'         agree_pt_mod <- rep_generic_id_mods(data = moderator_data,
 #'                                            model = agree_pt_mod_model)
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
-rep_id_mods_generic <- function(data, model = NULL, rating_1, rating_2,
+rep_generic_id_mods <- function(data, model = NULL, rating_1, rating_2,
                                 id_mod_variable,
                                 interaction_term, n_triads = length(rating_1),
                                 n_r1_per_r2 = 1,n_r2_per_r1 = 1){
   if(is.null(model)){
-    rep_id_mods_model <- rep_id_mods_generic_builder(rating_1, rating_2, id_mod_variable,
+    rep_id_mods_model <- rep_generic_id_mods_builder(rating_1, rating_2, id_mod_variable,
                                                interaction_term, n_triads = length(rating_1),
                                                n_r1_per_r2 = 1,n_r2_per_r1 = 1)
     }
@@ -262,10 +233,6 @@ rep_id_mods_generic <- function(data, model = NULL, rating_1, rating_2,
 #' \item{int_interaction}{intercept for interaction term}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param data The dataframe that contains the ratings, moderator variable, and the interaction term.
-#' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain four columns: one for P1 reports, one for mean-centered P2 reports,
-#' one for the mean-centered moderator variable, and one for the interaction term.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
@@ -301,7 +268,7 @@ rep_id_mods_generic <- function(data, model = NULL, rating_1, rating_2,
 #'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
 #' # Build a consensus model
-#' agree_pt_mod_consensus_model <- rep_id_mods_consensus_builder (p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#' agree_pt_mod_consensus_model <- rep_consensus_id_mods_builder (p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                                p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                                                id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                                                interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
@@ -318,16 +285,13 @@ rep_id_mods_generic <- function(data, model = NULL, rating_1, rating_2,
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
 
-rep_id_mods_consensus_builder <- function(data, p1_reports, p2_reports, id_mod_variable,
+rep_consensus_id_mods_builder <- function(p1_reports, p2_reports, id_mod_variable,
                                           interaction_term, n_triads = length(p1_reports),
                                           n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(n_triads > 0 &
      n_p1s_per_p2s == 1 &
      n_p2s_per_p1s == 1){
 
-    # code for 1 triad is simpler
-    if(n_triads == 1){
-
       model <-
         # moderated regression model
         paste(paste(p1_reports, "~", "hc_me*", p2_reports, "+",
@@ -352,33 +316,7 @@ rep_id_mods_consensus_builder <- function(data, p1_reports, p2_reports, id_mod_v
 
               paste(interaction_term, "~ int_interaction*1"),
               sep = "\n")
-    }
-    if(n_triads > 1){
-      model <-
-        # moderated regression model
-        paste(paste(p1_reports, "~", "hc_me*", p2_reports, "+",
-                    "mod_me*", id_mod_variable, "+",
-                    "interaction*", interaction_term),
 
-              # variances
-              paste(p1_reports, "~~ v_p1*", p1_reports),
-
-              paste(p2_reports, " ~~ v_p2*", p2_reports),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-
-              # intercepts
-              paste(p1_reports, "~ int_p1*1"),
-
-              paste(p2_reports, " ~ int_p2*1"),
-
-              paste(id_mod_variable, "~ int_mod*1"),
-
-              paste(interaction_term, "~ int_interaction*1"),
-              sep = "\n")
-    }
     # Put the model info together.
     rep_model_info <- tibble::as_tibble(list(model_type = "Individual-level moderator on Hearsay Consensus",
                                              ex_triads = n_triads,
@@ -457,29 +395,29 @@ rep_id_mods_consensus_builder <- function(data, p1_reports, p2_reports, id_mod_v
 #'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
 #' # Fitting by supplying variable/column names
-#' agree_pt_mod <- rep_id_mods_consensus(data = moderator_data,
+#' agree_pt_mod <- rep_consensus_id_mods(data = moderator_data,
 #'                                     p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                     p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                     id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                     interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #'
 #' # alternatively, build the model frst
-#' agree_pt_mod_model <- rep_id_mods_consensus_builder (p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#' agree_pt_mod_model <- rep_consensus_id_mods_builder (p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                     p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                                    id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                                    interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #' # Then fit the model you just built
-#' agree_pt_mod <- rep_id_mods_consensus(data = moderator_data,
+#' agree_pt_mod <- rep_consensus_id_mods(data = moderator_data,
 #'                                     model = agree_pt_mod_model)
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
 
-rep_id_mods_consensus <- function(data, model = NULL, p1_reports, p2_reports, id_mod_variable,
+rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id_mod_variable,
                                   interaction_term, n_triads = length(p1_reports),
                                   n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(is.null(model)){
-    rep_id_mods_model <- rep_id_mods_consensus_builder(p1_reports, p2_reports, id_mod_variable,
+    rep_id_mods_model <- rep_consensus_id_mods_builder(p1_reports, p2_reports, id_mod_variable,
                                                      interaction_term, n_triads = length(p1_reports),
                                                      n_p1s_per_p2s = n_p1s_per_p2s, n_p2s_per_p1s = n_p1s_per_p2s)
   }
@@ -550,7 +488,7 @@ rep_id_mods_consensus <- function(data, model = NULL, p1_reports, p2_reports, id
 #'                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
 #'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
-#' agree_pt_mods_hearacc_model <- rep_id_mods_accuracy_builder(data = moderator_data,
+#' agree_pt_mods_hearacc_model <- rep_accuracy_id_mods_builder(data = moderator_data,
 #'                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
@@ -567,16 +505,13 @@ rep_id_mods_consensus <- function(data, model = NULL, p1_reports, p2_reports, id
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
 
-rep_id_mods_accuracy_builder <- function(target_self, p2_reports, id_mod_variable,
+rep_accuracy_id_mods_builder <- function(target_self, p2_reports, id_mod_variable,
                                  interaction_term, n_triads = length(target_self),
                                  n_ts_per_p2s = 1, n_p2s_per_ts = 1){
   if(n_triads > 0 &
      n_ts_per_p2s == 1 &
      n_p2s_per_ts == 1){
 
-    # code for 1 triad is simpler
-    if(n_triads == 1){
-
       model <-
         # moderated regression model
         paste(paste(target_self, "~", "ha_me*", p2_reports, "+",
@@ -601,33 +536,7 @@ rep_id_mods_accuracy_builder <- function(target_self, p2_reports, id_mod_variabl
 
               paste(interaction_term, "~ int_interaction*1"),
               sep = "\n")
-    }
-    if(n_triads > 1){
-      model <-
-        # moderated regression model
-        paste(paste(target_self, "~", "ha_me*", p2_reports, "+",
-                    "mod_me*", id_mod_variable, "+",
-                    "interaction*", interaction_term),
 
-              # variances
-              paste(target_self, "~~ v_t*", target_self),
-
-              paste(p2_reports, " ~~ v_p2*", p2_reports),
-
-              paste(id_mod_variable, "~~ v_mod*", id_mod_variable),
-
-              paste(interaction_term, "~~ v_interaction*", interaction_term),
-
-              # intercepts
-              paste(target_self, "~ int_t*1"),
-
-              paste(p2_reports, " ~ int_p2*1"),
-
-              paste(id_mod_variable, "~ int_mod*1"),
-
-              paste(interaction_term, "~ int_interaction*1"),
-              sep = "\n")
-    }
     rep_model_info <- tibble::as_tibble(list(model_type = "Individual-level moderator on Hearsay Accuracy",
                                              ex_triads = n_triads,
                                              p2_per_t = n_p2s_per_ts,
@@ -703,30 +612,30 @@ rep_id_mods_accuracy_builder <- function(target_self, p2_reports, id_mod_variabl
 #'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
 #' # Fitting by supplying variable/column names
-#' agree_pt_mods_hearacc <- rep_id_mods_accuracy(data = moderator_data,
+#' agree_pt_mods_hearacc <- rep_accuracy_id_mods(data = moderator_data,
 #'                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #'
 #' # Alternatively, first build the model
-#' agree_pt_mods_hearacc_model <- rep_id_mods_accuracy_builder(data = moderator_data,
+#' agree_pt_mods_hearacc_model <- rep_accuracy_id_mods_builder(data = moderator_data,
 #'                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #'
 #' # Then fit the model you just built
-#'  agree_pt_mods_hearacc <- rep_id_mods_accuracy(data = moderator_data,
+#'  agree_pt_mods_hearacc <- rep_accuracy_id_mods(data = moderator_data,
 #'                                                model = agree_pt_mods_hearacc_model)
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
-rep_id_mods_accuracy <- function(data, model = NULL, target_self, p2_reports, id_mod_variable,
+rep_accuracy_id_mods <- function(data, model = NULL, target_self, p2_reports, id_mod_variable,
                                  interaction_term, n_triads = length(target_self),
                                  n_ts_per_p2s = 1, n_p2s_per_ts = 1){
   if(is.null(model)){
-    rep_id_mods_model <- rep_id_mods_accuracy_builder(target_self = target_self, p2_reports = p2_reports,
+    rep_id_mods_model <- rep_accuracy_id_mods_builder(target_self = target_self, p2_reports = p2_reports,
                                                       id_mod_variable = id_mod_variable, interaction_term = interaction_term,
                                                       n_triads = length(target_self),
                                                       n_ts_per_p2s = n_ts_per_p2s, n_p2s_per_ts = n_p2s_per_ts)
@@ -801,14 +710,14 @@ rep_id_mods_accuracy <- function(data, model = NULL, target_self, p2_reports, id
 #'        D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
 #' # Example for hearsay accuracy
-#' rep_id_mods_auto(data = moderator_data,
+#' rep_auto_id_mods(data = moderator_data,
 #'                  target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                  p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                  id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                  interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #'
 #' # Example for hearsay consensus
-#' rep_id_mods_auto(data = moderator_data,
+#' rep_auto_id_mods(data = moderator_data,
 #'                  p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                  p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                  id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
@@ -816,7 +725,7 @@ rep_id_mods_accuracy <- function(data, model = NULL, target_self, p2_reports, id
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
-rep_id_mods_auto <- function(data, target_self = NULL, p1_reports = NULL, p2_reports = NULL,
+rep_auto_id_mods <- function(data, target_self = NULL, p1_reports = NULL, p2_reports = NULL,
                              id_mod_variable = NULL, interaction_term = NULL,
                              n_triads = NULL, n_ts_per_p2s = 1, n_p2s_per_ts = 1,
                              n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_r1_per_r2 = 1, n_r2_per_r1 = 1){
@@ -830,7 +739,7 @@ rep_id_mods_auto <- function(data, target_self = NULL, p1_reports = NULL, p2_rep
      !is.null(p1_reports) &
      !is.null(p2_reports) &
      !is.null(id_mod_variable)){
-    fitted_model <- rep_id_mods_consensus(data = data, p1_reports = p1_reports,
+    fitted_model <- rep_consensus_id_mods(data = data, p1_reports = p1_reports,
                                           p2_reports = p2_reports,
                                           id_mod_variable = id_mod_variable,
                                           interaction_term = interaction_term,
@@ -843,7 +752,7 @@ rep_id_mods_auto <- function(data, target_self = NULL, p1_reports = NULL, p2_rep
           !is.null(target_self) &
           !is.null(p2_reports) &
           !is.null(id_mod_variable)){
-    fitted_model <- rep_id_mods_accuracy(data = data, target_self = target_self,
+    fitted_model <- rep_accuracy_id_mods(data = data, target_self = target_self,
                                          p2_reports = p2_reports,
                                          id_mod_variable = id_mod_variable,
                                          interaction_term = interaction_term,
@@ -855,7 +764,7 @@ rep_id_mods_auto <- function(data, target_self = NULL, p1_reports = NULL, p2_rep
           !is.null(target_self) &
           !is.null(p1_reports) &
           !is.null(id_mod_variable)){
-    fitted_model <- rep_id_mods_generic(data = data, rating_1 = target_self, rating_2 = p1_reports,
+    fitted_model <- rep_generic_id_mods(data = data, rating_1 = target_self, rating_2 = p1_reports,
                                         id_mod_variable = id_mod_variable,
                                         interaction_term = interaction_term,
                                         n_triads = length(rating_1),

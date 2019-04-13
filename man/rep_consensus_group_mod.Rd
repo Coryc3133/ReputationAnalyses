@@ -5,7 +5,7 @@
 \title{Reputation Consensus with Group Moderator Model}
 \usage{
 rep_consensus_group_mod(data, model = NULL, p1_reports, p2_reports,
-  group_mod = NULL, use_labs = TRUE, groups_eql = NULL,
+  group_mod = NULL, use_labs = TRUE, groups_eql = "none",
   params_eql = "none", n_triads = length(p1_reports),
   n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)
 }
@@ -31,7 +31,8 @@ If FALSE, generic labels (grp1 to grpk, where k is the number of groups) are use
 
 \item{groups_eql}{Optional. Groups that you want to constrain to be equal across some or all parameters. If
 you have use_labs set to TRUE, provide a vector of group labels corresponding to the groups you want to constrain to be equal. If you
-have use_labs set to FALSE, provide a vector of numbers corresponding to the position of the groups you want to constrain to be equal.}
+have use_labs set to FALSE, provide a vector of numbers corresponding to the position of the groups you want to constrain to be equal. If you provide
+"all", all groups will be constrained to be equal.}
 
 \item{params_eql}{Optional. Parameters that you want to constrain to be equal across the groups specified in groups_eql. You can provide
 one or more specific parameters (e.g., "hc" for hearsay consensus), or use one of several built-in options including "all" which constrains
@@ -75,17 +76,26 @@ The function can handle up to n exchangeable triads.
 \examples{
 data("rep_sim_data")
           agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
-                                           p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                           group = "study")
+                                                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                            group_mod = "study")
          # alternatively
          # build the model
           agree_consensus_grpmod_model <- rep_consensus_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                                             group = levels(rep_sim_data$study))
+                                                                          p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                                          group = levels(rep_sim_data$study))
          # then fit it
          agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
-                                                           agree_consensus_model)
+                                                           agree_consensus_model,
+                                                           group_mod = "study")
+
+        # And if you wanted to constrain hearsay consensus to be equal
+        agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
+                                                          p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                          p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                          group_mod = "study",
+                                                          groups_eql = c("study1", "study2"),
+                                                          prams_eql = "all")
 
 
 }

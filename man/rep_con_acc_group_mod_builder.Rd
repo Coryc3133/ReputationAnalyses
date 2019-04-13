@@ -6,7 +6,8 @@
 \usage{
 rep_con_acc_group_mod_builder(p1_reports, p2_reports, target_self,
   groups = NULL, use_labs = TRUE, n_triads = length(p1_reports),
-  n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)
+  n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
+  n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1)
 }
 \arguments{
 \item{p1_reports}{Quoted column names that contain P1 reports,
@@ -37,14 +38,6 @@ Currently, only values of 1 are supported.}
 \item{n_p2s_per_p1s}{The number of P2s for every P1;. This defaults to 1.
 Currently, only values of 1 are supported.}
 
-\item{data}{The dataframe.
-Data should be wide, with a row for every group of participants.
-At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
-one for targets' self-ratings.}
-
-\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
-is supplied, no additional arguments need to be specified.}
-
 \item{n_p1s_per_ts}{The number of P1s for every target;. This defaults to 1.
 Currently, only values of 1 are supported.}
 
@@ -56,6 +49,14 @@ Currently, only values of 1 are supported.}
 
 \item{n_ts_per_p2s}{The number of targets for every P2;. This defaults to 1.
 Currently, only values of 1 are supported.}
+
+\item{data}{The dataframe.
+Data should be wide, with a row for every group of participants.
+At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
+one for targets' self-ratings.}
+
+\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+is supplied, no additional arguments need to be specified.}
 }
 \value{
 The function returns a list containing an

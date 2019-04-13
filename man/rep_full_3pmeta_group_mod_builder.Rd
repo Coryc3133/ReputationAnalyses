@@ -2,7 +2,7 @@
 % Please edit documentation in R/group_mods.R
 \name{rep_full_3pmeta_group_mod_builder}
 \alias{rep_full_3pmeta_group_mod_builder}
-\title{Reputation Consensus, Accuracy, and 3rd-Person Meta-Perception Model Builder
+\title{Reputation Consensus, Accuracy, and 3rd-Person Meta-Perception with group moderator Model Builder
 This builds a model of lavaan syntax for estimating the possible hearsay reputation parameters
 as a multi-group path model given vectors of P1 and P2 reports (vectors of quoted variable names)
 and a group-level categorical variable.
@@ -123,10 +123,10 @@ The function can handle up to n exchangeable triads.
 }
 \examples{
 data("rep_sim_data")
-          rep_full_3pmeta_model <- rep_full_w_3pmeta_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                            target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                            p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-                            p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-                            groups = c("Study_1", "Study_2"))
+          rep_full_3pmeta_model <- rep_full_3pmeta_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                             p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+                                                             p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+                                                             groups = c("Study_1", "Study_2"))
 }
