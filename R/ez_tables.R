@@ -140,6 +140,147 @@ ez_differential_table <- function(rep_model,
                     ci_upper = ci.upper)}
   return(rep_paramter_table)}
 
+#' Easily Table Differential Results from Group Moderated Models
+#'
+#' This takes output from one of the group moderated reputation models
+#' (e.g., rep_analyses_auto) and returns a tibble of differential
+#' (correlational) parameters. It works with any of the group moderated models.
+#' @param rep_model The results from one of the ReputationAnalyses
+#' group Models (e.g., rep_auto_group_mod).
+#' @param what The parameters you want in the table. Current options are
+#' main and all. If what = "main", then just the 'main' model parameters are provided.
+#' This will include, when avaiable, hearsay consensus, hearsay accuracy,
+#' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
+#' @import tidyverse
+#' @export
+#' @examples data("rep_sim_data")
+#'      # Consensus only Model
+#'           agree_rep_consensus <- rep_analyses_auto(data = rep_sim_data,
+#'                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
+#'
+#'           ez_differential_table(agree_rep_consensus, what = "main")
+#'
+#'           ez_differential_table(agree_rep_consensus, what = "all")
+#'
+#'        # Consensus & Accuracy
+#'
+#'           agree_rep_con_acc <- rep_analyses_auto(data = rep_sim_data,
+#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+#'
+#'           ez_differential_table(agree_rep_con_acc, what = "main")
+#'
+#'           ez_differential_table(agree_rep_con_acc, what = "all")
+#'
+#'       # Consensus, Accuracy, 3rd  Person Meta
+#'
+#'          agree_rep_all <- rep_analyses_auto(data = rep_sim_data,
+#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                        p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                        p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
+#'
+#'          ez_differential_table(agree_rep_all, what = "main")
+#'
+#'           ez_differential_table(agree_rep_all, what = "all")
+#'
+#' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+
+ez_differential_group_table <- function(rep_model,
+                                  what = "main"){
+  # First save out labels
+  # we need these to remove the repeats (from equality constraints)
+  labels <- rep_model@ParTable %>%
+    tibble::as_tibble() %>%
+    dplyr::select(lhs, op, rhs, group, label) %>%
+    tidyr::separate(label, c("group_label", "param_label"), extra = "merge") %>%
+    dplyr::filter(group_label != "")
+
+  # Main parameters only
+  if(what == "main"){
+    rep_paramter_table <- rep_model %>%
+      standardizedsolution() %>%
+      tibble::as_tibble() %>%
+      dplyr::full_join(labels) %>%
+      dplyr::distinct(group_label, param_label, .keep_all = TRUE) %>%
+      dplyr::filter(param_label == "hc" |
+                      param_label == "ha" |
+                      param_label == "da" |
+                      param_label == "p1ma"|
+                      param_label == "p2ma") %>%
+      # give them their substantive labels
+      dplyr::mutate(parameter = ifelse(param_label == "ha", "hearsay accuracy",
+                                       ifelse(param_label == "hc", "hearsay consensus",
+                                              ifelse(param_label == "da", "direct accuracy",
+                                                     ifelse(param_label == "p1ma", "P1 Meta-Accuracy",
+                                                            ifelse(param_label == "p2ma", "P2 Meta-Accuracy", NA)))))) %>%
+      dplyr::select(group_label, parameter, est.std, ci.lower, ci.upper, pvalue) %>%
+      dplyr::rename(r = est.std,
+                    ci_lower = ci.lower,
+                    ci_upper = ci.upper)}
+  if(what == "all"){
+    rep_paramter_table <- rep_model %>%
+      standardizedsolution() %>%
+      tibble::as_tibble() %>%
+      dplyr::full_join(labels) %>%
+      dplyr::distinct(label, .keep_all = TRUE) %>%
+      dplyr::filter(param_label == "ha"|
+                      param_label == "hc"|
+                      param_label == "da"|
+                      param_label == "p1ma"|
+                      param_label == "p2ma"|
+                      param_label == "as_ac1"|
+                      param_label == "as_con1"|
+                      param_label == "mp_rec"|
+                      param_label == "as_ac2"|
+                      param_label == "as_con2"|
+                      param_label == "rec"|
+                      param_label == "h"|
+                      param_label == "m"|
+                      param_label == "tru_sim"|
+                      param_label == "as_sim_3p"|
+                      param_label == "as_sim_1p"|
+                      param_label == "as_sim_p1m"|
+                      param_label == "ukp1m1"|
+                      param_label == "p1meta_sim"|
+                      param_label == "ukp2m1"|
+                      param_label == "ukp2m3"|
+                      param_label == "p2meta_sim"|
+                      param_label == "ukm1") %>%
+      # give them their substantive labels
+      dplyr::mutate(parameter = ifelse(param_label == "ha", "hearsay accuracy",
+                                       ifelse(param_label == "hc", "hearsay consensus",
+                                              ifelse(param_label == "da", "direct accuracy",
+                                                     ifelse(param_label == "p1ma", "P1 Meta-Accuracy",
+                                                            ifelse(param_label == "p2ma", "P2 Meta-Accuracy",
+                                                                   ifelse(param_label == "as_ac1", "P1 Assumed Accuracy",
+                                                                          ifelse(param_label == "as_con1", "P1 Assumed Consensus",
+                                                                                 ifelse(param_label == "mp_rec", "P1-P2 Meta-Perception Reciprocity",
+                                                                                        ifelse(param_label == "as_ac2", "P2 Assumed Accuracy",
+                                                                                               ifelse(param_label == "as_con2", "P2 Assumed Consensus",
+                                                                                                      ifelse(param_label == "rec", "direct reciprocity",
+                                                                                                             ifelse(param_label == "h", "hearsay reciprocity",
+                                                                                                                    ifelse(param_label == "m", "P2(T) <-> opposite P1(T)",
+                                                                                                                           ifelse(param_label == "tru_sim", "True Target Similarity",
+                                                                                                                                  ifelse(param_label == "as_sim_3p", "Third-Person Assumed Similarity",
+                                                                                                                                         ifelse(param_label == "as_sim_1p", "First-Person Assumed Similarity",
+                                                                                                                                                ifelse(param_label == "as_sim_p1m", "P1 Meta- Assumed Similarity",
+                                                                                                                                                       ifelse(param_label == "ukp1m1", "P1 Meta <-> opposite P1-Report",
+                                                                                                                                                              ifelse(param_label == "p1meta_sim", "P1 meta-similarity",
+                                                                                                                                                                     ifelse(param_label == "ukp2m1", "P2 Meta <-> opposite target self-report",
+                                                                                                                                                                            ifelse(param_label == "ukp2m3", "P2 meta <-> opposite P1-report",
+                                                                                                                                                                                   ifelse(param_label == "p2meta_sim", "P2 Meta-similarity",
+                                                                                                                                                                                          ifelse(param_label == "ukm1", "P1 Meta <-> opposite P2 Meta", NA)))))))))))))))))))))))) %>%
+      dplyr::select(group_label, parameter, est.std, ci.lower, ci.upper, pvalue) %>%
+      dplyr::rename(r = est.std,
+                    ci_lower = ci.lower,
+                    ci_upper = ci.upper)}
+  return(rep_paramter_table)}
+
+
 #' Easily Table Elevation Results
 #'
 #' This takes output from one of the reputational analysis models
