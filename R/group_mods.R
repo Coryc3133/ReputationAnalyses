@@ -69,8 +69,17 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
   else{
     # get number of groups
     n_groups <- length(groups)
+    # Make sure each group label is unique
     if(length(unique(groups)) != n_groups){stop("You provided one or more non-unique group labels. Each group labeel provided needs to be unique.")}
-
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     # Create labels
     # if use_labs is true, then labels are made
     # based on the group labels used in groups =
@@ -438,6 +447,17 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
   else{
     # get number of groups
     n_groups <- length(groups)
+    # Make sure each group label is unique
+    if(length(unique(groups)) != n_groups){stop("You provided one or more non-unique group labels. Each group labeel provided needs to be unique.")}
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+      }
     # Create labels
     # if use_labs is true, then labels are made
     # based on the group labels used in groups =
@@ -878,6 +898,17 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
   else{
     # get number of groups
     n_groups <- length(groups)
+    # Make sure each group label is unique
+    if(length(unique(groups)) != n_groups){stop("You provided one or more non-unique group labels. Each group labeel provided needs to be unique.")}
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     # Create labels
     # if use_labs is true, then labels are made
     # based on the group labels used in groups =
@@ -1339,6 +1370,17 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
   else{
     # get number of groups
     n_groups <- length(groups)
+    # Make sure each group label is unique
+    if(length(unique(groups)) != n_groups){stop("You provided one or more non-unique group labels. Each group labeel provided needs to be unique.")}
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     # Create labels
     # if use_labs is true, then labels are made
     # based on the group labels used in groups =
@@ -1632,6 +1674,17 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
   else{
     # get number of groups
     n_groups <- length(groups)
+    # Make sure each group label is unique
+    if(length(unique(groups)) != n_groups){stop("You provided one or more non-unique group labels. Each group labeel provided needs to be unique.")}
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     # Create labels
     # if use_labs is true, then labels are made
     # based on the group labels used in groups =
@@ -1952,6 +2005,17 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
   else{
     # get number of groups
     n_groups <- length(groups)
+    # Make sure each group label is unique
+    if(length(unique(groups)) != n_groups){stop("You provided one or more non-unique group labels. Each group labeel provided needs to be unique.")}
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     # Create labels
     # if use_labs is true, then labels are made
     # based on the group labels used in groups =
