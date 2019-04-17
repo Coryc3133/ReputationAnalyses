@@ -131,13 +131,15 @@ data("rep_sim_data")
                                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
                                                                          p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
                                                                          p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+                                                                         groups = levels(rep_sim_data$study))
          # then fit it
          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-                                                       model = agree_full_3pmeta_grpmod_model$model,
+                                                       model = agree_full_3pmeta_grpmod_model,
                                                        group_mod = "study")
 
          # fit model with group equality constraints:
-         # if we wanted to constrain all parameters to be equal across the 2 groups, we could do that:
+         # if we wanted to constrain all parameters to be equal across the 2 groups, that can be done
+         # by setting groups_eql and params_eql both to "all".
          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
                                                                p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                                p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
@@ -147,5 +149,18 @@ data("rep_sim_data")
                                                                group_mod = "study",
                                                                groups_eql = "all",
                                                                params_eql = "all")
+
+      # for unlabelled groups (or whenever use_labs = FALSE), you can select certain groups for equality constraints
+      # by passing a vector of group numbers that should be constrained to be equal. For example, if we wanted
+      # just groups 1 and 3 to be equal, we would set groups_eql to c(1, 3), like so:
+       agree_4grp_full_fit <- rep_full_3pmeta_group_mod(data = rep_sim_data,
+                                                       p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                       p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                       target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                       p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+                                                       p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+                                                       group_mod = "group_var",
+                                                       groups_eql = c(1, 3),
+                                                       params_eql = "all")
 
 }

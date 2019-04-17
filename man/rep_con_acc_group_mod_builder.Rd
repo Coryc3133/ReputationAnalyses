@@ -100,9 +100,9 @@ The function can handle up to n exchangeable triads.
 \examples{
  # build the model
   agree_con_acc_model_grpmod <- rep_con_acc_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-  p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-  target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-  groups = c("Study_1", "Study_2"))
+                                                              p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                              target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                              groups = c("Study_1", "Study_2"))
 
  # view the model
  agree_consensus_model_grpmod$model

@@ -76,3 +76,34 @@ the correlation between ratings depends on the moderator variable}
 }
 The function can handle up to n exchangeable triads.
 }
+\examples{
+data("rep_sim_data")
+          # Prepare data
+          library(tidyverse)
+         moderator_data <- rep_sim_data \%>\%
+           mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+                  D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
+                  B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
+                  D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
+                  B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
+                  D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
+
+# build a bsaeline model examining perspective taking moderating hearsay consensus across groups (studies in this case)
+agree_pt_mod_model <- rep_generic_group_id_mods (moderator_data,
+                                           rating_1 = c("C_C_agreeableness", "A_A_agreeableness"),
+                                           rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+                                           id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+                                           interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
+                                           group_mod = "study")
+
+         # fit model with group equality constraints:
+         # if we wanted to constrain all parameters to be equal across the 2 groups, that can be done
+         # by setting groups_eql and params_eql both to "all".
+agree_pt_mod_model <- rep_generic_group_id_mods (moderator_data,
+                                           rating_1 = c("C_C_agreeableness", "A_A_agreeableness"),
+                                           rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+                                           id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+                                           interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
+                                           group_mod = "study", groups_eql = "all", params_eql = "all")
+
+}

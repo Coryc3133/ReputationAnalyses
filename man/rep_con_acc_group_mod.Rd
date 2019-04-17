@@ -107,28 +107,50 @@ The function can handle up to n exchangeable triads.
 \examples{
 data("rep_sim_data")
           agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
-                                           p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                           target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                                           group_mod = "study")
+                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                        group_mod = "study")
          # alternatively
          # build the model
          agree_con_acc_grpmod_model <- rep_con_acc_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                                             group = levels(rep_sim_data$study))
+                                                                     p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                                     target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                                     groups = levels(rep_sim_data$study))
          # then fit it
          agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
-                                                       model = agree_consensus_model,
+                                                       model = agree_con_acc_grpmod_model,
                                                        group_mod = "study")
 
          # fit model with group equality constraints:
-         # if we wanted to constrain all parameters to be equal across the 2 groups, we could do that:
+         # if we wanted to constrain all parameters to be equal across the 2 groups, that can be done
+         # by setting groups_eql and params_eql both to "all".
          agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
                                                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
                                                        group_mod = "study",
                                                        groups_eql = "all",
+                                                       params_eql = "all")
+
+        # Or we could constrain just some parameters to be equal, for example just hearsay accuracy
+         agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
+                                                       p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                       p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                       target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                       group_mod = "study",
+                                                       groups_eql = "all",
+                                                       params_eql = c("ha", "v_self", "v_p2"))
+
+      # for unlabelled groups (or whenever use_labs = FALSE), you can select certain groups for equality constraints
+      # by passing a vector of group numbers that should be constrained to be equal. For example, if we wanted
+      # just groups 1 and 3 to be equal, we would set groups_eql to c(1, 3), like so:
+       agree_4grp_con_acc_fit <- rep_con_acc_group_mod(data = rep_sim_data,
+                                                       p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                       p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                       target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                       group_mod = "group_var",
+                                                       groups_eql = c(1, 3),
                                                        params_eql = "all")
 
 }

@@ -118,15 +118,16 @@ agree_pt_mod_model <- rep_accuracy_id_mods_builder (target_self = c("C_C_agreeab
                                                      interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
                                                      groups = c("study1", "study2"))
 
-agree_pt_mod_fit <- rep_accuracy_id_mods(moderator_data, model = agree_pt_mod_model$model, group_mod = "study)
+agree_pt_mod_fit <- rep_accuracy_id_mods(moderator_data, model = agree_pt_mod_model, group_mod = "study)
 
-# constrain all parameters to be equal across all groups
+# You could constrain all parameters to be equal across all groups
+# by setting both the groups_eql and params_eql arguments to "all"
 agree_pt_mod_all_eq_fit<- rep_accuracy_id_mods(moderator_data,
                                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
                                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-                                                group_mod = "study, groups_eql = "all", params_eql = "all")
+                                                group_mod = "study", groups_eql = "all", params_eql = "all")
 
 # Or you could constrain one parameter to be equal across all groups
 agree_pt_mod_ha_eq_fit<- rep_accuracy_id_mods(moderator_data,
@@ -134,6 +135,6 @@ agree_pt_mod_ha_eq_fit<- rep_accuracy_id_mods(moderator_data,
                                                p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                                id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                                interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-                                               group_mod = "study, groups_eql = "all", params_eql = "ha_me")
+                                               group_mod = "study", groups_eql = "all", params_eql = "ha_me")
 
 }

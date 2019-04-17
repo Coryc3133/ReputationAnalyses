@@ -83,19 +83,47 @@ data("rep_sim_data")
          # build the model
           agree_consensus_grpmod_model <- rep_consensus_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                                           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                                                          group = levels(rep_sim_data$study))
+                                                                          groups = levels(rep_sim_data$study))
          # then fit it
          agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
-                                                           agree_consensus_model,
+                                                           model = agree_consensus_model,
                                                            group_mod = "study")
 
-        # And if you wanted to constrain hearsay consensus to be equal
+         # fit model with group equality constraints:
+         # if we wanted to constrain all parameters to be equal across the 2 groups, that can be done
+         # by setting groups_eql and params_eql both to "all".
         agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
                                                           p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
                                                           group_mod = "study",
-                                                          groups_eql = c("study1", "study2"),
+                                                          groups_eql = "all",
                                                           prams_eql = "all")
 
+        # Or we could constrain just hearsay consensus to be equal
+         agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
+                                                       p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                       p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                       group_mod = "study",
+                                                       groups_eql = "all",
+                                                       params_eql = c("hc", "v_p1", "v_p2"))
+
+       # It can also handle more groups, and groups without unlabelled groups.
+       # The simulated dataset has the group_var variable, which is contains
+       # 4 groups, each labelled with just a number (1 to 4). To use an unlabelled group
+       # either set use_labs to FALSE or it will do so for you.
+       agree_4grp_consensus_fit <- rep_consensus_group_mod(data = rep_sim_data,
+                                                       p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                       p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                       group_mod = "group_var")
+
+      # for unlabelled groups (or whenever use_labs = FALSE), you can select certain groups for equality constraints
+      # by passing a vector of group numbers that should be constrained to be equal. For example, if we wanted
+      # just groups 1 and 3 to be equal, we would set groups_eql to c(1, 3), like so:
+       agree_4grp_consensus_fit <- rep_consensus_group_mod(data = rep_sim_data,
+                                                       p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                       p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                       group_mod = "group_var",
+                                                       groups_eql = c(1, 3),
+                                                       params_eql = "all")
 
 }
