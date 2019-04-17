@@ -5,7 +5,8 @@
 #' The data were simulate based on results from Costello & Srivastava (in prep).
 #' We used the mvtnorm package to simulate a dataset based on the cariance-covariance matrix
 #' and vector of means for variables across the 2 reputation studies. At present, it includes
-#' ratings on Agreeableness and P2 self-reported perspective taking.
+#' ratings on Agreeableness and P2 self-reported perspective taking. It also includes 2
+#' arbitrary (not simulated from real data) grouping variables.
 #'
 #' The data, being simulated, should be treated solely as example data.
 #'
@@ -29,6 +30,8 @@
 #'   \item{D_C_A_agree_meta}{P2 meta-perception (D(C(A)) on agreeableness}
 #'   \item{B_iri_perspective}{P2 self-reported perspective taking}
 #'   \item{D_iri_perspective}{P2 self-reported perspective taking}
+#'   \item{study}{the study the data come from}
+#'   \item{group_var}{A 4-level group variable}
 #' }
 #'
 #' @keywords datasets
