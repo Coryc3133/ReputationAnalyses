@@ -156,37 +156,44 @@ ez_differential_table <- function(rep_model,
 #' @export
 #' @examples data("rep_sim_data")
 #'      # Consensus only Model
-#'           agree_rep_consensus <- rep_analyses_auto(data = rep_sim_data,
-#'                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"))
+#'           agree_rep_consensus_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                            group_mod = "study",
+#'                                                            groups_eql = "all",
+#'                                                            params_eql = "all")
 #'
-#'           ez_differential_table(agree_rep_consensus, what = "main")
+#'           ez_differential_group_table(agree_rep_consensus_grpmod, what = "main")
 #'
-#'           ez_differential_table(agree_rep_consensus, what = "all")
+#'           ez_differential_group_table(agree_rep_consensus_grpmod, what = "all")
 #'
 #'        # Consensus & Accuracy
 #'
-#'           agree_rep_con_acc <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"))
+#'           agree_rep_con_acc_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                          p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                          p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                          group_mod = "study", groups_eql = "all",params_eql = "all")
 #'
-#'           ez_differential_table(agree_rep_con_acc, what = "main")
+#'           ez_differential_group_table(agree_rep_con_acc_grpmod, what = "main")
 #'
-#'           ez_differential_table(agree_rep_con_acc, what = "all")
+#'           ez_differential_group_table(agree_rep_con_acc_grpmod, what = "all")
 #'
 #'       # Consensus, Accuracy, 3rd  Person Meta
 #'
-#'          agree_rep_all <- rep_analyses_auto(data = rep_sim_data,
-#'                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                        p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                        p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
+#' agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                       p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                       p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                       target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                       p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                                                       p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+#'                                                       group_mod = "study",
+#'                                                       groups_eql = "all",
+#'                                                       params_eql = "all")
 #'
-#'          ez_differential_table(agree_rep_all, what = "main")
+#'          ez_differential_group_table(agree_full_3pmeta_grpmod, what = "main")
 #'
-#'           ez_differential_table(agree_rep_all, what = "all")
+#'           ez_differential_group_table(agree_full_3pmeta_grpmod, what = "all")
 #'
 #' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
 
@@ -197,7 +204,7 @@ ez_differential_group_table <- function(rep_model,
   labels <- rep_model@ParTable %>%
     tibble::as_tibble() %>%
     dplyr::select(lhs, op, rhs, group, label) %>%
-    tidyr::separate(label, c("group_label", "param_label"), extra = "merge") %>%
+    tidyr::separate(label, c("group_label", "param_label"), extra = "merge", fill = "left") %>%
     dplyr::filter(group_label != "")
 
   # Main parameters only
@@ -284,13 +291,21 @@ ez_differential_group_table <- function(rep_model,
   # which sort of makes sense for this (it only gives you the results of group moderated analyses).
   # However, you might have a case in which some (but not all) groups or parameters are equal, and you
   # want to table them all together. This adds the equality constrained rows
-  rep_parameter_table_eqls <- ez_differential_table(rep_model = rep_model,
-                                                    what = what)# %>%
-    #mutate(group_label = NA) %>%
-    #select(group_label, parameter, r, ci_lower, ci_cupper, pvalue)
-  rep_parameter_table <- dplyr::full_join(rep_parameter_table, rep_parameter_table_eqls)
-  message("The Model you provided had some between-group equality constraints.
-          Those pooled estimates are in the rows where group is marked NA")
+  if(nrow(rep_parameter_table) == 0){
+    rep_parameter_table <- ez_differential_table(rep_model = rep_model,
+                                                  what = what)
+  }
+  else {
+    if(max(rep_model@ParTable[["group"]]) != nrow(unique(rep_parameter_table["group_label"]))){
+      rep_parameter_table_eqls <- ez_differential_table(rep_model = rep_model,
+                                                    what = what)
+    }
+    if(nrow(rep_parameter_table_eqls) > 0){
+      rep_parameter_table <- dplyr::full_join(rep_parameter_table, rep_parameter_table_eqls)
+      message("The Model you provided had some between-group equality constraints.
+              Those pooled estimates are in the rows where group is marked NA")
+    }
+  }
   return(rep_parameter_table)}
 
 
@@ -441,6 +456,189 @@ ez_elevation_table <- function(rep_model){
 
   rep_descrips <- rep_descrips %>%
     tidyr::gather(variable, value) %>%
+    tidyr::separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
+    dplyr::mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
+                  target = stringr::str_replace(target, "p2t", "p2_t")) %>%
+    tidyr::spread(stat, value)
+
+
+  return(list(elevation_table = rep_elevation_table,
+              pooled_means_sd = rep_descrips))}
+
+#' Easily Table Elevation Results from Group Moderated Models
+#'
+#' This takes output from one of the reputation group moderated models
+#' (e.g., rep_auto_group_mod) and returns a list of two tibbles corresponding to
+#' elevation (mean-differences) estimates and the relevant pooled Means and SDs respectively.
+#' The elevation table contains the raw difference, 95% CI around the raw difference,
+#' z scores, p values, and a cohen's d (difference / pooled SD). It has only 1 parameter.
+#'
+#' @param rep_model The results from one of the ReputationAnalyses group moderated models
+#' Models (e.g., rep_auto_group_mod).
+#' @import lavaan tidyverse
+#' @export
+#' @examples data("rep_sim_data")
+#'
+#'        # Consensus only Model
+#'           agree_rep_consensus_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                            group_mod = "study",
+#'                                                            groups_eql = "all",
+#'                                                            params_eql = "all")
+#'
+#'           ez_elevation_group_table(agree_rep_consensus_grpmod, what = "main")
+#'
+#'           ez_elevation_group_table(agree_rep_consensus_grpmod, what = "all")
+#'
+#'        # Consensus & Accuracy
+#'
+#'           agree_rep_con_acc_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                          p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                          p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                          group_mod = "study", groups_eql = "all",params_eql = "all")
+#'
+#'           ez_elevation_group_table(agree_rep_con_acc_grpmod, what = "main")
+#'
+#'           ez_elevation_group_table(agree_rep_con_acc_grpmod, what = "all")
+#'
+#'       # Consensus, Accuracy, 3rd  Person Meta
+#'
+#' agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                       p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                       p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                       target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                       p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                                                       p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+#'                                                       group_mod = "study",
+#'                                                       groups_eql = "all",
+#'                                                       params_eql = "all")
+#'
+#'          ez_elevation_group_table(agree_full_3pmeta_grpmod, what = "main")
+#'
+#'           ez_elevation_group_table(agree_full_3pmeta_grpmod, what = "all")
+#'
+#' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
+ez_elevation_group_table <- function(rep_model){
+  rep_elevation_table <- rep_model %>%
+    parameterestimates() %>%
+    tibble::as_tibble() %>%
+    tidyr::separate(label, c("group_label", "param_label"), extra = "merge", fill = "left") %>%
+    dplyr::distinct(group_label, param_label, .keep_all = TRUE) %>%
+    dplyr::filter(param_label == "p1_p2_rel_el"|
+                    param_label == "self_p2_rel_el"|
+                    param_label == "self_p1_rel_el"|
+                    param_label == "p1_meta_rel_el"|
+                    param_label == "p2_meta_rel_el"|
+                    # and get the variances for calculating a
+                    # cohen's d
+                    stringr::str_detect(param_label, "v_") |
+                    stringr::str_detect(param_label, "int_")) %>%
+    dplyr::select(group_label, param_label, est) %>%
+    tidyr::spread(param_label, est)
+
+  # calculate d's
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
+    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                         p1_p2_std_d = p1_p2_rel_el / sqrt((v_p1 + v_p2) / 2))}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p2_rel_el"))) > 0){
+    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                         self_p2_std_d = self_p2_rel_el / sqrt((v_self + v_p2) / 2))}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p1_rel_el"))) > 0){
+    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                         self_p1_std_d = self_p1_rel_el / sqrt((v_self + v_p1) / 2))}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_meta_rel_el"))) > 0){
+    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                         p1_meta_std_d = p1_meta_rel_el / sqrt((v_mp1 + v_p2) / 2))}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p2_meta_rel_el"))) > 0){
+    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                         p2_meta_std_d = p2_meta_rel_el / sqrt((v_mp2 + v_p1) / 2))}
+  rel_el_only <- rep_model %>%
+    parameterestimates() %>%
+    tibble::as_tibble() %>%
+    tidyr::separate(label, c("group_label", "param_label"), extra = "merge", fill = "left") %>%
+    dplyr::distinct(group_label, param_label, .keep_all = TRUE) %>%
+    dplyr::filter(param_label == "p1_p2_rel_el"|
+                  param_label == "self_p2_rel_el"|
+                  param_label == "self_p1_rel_el"|
+                  param_label == "p1_meta_rel_el"|
+                  param_label == "p2_meta_rel_el") %>%
+    dplyr::select(group_label, param_label, est, se, z, pvalue, ci.lower, ci.upper)
+  rep_elevation_table <-
+  rep_elevation_table %>%
+    dplyr::select(group_label, dplyr::ends_with("std_d")) %>%
+    tidyr::gather(param_label, cohen_d, -group_label) %>%
+    dplyr::mutate(param_label = stringr::str_replace_all(param_label, "std_d", "rel_el")) %>% print()
+    dplyr::left_join(rel_el_only) %>%
+    # give them their substantive labels
+    dplyr::mutate(param_label = ifelse(param_label == "p1_p2_rel_el", "P1-P2 Relative Elevation",
+                                       ifelse(param_label == "self_p2_rel_el", "Self-P2 Relative Elevation",
+                                              ifelse(param_label == "self_p1_rel_el", "Self-P1 Relative Elevation",
+                                                     ifelse(param_label == "p1_meta_rel_el", "P1 Meta-Elevation",
+                                                            ifelse(param_label == "p2_meta_rel_el", "P2 Meta-Elevation", NA)))))) %>%
+    dplyr::select(group_label, param_label, est, ci.lower, ci.upper, cohen_d, z, pvalue) %>%
+    dplyr::rename(raw_diff = est,
+                  ci_lower = ci.lower,
+                  ci_upper = ci.upper)
+
+  rep_descrips <- rep_model %>%
+    parameterestimates() %>%
+    tibble::as_tibble() %>%
+    tidyr::separate(label, c("group_label", "param_label"), extra = "merge", fill = "left") %>%
+    dplyr::distinct(group_label, param_label, .keep_all = TRUE) %>%
+    dplyr::select(param_label, est) %>%
+    tidyr::spread(param_label, est)
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
+    rep_descrips <- dplyr::mutate(rep_descrips,
+                                  self_sd = sqrt(v_self))}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p1"))) > 0){
+    rep_descrips <- dplyr::mutate(rep_descrips,
+                                  p1_sd = sqrt(v_p1))}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p2"))) > 0){
+    rep_descrips <- dplyr::mutate(rep_descrips,
+                                  p2_sd = sqrt(v_p2))}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
+    rep_descrips <- dplyr::mutate(rep_descrips,
+                                  mp1_sd = sqrt(v_mp1))}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
+    rep_descrips <- dplyr::mutate(rep_descrips,
+                                  mp2_sd = sqrt(v_mp2))}
+
+  rep_descrips <- rep_descrips %>%
+    dplyr::select(dplyr::starts_with("int"), dplyr::ends_with("sd"))
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
+    rep_descrips <- dplyr::rename(rep_descrips,
+                                  p1_t_mean = int_p1,
+                                  p1_t_sd = p1_sd,
+                                  p2_t_mean = int_p2,
+                                  p2_t_sd = p2_sd)}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
+    rep_descrips <- dplyr::rename(rep_descrips,
+                                  t_t_mean  = int_self,
+                                  t_t_sd    = self_sd)}
+
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
+    rep_descrips <- dplyr::rename(rep_descrips,
+                                  p1_p2t_mean = int_mp1,
+                                  p1_p2t_sd = mp1_sd)}
+  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
+    rep_descrips <- dplyr::rename(rep_descrips,
+                                  p2_p1t_mean = int_mp2,
+                                  p2_p1t_sd = mp2_sd)}
+
+  rep_descrips <- rep_descrips %>%
+    tidyr::gather(variable, value, -group_label) %>%
     tidyr::separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
     dplyr::mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
                   target = stringr::str_replace(target, "p2t", "p2_t")) %>%

@@ -97,48 +97,29 @@ The function can handle up to n exchangeable triads.
 }
 \examples{
 data("rep_sim_data")
-          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-                                                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                                            target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                                                            p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-                                                            p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-                                                            group_mod = "study")
-         # alternatively
-         # build the model
-         agree_full_3pmeta_grpmod_model <- rep_full_3pmeta_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                                                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                                                         target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                                                                         p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-                                                                         p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-                                                                         groups = levels(rep_sim_data$study))
-         # then fit it
-         agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-                                                       model = agree_full_3pmeta_grpmod_model,
-                                                       group_mod = "study")
+          agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+                                                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                         target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                         p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+                                                         p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+                                                         group_mod = "study")
 
          # You could constrain all parameters to be equal across all groups
          # by setting both the groups_eql and params_eql arguments to "all"
-         agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-                                                               p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                                               p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                                               target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                                                               p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-                                                               p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-                                                               group_mod = "study",
-                                                               groups_eql = "all",
-                                                               params_eql = "all")
+         agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                        p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+                                                        p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+                                                        group_mod = "study", groups_eql = "all", params_eql = "all")
 
-         # You could constrain all parameters to be equal across all groups
-         # by setting both the groups_eql and params_eql arguments to "all"
-         agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-                                                               p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-                                                               p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-                                                               target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-                                                               p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-                                                               p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-                                                               group_mod = "study",
-                                                               groups_eql = "all",
-                                                               params_eql = "all")
+         agree_con_acc_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+                                                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+                                                        group_mod = "study", groups_eql = "all", params_eql = "all")
+
 
 }

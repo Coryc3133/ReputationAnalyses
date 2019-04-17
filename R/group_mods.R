@@ -320,8 +320,8 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
                                     n_triads = length(p1_reports),
                                     n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(is.null(group_mod)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
-                            If you don't have a group moderator, try rep_consensus if you have no moderator or
-                            rep_id_mods_consensus if you have an individual difference moderator.")
+                            If you don't have a group moderator, try rep_analyses_auto if you have no moderator or
+                            rep_auto_id_mods if you have an individual difference moderator.")
   }
   else{
     # Note that lavaan orders groups based on the order
@@ -479,8 +479,8 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
                                           n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
                                           n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
-                              If you don't have a group moderator, try rep_consensus if you have no moderator or
-                              rep_id_mods_consensus if you have an individual difference moderator.")
+                              If you don't have a group moderator, try rep_analyses_auto if you have no moderator or
+                              rep_auto_id_mods if you have an individual difference moderator.")
   }
   else{
     # get number of groups
@@ -962,8 +962,8 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
                                               n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
                                               n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
-                              If you don't have a group moderator, try rep_full_w_3pmeta if you have no moderator or
-                              rep_id_mods_generic if you have an individual difference moderator.")
+                              If you don't have a group moderator, try rep_analyses_auto if you have no moderator or
+                              rep_auto_id_mods if you have an individual difference moderator.")
   }
   else{
     # get number of groups
@@ -1459,8 +1459,8 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
                                                n_r1_per_r2 = 1, n_r2_per_r1 = 1){
 
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
-                              If you don't have a group moderator, try rep_full_w_3pmeta if you have no moderator or
-                              rep_id_mods_generic if you have an individual difference moderator.")
+                              If you don't have a group moderator, try try rep_analyses_auto if you have no moderator or
+                              rep_auto_id_mods if you have an individual difference moderator.")
   }
   else{
     # get number of groups
@@ -1775,8 +1775,8 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
                                                 n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
 
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
-                              If you don't have a group moderator, try rep_full_w_3pmeta if you have no moderator or
-                              rep_id_mods_generic if you have an individual difference moderator.")
+                              If you don't have a group moderator, try rep_analyses_auto if you have no moderator or
+                              rep_auto_id_mods if you have an individual difference moderator.")
   }
   else{
     # get number of groups
@@ -2116,8 +2116,8 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
                                                n_ts_per_p2s = 1, n_p2s_per_ts = 1){
 
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
-                              If you don't have a group moderator, try rep_full_w_3pmeta if you have no moderator or
-                              rep_id_mods_generic if you have an individual difference moderator.")
+                              If you don't have a group moderator,try rep_analyses_auto if you have no moderator or
+                            rep_auto_id_mods if you have an individual difference moderator.")
   }
   else{
     # get number of groups
@@ -2319,8 +2319,8 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
                                         group_mod = NULL, use_labs = TRUE,groups_eql = "none", params_eql = "none",
                                         n_triads = length(p1_reports), n_ts_per_p2s = 1, n_p2s_per_ts = 1){
   if(is.null(group_mod)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
-                                 If you don't have a group moderator, try rep_consensus if you have no moderator or
-                                 rep_id_mods_consensus if you have an individual difference moderator.")
+                                 If you don't have a group moderator, try try rep_analyses_auto if you have no moderator or
+                                 rep_auto_id_mods if you have an individual difference moderator.")
   }
 
 
@@ -2450,49 +2450,30 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
 #' @export
 #' @examples
 #' @examples data("rep_sim_data")
-#'           agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-#'                                                             p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                                             p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                                                             target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                                                             p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                                                             p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-#'                                                             group_mod = "study")
-#'          # alternatively
-#'          # build the model
-#'          agree_full_3pmeta_grpmod_model <- rep_full_3pmeta_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                                                          p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                                                                          p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                                                                          p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-#'                                                                          groups = levels(rep_sim_data$study))
-#'          # then fit it
-#'          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-#'                                                        model = agree_full_3pmeta_grpmod_model,
-#'                                                        group_mod = "study")
+#'           agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                          p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                          p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                          p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                                                          p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+#'                                                          group_mod = "study")
 #'
 #'          # You could constrain all parameters to be equal across all groups
 #'          # by setting both the groups_eql and params_eql arguments to "all"
-#'          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-#'                                                                p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                                                p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                                                                target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                                                                p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                                                                p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-#'                                                                group_mod = "study",
-#'                                                                groups_eql = "all",
-#'                                                                params_eql = "all")
+#'          agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                         target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                         p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                                                         p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+#'                                                         group_mod = "study", groups_eql = "all", params_eql = "all")
 #'
-#'          # You could constrain all parameters to be equal across all groups
-#'          # by setting both the groups_eql and params_eql arguments to "all"
-#'          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-#'                                                                p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                                                p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                                                                target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                                                                p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
-#'                                                                p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
-#'                                                                group_mod = "study",
-#'                                                                groups_eql = "all",
-#'                                                                params_eql = "all")
+#'          agree_con_acc_grpmod <- rep_auto_group_mod(data = rep_sim_data,
+#'                                                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                         target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                         group_mod = "study", groups_eql = "all", params_eql = "all")
+#'
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
@@ -2502,9 +2483,11 @@ rep_auto_group_mod <- function(data, model = NULL, p1_reports, p2_reports, targe
                                       n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
 
   if(is.null(group_mod)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
-                                 If you don't have a group moderator, try rep_consensus if you have no moderator or
-                                 rep_id_mods_consensus if you have an individual difference moderator.")
+                                 If you don't have a group moderator, try rep_analyses_auto if you have no moderator or
+                                 rep_auto_id_mods if you have an individual difference moderator.")
   }
+  data <- data[order(data[,group_mod]),]
+  groups <- levels(as.factor(data[,group_mod]))
   # Make sure group labels aren't numbers, which
   # screw up the lavaan syntax. If they are, change use_labs
   # to TRUE, which creates generic labels that will work.
