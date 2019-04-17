@@ -61,7 +61,7 @@ ez_differential_table <- function(rep_model,
 
   # Main parameters only
   if(what == "main"){
-    rep_paramter_table <- rep_model %>%
+    rep_parameter_table <- rep_model %>%
       standardizedsolution() %>%
       tibble::as_tibble() %>%
       dplyr::full_join(labels) %>%
@@ -82,7 +82,7 @@ ez_differential_table <- function(rep_model,
                     ci_lower = ci.lower,
                     ci_upper = ci.upper)}
   if(what == "all"){
-    rep_paramter_table <- rep_model %>%
+    rep_parameter_table <- rep_model %>%
       standardizedsolution() %>%
       tibble::as_tibble() %>%
       dplyr::full_join(labels) %>%
@@ -138,7 +138,7 @@ ez_differential_table <- function(rep_model,
       dplyr::rename(r = est.std,
                     ci_lower = ci.lower,
                     ci_upper = ci.upper)}
-  return(rep_paramter_table)}
+  return(rep_parameter_table)}
 
 #' Easily Table Differential Results from Group Moderated Models
 #'
@@ -201,7 +201,7 @@ ez_differential_group_table <- function(rep_model,
 
   # Main parameters only
   if(what == "main"){
-    rep_paramter_table <- rep_model %>%
+    rep_parameter_table <- rep_model %>%
       standardizedsolution() %>%
       tibble::as_tibble() %>%
       dplyr::full_join(labels) %>%
@@ -222,7 +222,7 @@ ez_differential_group_table <- function(rep_model,
                     ci_lower = ci.lower,
                     ci_upper = ci.upper)}
   if(what == "all"){
-    rep_paramter_table <- rep_model %>%
+    rep_parameter_table <- rep_model %>%
       standardizedsolution() %>%
       tibble::as_tibble() %>%
       dplyr::full_join(labels) %>%
@@ -277,8 +277,20 @@ ez_differential_group_table <- function(rep_model,
       dplyr::select(group_label, parameter, est.std, ci.lower, ci.upper, pvalue) %>%
       dplyr::rename(r = est.std,
                     ci_lower = ci.lower,
-                    ci_upper = ci.upper)}
-  return(rep_paramter_table)}
+                    ci_upper = ci.upper)
+  }
+  # the function above will only get parameters without equality constraints
+  # which sort of makes sense for this (it only gives you the results of group moderated analyses).
+  # However, you might have a case in which some (but not all) groups or parameters are equal, and you
+  # want to table them all together. This adds the equality constrained rows
+  rep_parameter_table_eqls <- ez_differential_table(rep_model = rep_model,
+                                                    what = what)# %>%
+    #mutate(group_label = NA) %>%
+    #select(group_label, parameter, r, ci_lower, ci_cupper, pvalue)
+  rep_parameter_table <- dplyr::full_join(rep_parameter_table, rep_parameter_table_eqls)
+  message("The Model you provided had some between-group equality constraints.
+          Those pooled estimates are in the rows where group is marked NA")
+  return(rep_parameter_table)}
 
 
 #' Easily Table Elevation Results
