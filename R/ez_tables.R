@@ -146,7 +146,8 @@ ez_differential_table <- function(rep_model,
 #' (e.g., rep_analyses_auto) and returns a tibble of differential
 #' (correlational) parameters. It works with any of the group moderated models.
 #' @param rep_model The results from one of the ReputationAnalyses
-#' group Models (e.g., rep_auto_group_mod).
+#' group Models (e.g., rep_auto_group_mod). The model can have between-group equality
+#' constraints; those are marked by missing values (NA) in the group_label column.
 #' @param what The parameters you want in the table. Current options are
 #' main and all. If what = "main", then just the 'main' model parameters are provided.
 #' This will include, when avaiable, hearsay consensus, hearsay accuracy,
