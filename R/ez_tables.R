@@ -52,92 +52,92 @@
 
 ez_differential_table <- function(rep_model,
                                   what = "main"){
-  # First save out labels
-  # we need these to remove the repeats (from equality constraints)
-  labels <-
-    rep_model@ParTable %>%
-    tibble::as_tibble() %>%
-    dplyr::select(lhs, op, rhs, label)
+    # First save out labels
+    # we need these to remove the repeats (from equality constraints)
+    labels <-
+      rep_model@ParTable %>%
+      tibble::as_tibble() %>%
+      dplyr::select(lhs, op, rhs, label)
 
-  # Main parameters only
-  if(what == "main"){
-    rep_parameter_table <- rep_model %>%
-      standardizedsolution() %>%
-      tibble::as_tibble() %>%
-      dplyr::full_join(labels) %>%
-      dplyr::distinct(label, .keep_all = TRUE) %>%
-      dplyr::filter(label == "hc" |
-                      label == "ha" |
-                      label == "da" |
-                      label == "p1ma"|
-                      label == "p2ma") %>%
-      # give them their substantive labels
-      dplyr::mutate(parameter = ifelse(label == "ha", "hearsay accuracy",
-                                       ifelse(label == "hc", "hearsay consensus",
-                                              ifelse(label == "da", "direct accuracy",
-                                                     ifelse(label == "p1ma", "P1 Meta-Accuracy",
-                                                            ifelse(label == "p2ma", "P2 Meta-Accuracy", NA)))))) %>%
-      dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-      dplyr::rename(r = est.std,
-                    ci_lower = ci.lower,
-                    ci_upper = ci.upper)}
-  if(what == "all"){
-    rep_parameter_table <- rep_model %>%
-      standardizedsolution() %>%
-      tibble::as_tibble() %>%
-      dplyr::full_join(labels) %>%
-      dplyr::distinct(label, .keep_all = TRUE) %>%
-      dplyr::filter(label == "ha"|
-                      label == "hc"|
-                      label == "da"|
-                      label == "p1ma"|
-                      label == "p2ma"|
-                      label == "as_ac1"|
-                      label == "as_con1"|
-                      label == "mp_rec"|
-                      label == "as_ac2"|
-                      label == "as_con2"|
-                      label == "rec"|
-                      label == "h"|
-                      label == "m"|
-                      label == "tru_sim"|
-                      label == "as_sim_3p"|
-                      label == "as_sim_1p"|
-                      label == "as_sim_p1m"|
-                      label == "ukp1m1"|
-                      label == "p1meta_sim"|
-                      label == "ukp2m1"|
-                      label == "ukp2m3"|
-                      label == "p2meta_sim"|
-                      label == "ukm1") %>%
-      # give them their substantive labels
-      dplyr::mutate(parameter = ifelse(label == "ha", "hearsay accuracy",
-                                       ifelse(label == "hc", "hearsay consensus",
-                                              ifelse(label == "da", "direct accuracy",
-                                                     ifelse(label == "p1ma", "P1 Meta-Accuracy",
-                                                            ifelse(label == "p2ma", "P2 Meta-Accuracy",
-                                                                   ifelse(label == "as_ac1", "P1 Assumed Accuracy",
-                                                                          ifelse(label == "as_con1", "P1 Assumed Consensus",
-                                                                                 ifelse(label == "mp_rec", "P1-P2 Meta-Perception Reciprocity",
-                                                                                        ifelse(label == "as_ac2", "P2 Assumed Accuracy",
-                                                                                               ifelse(label == "as_con2", "P2 Assumed Consensus",
-                                                                                                      ifelse(label == "rec", "direct reciprocity",
-                                                                                                             ifelse(label == "h", "hearsay reciprocity",
-                                                                                                                    ifelse(label == "m", "P2(T) <-> opposite P1(T)",
-                                                                                                                           ifelse(label == "tru_sim", "True Target Similarity",
-                                                                                                                                  ifelse(label == "as_sim_3p", "Third-Person Assumed Similarity",
-                                                                                                                                         ifelse(label == "as_sim_1p", "First-Person Assumed Similarity",
-                                                                                                                                                ifelse(label == "as_sim_p1m", "P1 Meta- Assumed Similarity",
-                                                                                                                                                       ifelse(label == "ukp1m1", "P1 Meta <-> opposite P1-Report",
-                                                                                                                                                              ifelse(label == "p1meta_sim", "P1 meta-similarity",
-                                                                                                                                                                     ifelse(label == "ukp2m1", "P2 Meta <-> opposite target self-report",
-                                                                                                                                                                            ifelse(label == "ukp2m3", "P2 meta <-> opposite P1-report",
-                                                                                                                                                                                   ifelse(label == "p2meta_sim", "P2 Meta-similarity",
-                                                                                                                                                                                          ifelse(label == "ukm1", "P1 Meta <-> opposite P2 Meta", NA)))))))))))))))))))))))) %>%
-      dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-      dplyr::rename(r = est.std,
-                    ci_lower = ci.lower,
-                    ci_upper = ci.upper)}
+    # Main parameters only
+    if(what == "main"){
+      rep_parameter_table <- rep_model %>%
+        standardizedsolution() %>%
+        tibble::as_tibble() %>%
+        dplyr::full_join(labels) %>%
+        dplyr::distinct(label, .keep_all = TRUE) %>%
+        dplyr::filter(label == "hc" |
+                        label == "ha" |
+                        label == "da" |
+                        label == "p1ma"|
+                        label == "p2ma") %>%
+        # give them their substantive labels
+        dplyr::mutate(parameter = ifelse(label == "ha", "hearsay accuracy",
+                                         ifelse(label == "hc", "hearsay consensus",
+                                                ifelse(label == "da", "direct accuracy",
+                                                       ifelse(label == "p1ma", "P1 Meta-Accuracy",
+                                                              ifelse(label == "p2ma", "P2 Meta-Accuracy", NA)))))) %>%
+        dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
+        dplyr::rename(r = est.std,
+                      ci_lower = ci.lower,
+                      ci_upper = ci.upper)}
+    if(what == "all"){
+      rep_parameter_table <- rep_model %>%
+        standardizedsolution() %>%
+        tibble::as_tibble() %>%
+        dplyr::full_join(labels) %>%
+        dplyr::distinct(label, .keep_all = TRUE) %>%
+        dplyr::filter(label == "ha"|
+                        label == "hc"|
+                        label == "da"|
+                        label == "p1ma"|
+                        label == "p2ma"|
+                        label == "as_ac1"|
+                        label == "as_con1"|
+                        label == "mp_rec"|
+                        label == "as_ac2"|
+                        label == "as_con2"|
+                        label == "rec"|
+                        label == "h"|
+                        label == "m"|
+                        label == "tru_sim"|
+                        label == "as_sim_3p"|
+                        label == "as_sim_1p"|
+                        label == "as_sim_p1m"|
+                        label == "ukp1m1"|
+                        label == "p1meta_sim"|
+                        label == "ukp2m1"|
+                        label == "ukp2m3"|
+                        label == "p2meta_sim"|
+                        label == "ukm1") %>%
+        # give them their substantive labels
+        dplyr::mutate(parameter = ifelse(label == "ha", "hearsay accuracy",
+                                         ifelse(label == "hc", "hearsay consensus",
+                                                ifelse(label == "da", "direct accuracy",
+                                                       ifelse(label == "p1ma", "P1 Meta-Accuracy",
+                                                              ifelse(label == "p2ma", "P2 Meta-Accuracy",
+                                                                     ifelse(label == "as_ac1", "P1 Assumed Accuracy",
+                                                                            ifelse(label == "as_con1", "P1 Assumed Consensus",
+                                                                                   ifelse(label == "mp_rec", "P1-P2 Meta-Perception Reciprocity",
+                                                                                          ifelse(label == "as_ac2", "P2 Assumed Accuracy",
+                                                                                                 ifelse(label == "as_con2", "P2 Assumed Consensus",
+                                                                                                        ifelse(label == "rec", "direct reciprocity",
+                                                                                                               ifelse(label == "h", "hearsay reciprocity",
+                                                                                                                      ifelse(label == "m", "P2(T) <-> opposite P1(T)",
+                                                                                                                             ifelse(label == "tru_sim", "True Target Similarity",
+                                                                                                                                    ifelse(label == "as_sim_3p", "Third-Person Assumed Similarity",
+                                                                                                                                           ifelse(label == "as_sim_1p", "First-Person Assumed Similarity",
+                                                                                                                                                  ifelse(label == "as_sim_p1m", "P1 Meta- Assumed Similarity",
+                                                                                                                                                         ifelse(label == "ukp1m1", "P1 Meta <-> opposite P1-Report",
+                                                                                                                                                                ifelse(label == "p1meta_sim", "P1 meta-similarity",
+                                                                                                                                                                       ifelse(label == "ukp2m1", "P2 Meta <-> opposite target self-report",
+                                                                                                                                                                              ifelse(label == "ukp2m3", "P2 meta <-> opposite P1-report",
+                                                                                                                                                                                     ifelse(label == "p2meta_sim", "P2 Meta-similarity",
+                                                                                                                                                                                            ifelse(label == "ukm1", "P1 Meta <-> opposite P2 Meta", NA)))))))))))))))))))))))) %>%
+        dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
+        dplyr::rename(r = est.std,
+                      ci_lower = ci.lower,
+                      ci_upper = ci.upper)}
   return(rep_parameter_table)}
 
 #' Easily Table Differential Results from Group Moderated Models
@@ -338,7 +338,6 @@ ez_differential_group_table <- function(rep_model,
 #' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
 
 ez_elevation_table <- function(rep_model){
-
   rep_elevation_table <- rep_model %>%
     parameterestimates() %>%
     tibble::as_tibble() %>%
