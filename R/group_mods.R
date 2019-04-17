@@ -45,14 +45,14 @@
 #' @examples
 #'  # build the model
 #'   agree_consensus_model_grpmod <- rep_consensus_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'   p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'   groups = c("Study_1, "Study_2"))
+#'                                                                   p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                                   groups = c("Study_1", "Study_2"))
 #'
 #'  # view the model
 #'  agree_consensus_model_grpmod$model
 #'
 #'  # view the model information
-#'  # agree_consensus_model_grpmod$rep_model_info
+#'   agree_consensus_model_grpmod$rep_model_info
 #'
 #' @return The function returns a list containing an
 #' object of class \code{\link[tibble:tibble-class]{tibble}} with model information
@@ -270,20 +270,48 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
 #'          # build the model
 #'           agree_consensus_grpmod_model <- rep_consensus_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                                           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                                                                           group = levels(rep_sim_data$study))
+#'                                                                           groups = levels(rep_sim_data$study))
 #'          # then fit it
 #'          agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
-#'                                                            agree_consensus_model,
+#'                                                            model = agree_consensus_model,
 #'                                                            group_mod = "study")
 #'
-#'         # And if you wanted to constrain hearsay consensus to be equal
+#'          # fit model with group equality constraints:
+#'          # if we wanted to constrain all parameters to be equal across the 2 groups, that can be done
+#'          # by setting groups_eql and params_eql both to "all".
 #'         agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
 #'                                                           p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                                                           group_mod = "study",
-#'                                                           groups_eql = c("study1", "study2"),
+#'                                                           groups_eql = "all",
 #'                                                           prams_eql = "all")
 #'
+#'         # Or we could constrain just hearsay consensus to be equal
+#'          agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
+#'                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                        group_mod = "study",
+#'                                                        groups_eql = "all",
+#'                                                        params_eql = c("hc", "v_p1", "v_p2"))
+#'
+#'        # It can also handle more groups, and groups without unlabelled groups.
+#'        # The simulated dataset has the group_var variable, which is contains
+#'        # 4 groups, each labelled with just a number (1 to 4). To use an unlabelled group
+#'        # either set use_labs to FALSE or it will do so for you.
+#'        agree_4grp_consensus_fit <- rep_consensus_group_mod(data = rep_sim_data,
+#'                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                        group_mod = "group_var")
+#'
+#'       # for unlabelled groups (or whenever use_labs = FALSE), you can select certain groups for equality constraints
+#'       # by passing a vector of group numbers that should be constrained to be equal. For example, if we wanted
+#'       # just groups 1 and 3 to be equal, we would set groups_eql to c(1, 3), like so:
+#'        agree_4grp_consensus_fit <- rep_consensus_group_mod(data = rep_sim_data,
+#'                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                        group_mod = "group_var",
+#'                                                        groups_eql = c(1, 3),
+#'                                                        params_eql = "all")
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
@@ -304,6 +332,16 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
     # what I've written.
     data <- data[order(data[,group_mod]),]
     groups <- levels(as.factor(data[,group_mod]))
+
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     if(is.null(model)){
       rep_consensus_groups_model <- rep_consensus_group_mod_builder(p1_reports, p2_reports, groups, use_labs = use_labs,
                                                                     n_triads = length(p1_reports),
@@ -420,9 +458,9 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
 #' @examples
 #'  # build the model
 #'   agree_con_acc_model_grpmod <- rep_con_acc_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'   p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'   target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'   groups = c("Study_1", "Study_2"))
+#'                                                               p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                               target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                               groups = c("Study_1", "Study_2"))
 #'
 #'  # view the model
 #'  agree_consensus_model_grpmod$model
@@ -688,28 +726,50 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
 #' @examples
 #' @examples data("rep_sim_data")
 #'           agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
-#'                                            p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                            p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                                            target_self = c("C_C_agreeableness", "A_A_agreeableness"),
-#'                                            group_mod = "study")
+#'                                                         p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                         p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                         target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                         group_mod = "study")
 #'          # alternatively
 #'          # build the model
 #'          agree_con_acc_grpmod_model <- rep_con_acc_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
-#'                                                              p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
-#'                                                              group = levels(rep_sim_data$study))
+#'                                                                      p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                                      target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                                      groups = levels(rep_sim_data$study))
 #'          # then fit it
 #'          agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
-#'                                                        model = agree_consensus_model,
+#'                                                        model = agree_con_acc_grpmod_model,
 #'                                                        group_mod = "study")
 #'
 #'          # fit model with group equality constraints:
-#'          # if we wanted to constrain all parameters to be equal across the 2 groups, we could do that:
+#'          # if we wanted to constrain all parameters to be equal across the 2 groups, that can be done
+#'          # by setting groups_eql and params_eql both to "all".
 #'          agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
 #'                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                                                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                                        group_mod = "study",
 #'                                                        groups_eql = "all",
+#'                                                        params_eql = "all")
+#'
+#'         # Or we could constrain just some parameters to be equal, for example just hearsay accuracy
+#'          agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
+#'                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                        group_mod = "study",
+#'                                                        groups_eql = "all",
+#'                                                        params_eql = c("ha", "v_self", "v_p2"))
+#'
+#'       # for unlabelled groups (or whenever use_labs = FALSE), you can select certain groups for equality constraints
+#'       # by passing a vector of group numbers that should be constrained to be equal. For example, if we wanted
+#'       # just groups 1 and 3 to be equal, we would set groups_eql to c(1, 3), like so:
+#'        agree_4grp_con_acc_fit <- rep_con_acc_group_mod(data = rep_sim_data,
+#'                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                        group_mod = "group_var",
+#'                                                        groups_eql = c(1, 3),
 #'                                                        params_eql = "all")
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
@@ -731,6 +791,16 @@ rep_con_acc_group_mod <- function(data, model = NULL, p1_reports, p2_reports, ta
     # what I've written.
     data <- data[order(data[,group_mod]),]
     groups <- levels(as.factor(data[,group_mod]))
+
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     if(is.null(model)){
       rep_con_acc_group_model <- rep_con_acc_group_mod_builder(p1_reports, p2_reports, target_self,
                                                                groups,  use_labs = use_labs,
@@ -1195,13 +1265,15 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
 #'                                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                                                          p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
 #'                                                                          p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+#'                                                                          groups = levels(rep_sim_data$study))
 #'          # then fit it
 #'          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-#'                                                        model = agree_full_3pmeta_grpmod_model$model,
+#'                                                        model = agree_full_3pmeta_grpmod_model,
 #'                                                        group_mod = "study")
 #'
 #'          # fit model with group equality constraints:
-#'          # if we wanted to constrain all parameters to be equal across the 2 groups, we could do that:
+#'          # if we wanted to constrain all parameters to be equal across the 2 groups, that can be done
+#'          # by setting groups_eql and params_eql both to "all".
 #'          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
 #'                                                                p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                                p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
@@ -1211,6 +1283,19 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
 #'                                                                group_mod = "study",
 #'                                                                groups_eql = "all",
 #'                                                                params_eql = "all")
+#'
+#'       # for unlabelled groups (or whenever use_labs = FALSE), you can select certain groups for equality constraints
+#'       # by passing a vector of group numbers that should be constrained to be equal. For example, if we wanted
+#'       # just groups 1 and 3 to be equal, we would set groups_eql to c(1, 3), like so:
+#'        agree_4grp_full_fit <- rep_full_3pmeta_group_mod(data = rep_sim_data,
+#'                                                        p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                        p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                        target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                        p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                                                        p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+#'                                                        group_mod = "group_var",
+#'                                                        groups_eql = c(1, 3),
+#'                                                        params_eql = "all")
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
@@ -1233,6 +1318,16 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
     # what I've written.
     data <- data[order(data[,group_mod]),]
     groups <- levels(as.factor(data[,group_mod]))
+
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     if(is.null(model)){
       rep_full_3pmeta_group_model <- rep_full_3pmeta_group_mod_builder(p1_reports, p2_reports, target_self, p1_meta,
                                                                        p2_meta, groups = groups, use_labs = use_labs, n_triads = length(p1_reports),
@@ -1514,15 +1609,17 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
 #'                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
 #'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
-#' # build a bsaeline model examining perspective taking moderating hearsay consensus across two studies (no equality across studies)
+#' # build a bsaeline model examining perspective taking moderating hearsay consensus across groups (studies in this case)
 #' agree_pt_mod_model <- rep_generic_group_id_mods (moderator_data,
 #'                                            rating_1 = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                            rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                            id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                            interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-#'                                            group_mod = "study)
+#'                                            group_mod = "study")
 #'
-#' # build a bsaeline model examining perspective taking moderating hearsay consensus across two studies (no equality across studies)
+#'          # fit model with group equality constraints:
+#'          # if we wanted to constrain all parameters to be equal across the 2 groups, that can be done
+#'          # by setting groups_eql and params_eql both to "all".
 #' agree_pt_mod_model <- rep_generic_group_id_mods (moderator_data,
 #'                                            rating_1 = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                            rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
@@ -1550,6 +1647,16 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
     # what I've written.
     data <- data[order(data[,group_mod]),]
     groups <- levels(as.factor(data[,group_mod]))
+
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     if(is.null(model)){
       rep_generic_group_id_model <- rep_generic_group_id_mods_builder(rating_1 = rating_1, rating_2 = rating_2,
                                                                          id_mod_variable = id_mod_variable, interaction_term = interaction_term,
@@ -1832,16 +1939,16 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
 #'                                           p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                           id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                           interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-#'                                           group_mod = "study)
+#'                                           group_mod = "study")
 #'
 #' # Alternatively:
 #' agree_pt_mod_model <- rep_consensus_id_mods_builder (p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                      p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                                      id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                                      interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-#'                                                      groups = c("study1", "study2"))
+#'                                                      groups = levels(rep_sim_data$study))
 #'
-#' agree_pt_mod_fit <- rep_consensus_id_mods(moderator_data, model = agree_pt_mod_model$model, group_mod = "study)
+#' agree_pt_mod_fit <- rep_consensus_id_mods(moderator_data, model = agree_pt_mod_model, group_mod = "study")
 #'
 #' # constrain all parameters to be equal across all groups
 #' agree_pt_mod_all_eq_fit<- rep_consensus_id_mods(moderator_data,
@@ -1849,7 +1956,7 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
 #'                                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-#'                                                 group_mod = "study, groups_eql = "all", params_eql = "all")
+#'                                                 group_mod = "study", groups_eql = "all", params_eql = "all")
 #'
 #' # Or you could constrain one parameter to be equal across all groups
 #' agree_pt_mod_hc_eq_fit<- rep_consensus_id_mods(moderator_data,
@@ -1857,7 +1964,7 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
 #'                                                p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                                id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                                interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-#'                                                group_mod = "study, groups_eql = "all", params_eql = "hc_me")
+#'                                                group_mod = "study", groups_eql = "all", params_eql = "hc_me")
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
@@ -1880,6 +1987,16 @@ rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_var
     # what I've written.
     data <- data[order(data[,group_mod]),]
     groups <- levels(as.factor(data[,group_mod]))
+
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     if(is.null(model)){
       rep_consensus_group_id_model <- rep_consensus_group_id_mods_builder(p1_reports = p1_reports, p2_reports = p2_reports,
                                                                           id_mod_variable = id_mod_variable, interaction_term = interaction_term,
@@ -2177,15 +2294,16 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
 #'                                                      interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
 #'                                                      groups = c("study1", "study2"))
 #'
-#' agree_pt_mod_fit <- rep_accuracy_id_mods(moderator_data, model = agree_pt_mod_model$model, group_mod = "study)
+#' agree_pt_mod_fit <- rep_accuracy_id_mods(moderator_data, model = agree_pt_mod_model, group_mod = "study)
 #'
-#' # constrain all parameters to be equal across all groups
+#' # You could constrain all parameters to be equal across all groups
+#' # by setting both the groups_eql and params_eql arguments to "all"
 #' agree_pt_mod_all_eq_fit<- rep_accuracy_id_mods(moderator_data,
 #'                                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-#'                                                 group_mod = "study, groups_eql = "all", params_eql = "all")
+#'                                                 group_mod = "study", groups_eql = "all", params_eql = "all")
 #'
 #' # Or you could constrain one parameter to be equal across all groups
 #' agree_pt_mod_ha_eq_fit<- rep_accuracy_id_mods(moderator_data,
@@ -2193,7 +2311,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
 #'                                                p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                                id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                                interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
-#'                                                group_mod = "study, groups_eql = "all", params_eql = "ha_me")
+#'                                                group_mod = "study", groups_eql = "all", params_eql = "ha_me")
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
@@ -2215,6 +2333,16 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
     # what I've written.
     data <- data[order(data[,group_mod]),]
     groups <- levels(as.factor(data[,group_mod]))
+
+    # Make sure group labels aren't numbers, which
+    # screw up the lavaan syntax. If they are, change use_labs
+    # to TRUE, which creates generic labels that will work.
+    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+      use_labs = FALSE
+      message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
+    }
     if(is.null(model)){
       rep_accuracy_group_id_model <- rep_accuracy_group_id_mods_builder(target_self = target_self, p2_reports = p2_reports,
                                                                          id_mod_variable = id_mod_variable, interaction_term = interaction_term,
@@ -2336,13 +2464,26 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
 #'                                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                                                          p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
 #'                                                                          p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+#'                                                                          groups = levels(rep_sim_data$study))
 #'          # then fit it
 #'          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
-#'                                                        model = agree_full_3pmeta_grpmod_model$model,
+#'                                                        model = agree_full_3pmeta_grpmod_model,
 #'                                                        group_mod = "study")
 #'
-#'          # fit model with group equality constraints:
-#'          # if we wanted to constrain all parameters to be equal across the 2 groups, we could do that:
+#'          # You could constrain all parameters to be equal across all groups
+#'          # by setting both the groups_eql and params_eql arguments to "all"
+#'          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
+#'                                                                p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+#'                                                                p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
+#'                                                                target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                                p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
+#'                                                                p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
+#'                                                                group_mod = "study",
+#'                                                                groups_eql = "all",
+#'                                                                params_eql = "all")
+#'
+#'          # You could constrain all parameters to be equal across all groups
+#'          # by setting both the groups_eql and params_eql arguments to "all"
 #'          agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
 #'                                                                p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
 #'                                                                p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
@@ -2363,6 +2504,16 @@ rep_auto_group_mod <- function(data, model = NULL, p1_reports, p2_reports, targe
   if(is.null(group_mod)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                                  If you don't have a group moderator, try rep_consensus if you have no moderator or
                                  rep_id_mods_consensus if you have an individual difference moderator.")
+  }
+  # Make sure group labels aren't numbers, which
+  # screw up the lavaan syntax. If they are, change use_labs
+  # to TRUE, which creates generic labels that will work.
+  if(!is.na(as.numeric(groups))
+     & use_labs == TRUE){
+    use_labs = FALSE
+    message("Labels are numeric variables and use_labs was set to TRUE. This creates
+              problems in the underlying lavaan syntax. use_labs is being set to FALSE,
+              creating group labels of grp1 to grpk where k is the number of groups")
   }
   else if(is.null(target_self) &
           is.null(p1_meta) &
