@@ -74,7 +74,7 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -95,8 +95,8 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
       groups <- paste0("grp", 1:n_groups)
       }
 
-    if(n_triads > 0 &
-       n_p1s_per_p2s == 1 &
+    if(n_triads > 0 &&
+       n_p1s_per_p2s == 1 &&
        n_p2s_per_p1s == 1){
       rep_model <- rep_consensus_builder(p1_reports, p2_reports, n_triads = length(p1_reports),
                                                    n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)
@@ -168,8 +168,8 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
           stringr::str_flatten(collaps = "\n")
       }
       # code for 2 triads
-      if(n_triads > 1 &
-         n_p1s_per_p2s == 1 &
+      if(n_triads > 1 &&
+         n_p1s_per_p2s == 1 &&
          n_p2s_per_p1s == 1){
         # create empty model
         model <- ""
@@ -336,7 +336,7 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -348,17 +348,17 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
                                                                     n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)}
     else{rep_consensus_groups_model <- model}
 
-    if(groups_eql != "none" &
-       groups_eql != "all" &
+    if(groups_eql != "none" &&
+       groups_eql != "all" &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" & use_labs == FALSE){
+    if(groups_eql == "all" && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" & use_labs == TRUE){
+    if(groups_eql == "all" && use_labs == TRUE){
       groups_eql <- groups
     }
 
@@ -490,7 +490,7 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -510,8 +510,8 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
     if(use_labs == FALSE){
       groups <- paste0("grp", 1:n_groups)
     }
-    if(n_triads > 0 &
-       n_p1s_per_p2s == 1 &
+    if(n_triads > 0 &&
+       n_p1s_per_p2s == 1 &&
        n_p2s_per_p1s == 1){
       rep_model <- rep_consensus_accuracy_builder(p1_reports, p2_reports, target_self,
                                                             n_triads = length(p1_reports),
@@ -594,8 +594,8 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
           stringr::str_flatten(collaps = "\n")
       }
       # code for 2 triads
-      if(n_triads > 1 &
-         n_p1s_per_p2s == 1 &
+      if(n_triads > 1 &&
+         n_p1s_per_p2s == 1 &&
          n_p2s_per_p1s == 1){
         # create empty model
         model <- ""
@@ -795,7 +795,7 @@ rep_con_acc_group_mod <- function(data, model = NULL, p1_reports, p2_reports, ta
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -810,17 +810,17 @@ rep_con_acc_group_mod <- function(data, model = NULL, p1_reports, p2_reports, ta
     else{rep_con_acc_group_model <- model}
 
 
-    if(groups_eql != "none" &
-       groups_eql != "all" &
+    if(groups_eql != "none" &&
+       groups_eql != "all" &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" & use_labs == FALSE){
+    if(groups_eql == "all" && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" & use_labs == TRUE){
+    if(groups_eql == "all" && use_labs == TRUE){
       groups_eql <- groups
     }
 
@@ -973,7 +973,7 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -993,8 +993,8 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
     if(use_labs == FALSE){
       groups <- paste0("grp", 1:n_groups)
     }
-    if(n_triads > 0 &
-       n_p1s_per_p2s == 1 &
+    if(n_triads > 0 &&
+       n_p1s_per_p2s == 1 &&
        n_p2s_per_p1s == 1){
       rep_model <- rep_full_w_3pmeta_builder(p1_reports, p2_reports, target_self,
                                                             p1_meta, p2_meta,
@@ -1086,8 +1086,8 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
           stringr::str_flatten(collaps = "\n")
       }
       # code for 2 triads
-      if(n_triads > 1 &
-         n_p1s_per_p2s == 1 &
+      if(n_triads > 1 &&
+         n_p1s_per_p2s == 1 &&
          n_p2s_per_p1s == 1){
         # create empty model
         model <- ""
@@ -1322,7 +1322,7 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1338,17 +1338,17 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
     else{rep_full_3pmeta_group_model <- model}
 
 
-    if(groups_eql != "none" &
-       groups_eql != "all" &
+    if(groups_eql != "none" &&
+       groups_eql != "all" &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" & use_labs == FALSE){
+    if(groups_eql == "all" && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" & use_labs == TRUE){
+    if(groups_eql == "all" && use_labs == TRUE){
       groups_eql <- groups
     }
 
@@ -1470,7 +1470,7 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1490,8 +1490,8 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
     if(use_labs == FALSE){
       groups <- paste0("grp", 1:n_groups)
     }
-    if(n_triads > 0 &
-       n_r1_per_r2 == 1 &
+    if(n_triads > 0 &&
+       n_r1_per_r2 == 1 &&
        n_r1_per_r2 == 1){
 
       rep_model <- rep_generic_id_mods_builder(rating_1 = rating_1, rating_2 = rating_2,
@@ -1651,7 +1651,7 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1666,17 +1666,17 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
     else{rep_consensus_group_id_model <- model}
 
 
-    if(groups_eql != "none" &
-       groups_eql != "all" &
+    if(groups_eql != "none" &&
+       groups_eql != "all" &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" & use_labs == FALSE){
+    if(groups_eql == "all" && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" & use_labs == TRUE){
+    if(groups_eql == "all" && use_labs == TRUE){
       groups_eql <- groups
     }
 
@@ -1786,7 +1786,7 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1806,8 +1806,8 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
     if(use_labs == FALSE){
       groups <- paste0("grp", 1:n_groups)
     }
-    if(n_triads > 0 &
-       n_p1s_per_p2s == 1 &
+    if(n_triads > 0 &&
+       n_p1s_per_p2s == 1 &&
        n_p2s_per_p1s == 1){
 
   rep_model <- rep_consensus_id_mods_builder(p1_reports = p1_reports, p2_reports = p2_reports,
@@ -1991,7 +1991,7 @@ rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_var
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -2006,17 +2006,17 @@ rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_var
     else{rep_consensus_group_id_model <- model}
 
 
-    if(groups_eql != "none" &
-       groups_eql != "all" &
+    if(groups_eql != "none" &&
+       groups_eql != "all" &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" & use_labs == FALSE){
+    if(groups_eql == "all" && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" & use_labs == TRUE){
+    if(groups_eql == "all" && use_labs == TRUE){
       groups_eql <- groups
     }
 
@@ -2127,7 +2127,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -2147,8 +2147,8 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
     if(use_labs == FALSE){
       groups <- paste0("grp", 1:n_groups)
     }
-    if(n_triads > 0 &
-       n_ts_per_p2s == 1 &
+    if(n_triads > 0 &&
+       n_ts_per_p2s == 1 &&
        n_p2s_per_ts == 1){
 
       rep_model <- rep_accuracy_id_mods_builder(target_self = target_self, p2_reports = p2_reports,
@@ -2337,7 +2337,7 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) & use_labs == TRUE){
+    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -2352,17 +2352,17 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
     else{rep_accuracy_group_id_model <- model}
 
 
-    if(groups_eql != "none" &
-       groups_eql != "all" &
+    if(groups_eql != "none" &&
+       groups_eql != "all" &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" & use_labs == FALSE){
+    if(groups_eql == "all" && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" & use_labs == TRUE){
+    if(groups_eql == "all" && use_labs == TRUE){
       groups_eql <- groups
     }
 
@@ -2492,27 +2492,27 @@ rep_auto_group_mod <- function(data, model = NULL, p1_reports, p2_reports, targe
   # screw up the lavaan syntax. If they are, change use_labs
   # to TRUE, which creates generic labels that will work.
   if(!is.na(as.numeric(groups))
-     & use_labs == TRUE){
+     && use_labs == TRUE){
     use_labs = FALSE
     message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
               creating group labels of grp1 to grpk where k is the number of groups")
   }
-  else if(is.null(target_self) &
-          is.null(p1_meta) &
+  else if(is.null(target_self) &&
+          is.null(p1_meta) &&
           is.null(p2_meta)){
       fitted_model <- rep_consensus_group_mod(data = data, p1_reports = p1_reports, p2_reports = p2_reports,
                                               group_mod = group_mod, use_labs = use_labs, groups_eql = groups_eql,
                                               params_eql = params_eql)
     }
-    else if(is.null(p1_meta) &
+    else if(is.null(p1_meta) &&
             is.null(p2_meta)){
       fitted_model <- rep_con_acc_group_mod(data = data, p1_reports = p1_reports, p2_reports = p2_reports,
                                             target_self = target_self, group_mod = group_mod, use_labs = use_labs,
                                             groups_eql = groups_eql,params_eql = params_eql)
     }
-    else if(!is.null(target_self) &
-            !is.null(p1_meta) &
+    else if(!is.null(target_self) &&
+            !is.null(p1_meta) &&
             !is.null(p2_meta)){
       fitted_model <- rep_full_3pmeta_group_mod(data = data, p1_reports = p1_reports,  p2_reports = p2_reports,
                                         target_self = target_self, p1_meta = p1_meta, p2_meta = p2_meta,
