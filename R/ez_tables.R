@@ -295,12 +295,13 @@ ez_differential_group_table <- function(rep_model,
     rep_parameter_table <- ez_differential_table(rep_model = rep_model,
                                                   what = what)
   }
-  else {
+  else{
+    rep_elevation_table_eqls <- NULL
     if(max(rep_model@ParTable[["group"]]) != nrow(unique(rep_parameter_table["group_label"]))){
       rep_parameter_table_eqls <- ez_differential_table(rep_model = rep_model,
                                                     what = what)
     }
-    if(nrow(rep_parameter_table_eqls) > 0){
+    if(!is.null(rep_elevation_table_eqls) && nrow(rep_parameter_table_eqls) > 0){
       rep_parameter_table <- dplyr::full_join(rep_parameter_table, rep_parameter_table_eqls)
       rep_parameter_table <- dplyr::mutate(rep_parameter_table, group_label = ifelse(is.na(group_label), "eql", group_label))
       message("The Model you provided had some between-group equality constraints.
