@@ -540,60 +540,82 @@ ez_elevation_group_table <- function(rep_model){
                     stringr::str_detect(parameter, "int_")) %>%
     dplyr::select(group_label, parameter, est) %>%
     tidyr::spread(parameter, est)
+  # When all parameters are constrained to be equal, the above
+  # will produce an empty tibble. In that case, we just want to
+  # run the non-group elevation table function.
+  if(nrow(rep_elevation_table) == 0){
+    rep_elevation_table <- ez_elevation_table(rep_model = rep_model)[[1]]
+    rep_descrips <- ez_elevation_table(rep_model = rep_model)[[2]]
+    # provide a label of 'eql' for group_labs if there is a group variable
+    if(max(rep_model@ParTable[["group"]]) > 1){
+      rep_elevation_table <- rep_elevation_table %>%
+        dplyr::mutate(group_label = "eql") %>%
+        dplyr::select(group_label, dplyr::everything())
 
-  # calculate d's
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
-    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         p1_p2_std_d = p1_p2_rel_el / sqrt((v_p1 + v_p2) / 2))}
+      rep_descrips <- rep_descrips %>%
+        dplyr::mutate(group_label = "eql") %>%
+        dplyr::select(group_label, dplyr::everything())
+    }
+    else{
+      rep_elevation_table <- rep_elevation_table %>%
+        dplyr::mutate(group_label = "No Group Moderator in Model") %>%
+        dplyr::select(group_label, dplyr::everything())
 
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p2_rel_el"))) > 0){
-    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         self_p2_std_d = self_p2_rel_el / sqrt((v_self + v_p2) / 2))}
+      rep_descrips <- rep_descrips %>%
+        dplyr::mutate(group_label = "No Group Moderator in Model") %>%
+        dplyr::select(group_label, dplyr::everything())
+    }
+  }
+  else{
+    # calculate d's
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
+      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                           p1_p2_std_d = p1_p2_rel_el / sqrt((v_p1 + v_p2) / 2))}
 
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p1_rel_el"))) > 0){
-    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         self_p1_std_d = self_p1_rel_el / sqrt((v_self + v_p1) / 2))}
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p2_rel_el"))) > 0){
+      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                           self_p2_std_d = self_p2_rel_el / sqrt((v_self + v_p2) / 2))}
 
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_meta_rel_el"))) > 0){
-    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         p1_meta_std_d = p1_meta_rel_el / sqrt((v_mp1 + v_p2) / 2))}
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p1_rel_el"))) > 0){
+      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                           self_p1_std_d = self_p1_rel_el / sqrt((v_self + v_p1) / 2))}
 
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p2_meta_rel_el"))) > 0){
-    rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         p2_meta_std_d = p2_meta_rel_el / sqrt((v_mp2 + v_p1) / 2))}
-  rel_el_only <- rep_model %>%
-    parameterestimates() %>%
-    tibble::as_tibble() %>%
-    tidyr::separate(label, c("group_label", "parameter"), extra = "merge", fill = "left") %>%
-    dplyr::distinct(group_label, parameter, .keep_all = TRUE) %>%
-    dplyr::filter(parameter == "p1_p2_rel_el"|
-                  parameter == "self_p2_rel_el"|
-                  parameter == "self_p1_rel_el"|
-                  parameter == "p1_meta_rel_el"|
-                  parameter == "p2_meta_rel_el") %>%
-    dplyr::select(group_label, parameter, est, se, z, pvalue, ci.lower, ci.upper)
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_meta_rel_el"))) > 0){
+      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                           p1_meta_std_d = p1_meta_rel_el / sqrt((v_mp1 + v_p2) / 2))}
 
-  rep_elevation_table <-
-  rep_elevation_table %>%
-    dplyr::select(group_label, dplyr::ends_with("std_d")) %>%
-    tidyr::gather(parameter, cohen_d, -group_label) %>%
-    dplyr::mutate(parameter = stringr::str_replace_all(parameter, "std_d", "rel_el")) %>%
-    dplyr::left_join(rel_el_only) %>%
-    # give them their substantive labels
-    dplyr::mutate(parameter = ifelse(parameter == "p1_p2_rel_el", "P1-P2 Relative Elevation",
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p2_meta_rel_el"))) > 0){
+      rep_elevation_table <- dplyr::mutate(rep_elevation_table,
+                                           p2_meta_std_d = p2_meta_rel_el / sqrt((v_mp2 + v_p1) / 2))}
+    rel_el_only <- rep_model %>%
+      parameterestimates() %>%
+      tibble::as_tibble() %>%
+      tidyr::separate(label, c("group_label", "parameter"), extra = "merge", fill = "left") %>%
+      dplyr::distinct(group_label, parameter, .keep_all = TRUE) %>%
+      dplyr::filter(parameter == "p1_p2_rel_el"|
+                      parameter == "self_p2_rel_el"|
+                      parameter == "self_p1_rel_el"|
+                      parameter == "p1_meta_rel_el"|
+                      parameter == "p2_meta_rel_el") %>%
+      dplyr::select(group_label, parameter, est, se, z, pvalue, ci.lower, ci.upper)
+
+    rep_elevation_table <-
+      rep_elevation_table %>%
+      dplyr::select(group_label, dplyr::ends_with("std_d")) %>%
+      tidyr::gather(parameter, cohen_d, -group_label) %>%
+      dplyr::mutate(parameter = stringr::str_replace_all(parameter, "std_d", "rel_el")) %>%
+      dplyr::left_join(rel_el_only) %>%
+      # give them their substantive labels
+      dplyr::mutate(parameter = ifelse(parameter == "p1_p2_rel_el", "P1-P2 Relative Elevation",
                                        ifelse(parameter == "self_p2_rel_el", "Self-P2 Relative Elevation",
                                               ifelse(parameter == "self_p1_rel_el", "Self-P1 Relative Elevation",
                                                      ifelse(parameter == "p1_meta_rel_el", "P1 Meta-Elevation",
                                                             ifelse(parameter == "p2_meta_rel_el", "P2 Meta-Elevation", NA)))))) %>%
-    dplyr::select(group_label, parameter, est, ci.lower, ci.upper, cohen_d, z, pvalue) %>%
-    dplyr::rename(raw_diff = est,
-                  ci_lower = ci.lower,
-                  ci_upper = ci.upper)
+      dplyr::select(group_label, parameter, est, ci.lower, ci.upper, cohen_d, z, pvalue) %>%
+      dplyr::rename(raw_diff = est,
+                    ci_lower = ci.lower,
+                    ci_upper = ci.upper)
 
-  if(nrow(rep_elevation_table) == 0){
-    rep_elevation_table <- ez_elevation_table(rep_model = rep_model)
-  }
-  else {
     rep_elevation_table_eqls <- NULL
     if(max(rep_model@ParTable[["group"]]) != nrow(unique(rep_elevation_table["group_label"]))){
       rep_elevation_table_eqls <- ez_elevation_table(rep_model = rep_model)$elevation_table
@@ -604,71 +626,70 @@ ez_elevation_group_table <- function(rep_model){
       message("The Model you provided had some between-group equality constraints.
               Those pooled estimates are in the rows where group is marked eql")
     }
+    rep_descrips <- rep_model %>%
+      parameterestimates() %>%
+      tibble::as_tibble() %>%
+      dplyr::filter(str_detect(label, "int") | str_detect(label, "v")) %>%
+      dplyr::mutate(label = ifelse(str_detect(label, "^int"), str_replace_all(label, label, paste("eql", label, sep = "_")),
+                                   ifelse(str_detect(label, "^v"), str_replace_all(label, label, paste("eql", label, sep = "_")), label))) %>%
+      tidyr::separate(label, c("group_label", "parameter"), extra = "merge", fill = "left") %>%
+      dplyr::distinct(group_label, parameter, .keep_all = TRUE) %>%
+      dplyr::select(group_label, parameter, est) %>%
+      tidyr::spread(parameter, est)
+
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
+      rep_descrips <- dplyr::mutate(rep_descrips,
+                                    self_sd = sqrt(v_self))}
+
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p1"))) > 0){
+      rep_descrips <- dplyr::mutate(rep_descrips,
+                                    p1_sd = sqrt(v_p1))}
+
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p2"))) > 0){
+      rep_descrips <- dplyr::mutate(rep_descrips,
+                                    p2_sd = sqrt(v_p2))}
+
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
+      rep_descrips <- dplyr::mutate(rep_descrips,
+                                    mp1_sd = sqrt(v_mp1))}
+
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
+      rep_descrips <- dplyr::mutate(rep_descrips,
+                                    mp2_sd = sqrt(v_mp2))}
+
+    rep_descrips <- rep_descrips %>%
+      dplyr::select(group_label, dplyr::starts_with("int"), dplyr::ends_with("sd"))
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
+      rep_descrips <- dplyr::rename(rep_descrips,
+                                    p1_t_mean = int_p1,
+                                    p1_t_sd = p1_sd,
+                                    p2_t_mean = int_p2,
+                                    p2_t_sd = p2_sd)}
+
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
+      rep_descrips <- dplyr::rename(rep_descrips,
+                                    t_t_mean  = int_self,
+                                    t_t_sd    = self_sd)}
+
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
+      rep_descrips <- dplyr::rename(rep_descrips,
+                                    p1_p2t_mean = int_mp1,
+                                    p1_p2t_sd = mp1_sd)}
+    if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
+      rep_descrips <- dplyr::rename(rep_descrips,
+                                    p2_p1t_mean = int_mp2,
+                                    p2_p1t_sd = mp2_sd)}
+
+    rep_descrips <- rep_descrips %>%
+      tidyr::gather(variable, value, -group_label) %>%
+      tidyr::separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
+      dplyr::mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
+                    target = stringr::str_replace(target, "p2t", "p2_t")) %>%
+      tidyr::spread(stat, value)
   }
 
-  rep_descrips <- rep_model %>%
-    parameterestimates() %>%
-    tibble::as_tibble() %>%
-    dplyr::filter(str_detect(label, "int") | str_detect(label, "v")) %>%
-    dplyr::mutate(label = ifelse(str_detect(label, "^int"), str_replace_all(label, label, paste("eql", label, sep = "_")),
-                           ifelse(str_detect(label, "^v"), str_replace_all(label, label, paste("eql", label, sep = "_")), label))) %>%
-    tidyr::separate(label, c("group_label", "parameter"), extra = "merge", fill = "left") %>%
-    dplyr::distinct(group_label, parameter, .keep_all = TRUE) %>%
-    dplyr::select(group_label, parameter, est) %>%
-    tidyr::spread(parameter, est)
 
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  self_sd = sqrt(v_self))}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p1"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  p1_sd = sqrt(v_p1))}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p2"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  p2_sd = sqrt(v_p2))}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  mp1_sd = sqrt(v_mp1))}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
-    rep_descrips <- dplyr::mutate(rep_descrips,
-                                  mp2_sd = sqrt(v_mp2))}
-
-  rep_descrips <- rep_descrips %>%
-    dplyr::select(group_label, dplyr::starts_with("int"), dplyr::ends_with("sd"))
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
-    rep_descrips <- dplyr::rename(rep_descrips,
-                                  p1_t_mean = int_p1,
-                                  p1_t_sd = p1_sd,
-                                  p2_t_mean = int_p2,
-                                  p2_t_sd = p2_sd)}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
-    rep_descrips <- dplyr::rename(rep_descrips,
-                                  t_t_mean  = int_self,
-                                  t_t_sd    = self_sd)}
-
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
-    rep_descrips <- dplyr::rename(rep_descrips,
-                                  p1_p2t_mean = int_mp1,
-                                  p1_p2t_sd = mp1_sd)}
-  if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
-    rep_descrips <- dplyr::rename(rep_descrips,
-                                  p2_p1t_mean = int_mp2,
-                                  p2_p1t_sd = mp2_sd)}
-
-  rep_descrips <- rep_descrips %>%
-    tidyr::gather(variable, value, -group_label) %>%
-    tidyr::separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
-    dplyr::mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
-                  target = stringr::str_replace(target, "p2t", "p2_t")) %>%
-    tidyr::spread(stat, value)
-
-
-  return(list(elevation_table = rep_elevation_table,
+  return(list(elevation_table = dplyr::arrange(rep_elevation_table, group_label),
               pooled_means_sd = rep_descrips))}
 
 #' Easy Differential & Elevation Tables
@@ -723,10 +744,16 @@ ez_elevation_group_table <- function(rep_model){
 #' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
 
 ez_tables <- function(rep_model, what = "main"){
-  differential_table <- ez_differential_table(rep_model = rep_model, what = what)
-  elevation_table <- ez_elevation_table(rep_model = rep_model)[[1]]
-  pooled_means_sd <- ez_elevation_table(rep_model = rep_model)[[2]]
-
+  if(max(rep_model@ParTable[["group"]]) > 1){
+    differential_table <- ez_differential_group_table(rep_model = rep_model, what = what)
+    elevation_table <- ez_elevation_group_table(rep_model = rep_model)[[1]]
+    pooled_means_sd <- ez_elevation_group_table(rep_model = rep_model)[[2]]
+  }
+  else{
+    differential_table <- ez_differential_table(rep_model = rep_model, what = what)
+    elevation_table <- ez_elevation_table(rep_model = rep_model)[[1]]
+    pooled_means_sd <- ez_elevation_table(rep_model = rep_model)[[2]]
+  }
   return(list(differential_table = differential_table,
               elevation_table = elevation_table,
               pooled_means_sd = pooled_means_sd))
