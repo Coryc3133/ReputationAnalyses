@@ -2494,7 +2494,6 @@ rep_auto_group_mod <- function(data, model = NULL, p1_reports, p2_reports, targe
   if(!is.na(as.numeric(groups))
      && use_labs == TRUE){
     use_labs = FALSE
-    print(use_labs)
     message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
               creating group labels of grp1 to grpk where k is the number of groups")
