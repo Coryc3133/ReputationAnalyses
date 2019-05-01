@@ -80,7 +80,7 @@ data("rep_sim_data")
                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 
 # build a model examining perspective taking moderating hearsay consensus across two studies
-agree_pt_mod_model <- rep_generic_id_mods_builder (rating_1 = c("C_C_agreeableness", "A_A_agreeableness"),
+agree_pt_mod_model <- rep_generic_group_id_mods_builder (rating_1 = c("C_C_agreeableness", "A_A_agreeableness"),
                                                      rating_2 = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                                      id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                                      interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),

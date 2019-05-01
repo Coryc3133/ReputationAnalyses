@@ -98,7 +98,7 @@ data("rep_sim_data")
 
     # Fit a model examining perspective taking moderating hearsay consensus across two studies
     # allowing estimates to differ across studies
-agree_pt_mod_fit <- rep_consensus_id_mods(moderator_data,
+agree_pt_mod_fit <- rep_consensus_group_id_mods(moderator_data,
                                           p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                           p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                           id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
@@ -106,16 +106,16 @@ agree_pt_mod_fit <- rep_consensus_id_mods(moderator_data,
                                           group_mod = "study")
 
 # Alternatively:
-agree_pt_mod_model <- rep_consensus_id_mods_builder (p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
+agree_pt_mod_model <- rep_consensus_group_id_mods_builder (p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                      p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                                      id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                                      interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
                                                      groups = levels(rep_sim_data$study))
 
-agree_pt_mod_fit <- rep_consensus_id_mods(moderator_data, model = agree_pt_mod_model, group_mod = "study")
+agree_pt_mod_fit <- rep_consensus_group_id_mods(moderator_data, model = agree_pt_mod_model, group_mod = "study")
 
 # constrain all parameters to be equal across all groups
-agree_pt_mod_all_eq_fit<- rep_consensus_id_mods(moderator_data,
+agree_pt_mod_all_eq_fit<- rep_consensus_group_id_mods(moderator_data,
                                                 p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
@@ -123,7 +123,7 @@ agree_pt_mod_all_eq_fit<- rep_consensus_id_mods(moderator_data,
                                                 group_mod = "study", groups_eql = "all", params_eql = "all")
 
 # Or you could constrain one parameter to be equal across all groups
-agree_pt_mod_hc_eq_fit<- rep_consensus_id_mods(moderator_data,
+agree_pt_mod_hc_eq_fit<- rep_consensus_group_id_mods(moderator_data,
                                                p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
                                                p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                                id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
