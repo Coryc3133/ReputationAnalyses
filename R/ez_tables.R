@@ -593,10 +593,11 @@ ez_elevation_group_table <- function(rep_model){
     rep_elevation_table <- ez_elevation_table(rep_model = rep_model)
   }
   else {
+    rep_elevation_table_eqls <- NULL
     if(max(rep_model@ParTable[["group"]]) != nrow(unique(rep_elevation_table["group_label"]))){
       rep_elevation_table_eqls <- ez_elevation_table(rep_model = rep_model)$elevation_table
     }
-    if(nrow(rep_elevation_table_eqls) > 0){
+    if(!is.null(rep_elevation_table_eqls) && nrow(rep_elevation_table_eqls) > 0){
       rep_elevation_table <- dplyr::full_join(rep_elevation_table, rep_elevation_table_eqls)
       rep_elevation_table <- dplyr::mutate(rep_elevation_table, group_label = ifelse(is.na(group_label), "eql", group_label))
       message("The Model you provided had some between-group equality constraints.
