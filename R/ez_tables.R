@@ -310,6 +310,63 @@ ez_differential_group_table <- function(rep_model,
   }
   return(rep_parameter_table)}
 
+#' Easily Table Individual Difference Moderator Results
+#'
+#' This takes output from one of the individual-level moderated reputation models
+#' (e.g., rep_auto_id_mods) and returns a tibble of model
+#' (regression) parameters. It works with any of the Individual-level moderated models.
+#' @param rep_model The results from one of the ReputationAnalyses
+#' individual-level moderator Models (e.g., rep_auto_id_mods).
+#' @import tidyverse
+#' @export
+#' @examples data("rep_sim_data")
+#' library(tidyverse)
+#' moderator_data <- rep_sim_data %>%
+#' mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'        D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
+#'        B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
+#'        D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
+#'        B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
+#'        D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
+#'
+#' # Example for hearsay accuracy
+#' agree_ha_p2ptmod_model <- rep_auto_id_mods(data = moderator_data,
+#'                  target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                  p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+#'                  id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+#'                  interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
+#'  ez_id_mod_table(agree_ha_p2ptmod_model)
+#'
+#'
+#' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+
+ez_id_mod_table <- function(rep_model){
+  # First save out labels
+  # we need these to remove the repeats (from equality constraints)
+  labels <- rep_model@ParTable %>%
+    tibble::as_tibble() %>%
+    dplyr::select(lhs, op, rhs, label)
+
+  rep_parameter_table <- rep_model %>%
+      standardizedsolution() %>%
+      tibble::as_tibble() %>%
+      dplyr::full_join(labels) %>%
+      dplyr::distinct(label, .keep_all = TRUE) %>%
+      dplyr::filter(label == "hc_me" |
+                    label == "ha_me" |
+                    label == "mod_me" |
+                    label == "interaction") %>%
+      # give them their substantive labels
+      dplyr::mutate(parameter = ifelse(label == "hc_me", "hearsay consensus (main effect)",
+                                       ifelse(label == "ha_me", "hearsay accuracy (main effect)",
+                                              ifelse(label == "mod_me", "moderator (main effect)",
+                                                     ifelse(label == "interaction", "interaction effect",NA))))) %>%
+      dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
+      dplyr::rename(r = est.std,
+                    ci_lower = ci.lower,
+                    ci_upper = ci.upper)
+  return(rep_parameter_table)}
+
 
 #' Easily Table Elevation Results
 #'
