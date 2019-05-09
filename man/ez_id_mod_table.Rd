@@ -20,6 +20,7 @@ This takes output from one of the individual-level moderated reputation models
 }
 \examples{
 data("rep_sim_data")
+library(tidyverse)
 moderator_data <- rep_sim_data \%>\%
 mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
        D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
@@ -34,6 +35,7 @@ agree_ha_p2ptmod_model <- rep_auto_id_mods(data = moderator_data,
                  p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                  id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                  interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
+ ez_id_mod_table(agree_ha_p2ptmod_model)
 
 
 }
