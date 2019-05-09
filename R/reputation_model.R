@@ -772,9 +772,6 @@ rep_full_w_3pmeta <- function(data, model = NULL, p1_reports, p2_reports, target
   }
   else{rep_full_w_3pmeta_model <- model}
   fitted_model <- lavaan::sem(rep_full_w_3pmeta_model$model, data = data, missing = "FIML")
-  setClass("rep_model",
-           slots = list(model_type = "character"),
-           contains = "lavaan")
   fitted_model <- new("rep_model",
                       model_type = "full_model",
                       fitted_model)
