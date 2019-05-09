@@ -362,11 +362,110 @@ ez_id_mod_table <- function(rep_model){
                                               ifelse(label == "mod_me", "moderator (main effect)",
                                                      ifelse(label == "interaction", "interaction effect",NA))))) %>%
       dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-      dplyr::rename(r = est.std,
+      dplyr::rename(beta = est.std,
                     ci_lower = ci.lower,
                     ci_upper = ci.upper)
   return(rep_parameter_table)}
 
+#' Easily Table Model with Group and Individual Difference Moderators
+#'
+#' This takes output from one of the group- and individual-level moderated reputation models
+#' (e.g., rep_accuracy_group_id_mods) and returns a tibble of model
+#' (regression) parameters. It works with any of the Group- and Individual-level moderated models.
+#' @param rep_model The results from one of the ReputationAnalyses
+#' group- and individual-level moderator Models (e.g., rep_accuracy_group_id_mods).
+#' @import tidyverse
+#' @export
+#' @examples data("rep_sim_data")
+#' library(tidyverse)
+#' moderator_data <- rep_sim_data %>%
+#' mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'        D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
+#'        B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
+#'        D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
+#'        B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
+#'        D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
+#'
+#' # Example for hearsay accuracy with no equality constraints
+#' agree_pt_mod_fit <- rep_accuracy_group_id_mods(moderator_data,
+#'                                           target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                           p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+#'                                           id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+#'                                           interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
+#'                                           group_mod = "study")
+#'  ez_group_id_mod_table(agree_ha_p2ptmod_model)
+#'
+#'  # Example for hearsay accuracy with all parameters equal across all groups
+#'  agree_pt_mod_fit_alleq <- rep_accuracy_group_id_mods(moderator_data,
+#'                                           target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                           p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+#'                                           id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+#'                                           interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
+#'                                           group_mod = "study", groups_eql = "all", params_eql = "all")
+#'  ez_group_id_mod_table(agree_pt_mod_fit_alleq)
+#'
+#'  # Example with some equality constraints
+#'
+#'  agree_pt_mod_fit_someeql <-  rep_accuracy_group_id_mods(moderator_data,
+#'                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#'                                                          p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
+#'                                                          id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
+#'                                                          interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
+#'                                                          group_mod = "group_var", groups_eql = c(1, 4), params_eql = "all")
+#'
+#'
+#' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+
+ez_group_id_mod_table <- function(rep_model){
+  # First save out labels
+  # we need these to remove the repeats (from equality constraints)
+  labels <- rep_model@ParTable%>%
+    tibble::as_tibble() %>%
+    dplyr::select(lhs, op, rhs, group, label) %>%
+    tidyr::separate(label, c("group_label", "param_label"), extra = "merge", fill = "left") %>%
+    dplyr::filter(group_label != "")
+
+  rep_parameter_table <- rep_model %>%
+    standardizedsolution() %>%
+    tibble::as_tibble() %>%
+    dplyr::full_join(labels) %>%
+    dplyr::filter(lhs != rhs &
+                  op != "~1") %>%
+    dplyr::distinct(group_label, param_label, .keep_all = TRUE) %>%
+    dplyr::filter(param_label == "hc_me" |
+                  param_label == "ha_me" |
+                  param_label == "mod_me" |
+                  param_label == "interaction") %>%
+    # give them their substantive labels
+    dplyr::mutate(parameter = ifelse(param_label == "hc_me", "hearsay consensus (main effect)",
+                              ifelse(param_label == "ha_me", "hearsay accuracy (main effect)",
+                              ifelse(param_label == "mod_me", "moderator (main effect)",
+                              ifelse(param_label == "interaction", "interaction effect",NA))))) %>%
+    dplyr::select(group_label, parameter, est.std, ci.lower, ci.upper, pvalue) %>%
+    dplyr::rename(beta = est.std,
+                  ci_lower = ci.lower,
+                  ci_upper = ci.upper)
+
+  # the function above will only get parameters without equality constraints
+  # which sort of makes sense for this (it only gives you the results of group moderated analyses).
+  # However, you might have a case in which some (but not all) groups or parameters are equal, and you
+  # want to table them all together. This adds the equality constrained rows
+  if(nrow(rep_parameter_table) == 0){
+    rep_parameter_table <- ez_id_mod_table(rep_model = rep_model)
+  }
+  else{
+    rep_parameter_table_eqls <- NULL
+    if(max(rep_model@ParTable[["group"]]) != nrow(unique(rep_parameter_table["group_label"]))){
+      rep_parameter_table_eqls <-  ez_id_mod_table(rep_model = rep_model)
+    }
+    if(!is.null(rep_parameter_table_eqls) && nrow(rep_parameter_table_eqls) > 0){
+      rep_parameter_table <- dplyr::full_join(rep_parameter_table, rep_parameter_table_eqls)
+      rep_parameter_table <- dplyr::mutate(rep_parameter_table, group_label = ifelse(is.na(group_label), "eql", group_label))
+      message("The Model you provided had some between-group equality constraints.
+              Those pooled estimates are in the rows where group is marked eql")
+    }
+  }
+  return(rep_parameter_table)}
 
 #' Easily Table Elevation Results
 #'
