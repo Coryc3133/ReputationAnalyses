@@ -52,19 +52,34 @@
 #'
 #' @return The function returns an object of class \code{\link[ggplot2::ggplot()]{ggplot}}.
 ez_differential_plot <- function(agree_rep_model, what = "main"){
-  ez_tables(agree_rep_model, what = what)$differential_table %>%
+  param_tbl <- ez_tables(agree_rep_model, what = what)$differential_table %>%
     dplyr::mutate(parameter = stringr::str_to_title(parameter),
                   parameter = forcats::fct_relevel(parameter,
                                                    "P2 Meta-Accuracy",
                                                    "P1 Meta-Accuracy",
                                                    "Direct Accuracy",
                                                    "Hearsay Accuracy",
-                                                   "Hearsay Consensus")) %>%
-    ggplot2::ggplot(ggplot2::aes(x = parameter, y = r)) +
-    ggplot2::geom_pointrange(ggplot2::aes(ymin = ci_lower, ymax = ci_upper)) +
-    ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
-    ggplot2::coord_flip() +
-    ggplot2::theme_minimal() +
-    ggplot2::labs(title = "Differential Reputation Results",
-                  x = NULL)}
+                                                   "Hearsay Consensus"))
+  if(sum(str_detect(colnames(ez_tables(agree_full_3pmeta_grpmod)$differential_table), "group_label")) == 0){
+    ggplot2::ggplot(param_tbl, ggplot2::aes(x = parameter, y = r)) +
+      ggplot2::geom_pointrange(ggplot2::aes(ymin = ci_lower, ymax = ci_upper)) +
+      ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
+      ggplot2::coord_flip() +
+      ggplot2::theme_minimal() +
+      ggplot2::labs(title = "Differential Reputation Results",
+                    x = NULL)
+  }
+  else{
+    ggplot2::ggplot(param_tbl, ggplot2::aes(x = parameter, y = r, shape = forcats::fct_rev(group_label))) +
+      ggplot2::geom_pointrange(ggplot2::aes(ymin = ci_lower, ymax = ci_upper),
+                               position = ggplot2::position_dodge(width = .5)) +
+      ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
+      ggplot2::coord_flip() +
+      ggplot2::theme_minimal() +
+      ggplot2::labs(title = "Differential Reputation Results with Group Moderator",
+                    x = NULL,
+                    shape = "group") +
+      ggplot2::guides(shape = ggplot2::guide_legend(reverse = TRUE))
+  }
+    }
 

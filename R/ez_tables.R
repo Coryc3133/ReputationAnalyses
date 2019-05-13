@@ -413,7 +413,7 @@ ez_id_mod_table <- function(rep_model){
 #'                                                          interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
 #'                                                          group_mod = "group_var", groups_eql = c(1, 4), params_eql = "all")
 #'
-#'
+#' ez_group_id_mod_table(agree_pt_mod_fit_someeql)
 #' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
 
 ez_group_id_mod_table <- function(rep_model){

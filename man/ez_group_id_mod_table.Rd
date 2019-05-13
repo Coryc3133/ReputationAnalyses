@@ -56,5 +56,5 @@ agree_pt_mod_fit <- rep_accuracy_group_id_mods(moderator_data,
                                                          interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
                                                          group_mod = "group_var", groups_eql = c(1, 4), params_eql = "all")
 
-
+ez_group_id_mod_table(agree_pt_mod_fit_someeql)
 }
