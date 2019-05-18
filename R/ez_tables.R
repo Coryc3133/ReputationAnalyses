@@ -12,7 +12,7 @@
 #' main and all. If what = "main", then just the 'main' model parameters are provided.
 #' This will include, when avaiable, hearsay consensus, hearsay accuracy,
 #' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
-#' @import tidyverse
+
 #' @export
 #' @examples data("rep_sim_data")
 #'      # Consensus only Model
@@ -152,7 +152,7 @@ ez_differential_table <- function(rep_model,
 #' main and all. If what = "main", then just the 'main' model parameters are provided.
 #' This will include, when avaiable, hearsay consensus, hearsay accuracy,
 #' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
-#' @import tidyverse
+
 #' @export
 #' @examples data("rep_sim_data")
 #'      # Consensus only Model
@@ -317,12 +317,11 @@ ez_differential_group_table <- function(rep_model,
 #' (regression) parameters. It works with any of the Individual-level moderated models.
 #' @param rep_model The results from one of the ReputationAnalyses
 #' individual-level moderator Models (e.g., rep_auto_id_mods).
-#' @import tidyverse
+
 #' @export
 #' @examples data("rep_sim_data")
-#' library(tidyverse)
 #' moderator_data <- rep_sim_data %>%
-#' mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#' dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'        D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'        B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'        D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -374,12 +373,11 @@ ez_id_mod_table <- function(rep_model){
 #' (regression) parameters. It works with any of the Group- and Individual-level moderated models.
 #' @param rep_model The results from one of the ReputationAnalyses
 #' group- and individual-level moderator Models (e.g., rep_accuracy_group_id_mods).
-#' @import tidyverse
+
 #' @export
 #' @examples data("rep_sim_data")
-#' library(tidyverse)
 #' moderator_data <- rep_sim_data %>%
-#' mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#' dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'        D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'        B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'        D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -477,7 +475,7 @@ ez_group_id_mod_table <- function(rep_model){
 #'
 #' @param rep_model The results from one of the ReputationAnalyses
 #' Models (e.g., rep_analyses_auto).
-#' @import lavaan tidyverse
+#' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'
@@ -634,7 +632,7 @@ ez_elevation_table <- function(rep_model){
 #'
 #' @param rep_model The results from one of the ReputationAnalyses group moderated models
 #' Models (e.g., rep_auto_group_mod).
-#' @import lavaan tidyverse
+#' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'
@@ -863,7 +861,7 @@ ez_elevation_group_table <- function(rep_model){
 #' This will include, when avaiable, hearsay consensus, hearsay accuracy,
 #' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
 #'
-#' @import lavaan tidyverse
+#' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'

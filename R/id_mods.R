@@ -44,9 +44,8 @@
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -163,9 +162,8 @@ rep_generic_id_mods_builder <- function(rating_1, rating_2, id_mod_variable,
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
-#'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'           moderator_data <- rep_sim_data %>%
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -258,9 +256,8 @@ rep_generic_id_mods <- function(data, model = NULL, rating_1, rating_2,
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -385,9 +382,8 @@ rep_consensus_id_mods_builder <- function(p1_reports, p2_reports, id_mod_variabl
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -479,9 +475,8 @@ rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -602,9 +597,8 @@ rep_accuracy_id_mods_builder <- function(target_self, p2_reports, id_mod_variabl
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -696,13 +690,12 @@ rep_accuracy_id_mods <- function(data, model = NULL, target_self, p2_reports, id
 #' Currently, only values of 1 are supported.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
 #' @param n_r1_per_r2 The number of second ratings for each first rating. Currently, only 1:1 is supported.
-#' @import tidyverse
+
 #' @export
 #' @examples data("rep_sim_data")
 #' # Prepare data
-#' library(tidyverse)
 #' moderator_data <- rep_sim_data %>%
-#' mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#' dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'        D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'        B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'        D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),

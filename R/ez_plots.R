@@ -14,7 +14,7 @@
 #' main and all. If what = "main", then just the 'main' model parameters are provided.
 #' This will include, when avaiable, hearsay consensus, hearsay accuracy,
 #' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
-#' @import tidyverse
+
 #' @export
 #' @examples data("rep_sim_data")
 #'      # Consensus only Model

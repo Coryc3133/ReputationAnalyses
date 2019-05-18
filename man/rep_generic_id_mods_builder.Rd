@@ -69,9 +69,8 @@ The function can handle up to n exchangeable triads.
 \examples{
 data("rep_sim_data")
           # Prepare data
-          library(tidyverse)
          moderator_data <- rep_sim_data \%>\%
-           mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+           dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),

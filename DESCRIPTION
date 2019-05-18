@@ -1,14 +1,19 @@
 Package: ReputationAnalyses
-Title: Functions to analyze triadic (T-P1-P2) reputational data.
+Title: Functions to analyze triadic (T-P1-P2) reputational data
 Version: 0.0.0.9001
 Authors@R: person("Cory", "Costello", email = "costell@uoregon.edu", role = c("aut", "cre"))
 Description: This package contains functions to analyze triadic reputational data (T-P1-P2).
              It can work with several different designs (P1-P2, T-P1-P2, T-P1-P2 + third-person meta-perceiotns).
 Depends: R (>= 3.6.0), 
          lavaan (>= 0.6-2.1253), 
-         magrittr,
-         stringr, 
-         tidyverse (>= 1.2.1)
+         magrittr (>= 1.5),
+         stringr (>= 1.4.0)
+Imports: dplyr (>= 0.8.0.1),
+         forcats (>= 0.4.0),
+         ggplot2 (>= 3.1.1),
+         purrr (>= 0.3.2),
+         tibble (>= 2.1.1),
+         tidyr (>= 0.8.3)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

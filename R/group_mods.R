@@ -348,32 +348,32 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
                                                                     n_p1s_per_p2s = 1, n_p2s_per_p1s = 1)}
     else{rep_consensus_groups_model <- model}
 
-    if(groups_eql != "none" &&
-       groups_eql != "all" &&
+    if(!("none" %in% params_eql) &&
+       !("all" %in% groups_eql) &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" && use_labs == FALSE){
+    if("all" %in% groups_eql && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" && use_labs == TRUE){
+    if("all" %in% groups_eql && use_labs == TRUE){
       groups_eql <- groups
     }
 
-    if(params_eql == "all"){
+    if("all" %in% params_eql){
       params_eql <- c("hc", "int_p1", "int_p2", "v_p1", "v_p2", "p1_p2_rel_el")
       if(n_triads > 1){
         params_eql <- c(params_eql, "rec", "h", "m")
       }
     }
 
-    if(params_eql == "main"){
+    if("main" %in% params_eql){
       params_eql <- c("hc")
     }
 
-    if(groups_eql != "none"){
+    if(!("none" %in% groups_eql)){
       groups_eql <- groups_eql %>% str_remove_all("_")
       eql_labs <- expand.grid(groups_eql, params_eql)
       old_labs <- paste(eql_labs$Var1, eql_labs$Var2, sep = "_")
@@ -809,21 +809,21 @@ rep_con_acc_group_mod <- function(data, model = NULL, p1_reports, p2_reports, ta
     else{rep_con_acc_group_model <- model}
 
 
-    if(groups_eql != "none" &&
-       groups_eql != "all" &&
+    if(!("none" %in% params_eql) &&
+       !("all" %in% groups_eql) &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" && use_labs == FALSE){
+    if("all" %in% groups_eql && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" && use_labs == TRUE){
+    if("all" %in% groups_eql && use_labs == TRUE){
       groups_eql <- groups
     }
 
-    if(params_eql == "all"){
+    if("all" %in% params_eql){
       params_eql <- c("hc", "ha", "da",
                       "int_p1", "int_p2", "int_self",
                       "v_p1", "v_p2", "v_self",
@@ -835,11 +835,11 @@ rep_con_acc_group_mod <- function(data, model = NULL, p1_reports, p2_reports, ta
       }
     }
 
-    if(params_eql == "main"){
+    if("main" %in% params_eql){
       params_eql <- c("hc", "ha", "da")
     }
 
-    if(groups_eql != "none"){
+    if(!("none" %in% groups_eql)){
       groups_eql <- groups_eql %>% str_remove_all("_")
       eql_labs <- expand.grid(groups_eql, params_eql)
       old_labs <- paste(eql_labs$Var1, eql_labs$Var2, sep = "_")
@@ -1336,21 +1336,21 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
     else{rep_full_3pmeta_group_model <- model}
 
 
-    if(groups_eql != "none" &&
-       groups_eql != "all" &&
+    if(!("none" %in% params_eql) &&
+       !("all" %in% groups_eql) &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" && use_labs == FALSE){
+    if("all" %in% groups_eql && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" && use_labs == TRUE){
+    if("all" %in% groups_eql && use_labs == TRUE){
       groups_eql <- groups
     }
 
-    if(params_eql == "all"){
+    if("all" %in% params_eql){
       params_eql <- c("hc", "ha", "da",
                       "p1ma", "p2ma", "as_ac1",
                       "as_con1", "mp_rec", "as_ac2", "as_con2",
@@ -1368,11 +1368,11 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
       }
     }
 
-    if(params_eql == "main"){
+    if("main" %in% params_eql){
       params_eql <- c("hc", "ha", "da", "p1ma", "p2ma")
     }
 
-    if(groups_eql != "none"){
+    if(!("none" %in% groups_eql)){
       groups_eql <- groups_eql %>% str_remove_all("_")
       eql_labs <- expand.grid(groups_eql, params_eql)
       old_labs <- paste(eql_labs$Var1, eql_labs$Var2, sep = "_")
@@ -1433,9 +1433,8 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
-#'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'           moderator_data <- rep_sim_data %>%
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -1598,9 +1597,8 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -1664,27 +1662,27 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
     else{rep_consensus_group_id_model <- model}
 
 
-    if(groups_eql != "none" &&
-       groups_eql != "all" &&
+    if(!("none" %in% params_eql) &&
+       !("all" %in% groups_eql) &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" && use_labs == FALSE){
+    if("all" %in% groups_eql && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" && use_labs == TRUE){
+    if("all" %in% groups_eql && use_labs == TRUE){
       groups_eql <- groups
     }
 
-    if(params_eql == "all"){
+    if("all" %in% params_eql){
       params_eql <- c("rating_me", "mod_me", "interaction",
                       "int_rating_1", "int_rating_2", "int_mod", "int_interaction",
                       "v_rating_", "v_rating_2", "v_mod", "v_interaction")
     }
 
-    if(groups_eql != "none"){
+    if(!("none" %in% groups_eql)){
       groups_eql <- groups_eql %>% str_remove_all("_")
       eql_labs <- expand.grid(groups_eql, params_eql)
       old_labs <- paste(eql_labs$Var1, eql_labs$Var2, sep = "_")
@@ -1749,9 +1747,8 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -1921,9 +1918,8 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -2004,27 +2000,27 @@ rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_var
     else{rep_consensus_group_id_model <- model}
 
 
-    if(groups_eql != "none" &&
-       groups_eql != "all" &&
+    if(!("none" %in% params_eql) &&
+       !("all" %in% groups_eql) &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" && use_labs == FALSE){
+    if("all" %in% groups_eql && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" && use_labs == TRUE){
+    if("all" %in% groups_eql && use_labs == TRUE){
       groups_eql <- groups
     }
 
-    if(params_eql == "all"){
+    if("all" %in% params_eql){
       params_eql <- c("hc_me", "mod_me", "interaction",
                       "int_p1", "int_p2", "int_mod", "int_interaction",
                       "v_p1", "v_p2", "v_mod", "v_interaction")
     }
 
-    if(groups_eql != "none"){
+    if(!("none" %in% groups_eql)){
       groups_eql <- groups_eql %>% str_remove_all("_")
       eql_labs <- expand.grid(groups_eql, params_eql)
       old_labs <- paste(eql_labs$Var1, eql_labs$Var2, sep = "_")
@@ -2090,9 +2086,8 @@ rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_var
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -2267,9 +2262,8 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
-#'           library(tidyverse)
 #'          moderator_data <- rep_sim_data %>%
-#'            mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
+#'            dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
 #'                   D_A_agreeableness_cent = scale(D_A_agreeableness, scale = FALSE),
 #'                   B_iri_perspective_cent = scale(B_iri_perspective, scale = FALSE),
 #'                   D_iri_perspective_cent = scale(D_iri_perspective, scale = FALSE),
@@ -2350,27 +2344,27 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
     else{rep_accuracy_group_id_model <- model}
 
 
-    if(groups_eql != "none" &&
-       groups_eql != "all" &&
+    if(!("none" %in% params_eql) &&
+       !("all" %in% groups_eql) &&
        use_labs == FALSE){
       groups_eql <- paste0("grp", groups_eql)
     }
 
-    if(groups_eql == "all" && use_labs == FALSE){
+    if("all" %in% groups_eql && use_labs == FALSE){
       groups_eql <- paste0("grp", c(1:length(groups)))
     }
 
-    if(groups_eql == "all" && use_labs == TRUE){
+    if("all" %in% groups_eql && use_labs == TRUE){
       groups_eql <- groups
     }
 
-    if(params_eql == "all"){
+    if("all" %in% params_eql){
       params_eql <- c("ha_me", "mod_me", "interaction",
                       "int_self", "int_p2", "int_mod", "int_interaction",
                       "v_self", "v_p2", "v_mod", "v_interaction")
     }
 
-    if(groups_eql != "none"){
+    if(!("none" %in% groups_eql)){
       groups_eql <- groups_eql %>% str_remove_all("_")
       eql_labs <- expand.grid(groups_eql, params_eql)
       old_labs <- paste(eql_labs$Var1, eql_labs$Var2, sep = "_")
