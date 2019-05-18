@@ -4,16 +4,16 @@
 \alias{ez_differential_plot}
 \title{Easily Plot Differential Results}
 \usage{
-ez_differential_plot(agree_rep_model, what = "main")
+ez_differential_plot(rep_model, what = "main")
 }
 \arguments{
+\item{rep_model}{The results from one of the ReputationAnalyses
+Models (e.g., rep_analyses_auto).}
+
 \item{what}{The parameters you want in the plot Current options are
 main and all. If what = "main", then just the 'main' model parameters are provided.
 This will include, when avaiable, hearsay consensus, hearsay accuracy,
 direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.}
-
-\item{rep_model}{The results from one of the ReputationAnalyses
-Models (e.g., rep_analyses_auto).}
 }
 \value{
 The function returns an object of class \code{\link[ggplot2::ggplot()]{ggplot}}.

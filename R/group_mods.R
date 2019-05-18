@@ -74,7 +74,7 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups))&& use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -335,8 +335,8 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
 
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
-    # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    # to FALSE, which creates generic labels that will work.
+    if(is.numeric(groups) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -490,7 +490,7 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(is.numeric(groups) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -794,7 +794,7 @@ rep_con_acc_group_mod <- function(data, model = NULL, p1_reports, p2_reports, ta
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -972,7 +972,7 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1320,7 +1320,7 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1467,7 +1467,7 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1647,7 +1647,7 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(s.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1781,7 +1781,7 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1985,7 +1985,7 @@ rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_var
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -2120,7 +2120,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -2329,7 +2329,7 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!is.na(as.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups))&& use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -2482,7 +2482,7 @@ rep_auto_group_mod <- function(data, model = NULL, p1_reports, p2_reports, targe
   # Make sure group labels aren't numbers, which
   # screw up the lavaan syntax. If they are, change use_labs
   # to TRUE, which creates generic labels that will work.
-  if(!is.na(as.numeric(groups))
+  if(NA %in% as.numeric(groups)
      && use_labs == TRUE){
     use_labs = FALSE
     message("Labels are numeric variables and use_labs was set to TRUE. This creates

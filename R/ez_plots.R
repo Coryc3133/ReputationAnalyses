@@ -51,8 +51,24 @@
 #'           ez_differential_plot(agree_rep_all, what = "all")
 #'
 #' @return The function returns an object of class \code{\link[ggplot2::ggplot()]{ggplot}}.
-ez_differential_plot <- function(agree_rep_model, what = "main"){
-  param_tbl <- ez_tables(agree_rep_model, what = what)$differential_table %>%
+ez_differential_plot <- function(rep_model, what = "main"){
+  param_tbl <- ez_tables(rep_model, what = what)$differential_table
+    if(length(unique(param_tbl$parameter)) == 1){
+      param_tbl <- param_tbl %>%
+        dplyr::mutate(parameter = stringr::str_to_title(parameter),
+                      parameter = forcats::fct_relevel(parameter,
+                                                       "Hearsay Consensus"))
+    }
+  if(length(unique(param_tbl$parameter)) == 2){
+    param_tbl <- param_tbl %>%
+      dplyr::mutate(parameter = stringr::str_to_title(parameter),
+                    parameter = forcats::fct_relevel(parameter,
+                                                     "Direct Accuracy",
+                                                     "Hearsay Accuracy",
+                                                     "Hearsay Consensus"))
+  }
+  if(length(unique(param_tbl$parameter)) == 5){
+  param_tbl <- param_tbl %>%
     dplyr::mutate(parameter = stringr::str_to_title(parameter),
                   parameter = forcats::fct_relevel(parameter,
                                                    "P2 Meta-Accuracy",
@@ -60,7 +76,9 @@ ez_differential_plot <- function(agree_rep_model, what = "main"){
                                                    "Direct Accuracy",
                                                    "Hearsay Accuracy",
                                                    "Hearsay Consensus"))
-  if(sum(str_detect(colnames(ez_tables(agree_full_3pmeta_grpmod)$differential_table), "group_label")) == 0){
+  }
+
+  if(!("group_label" %in% colnames(ez_tables(rep_model)$differential_table))){
     ggplot2::ggplot(param_tbl, ggplot2::aes(x = parameter, y = r)) +
       ggplot2::geom_pointrange(ggplot2::aes(ymin = ci_lower, ymax = ci_upper)) +
       ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
