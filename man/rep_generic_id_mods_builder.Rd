@@ -30,7 +30,7 @@ counting the number of P1 reports. This parameter rarely needs to be changed.}
 
 \item{n_r1_per_r2}{The number of first ratings for each second rating. Currently, only 1:1 is supported.}
 
-\item{n_r1_per_r2}{The number of second ratings for each first rating. Currently, only 1:1 is supported.}
+\item{n_r2_per_r1}{The number of second ratings for each first rating. Currently, only 1:1 is supported.}
 }
 \value{
 The function returns a list containing an

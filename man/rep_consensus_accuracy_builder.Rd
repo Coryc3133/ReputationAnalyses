@@ -32,6 +32,18 @@ Currently, only values of 1 are supported.}
 
 \item{n_p2s_per_p1s}{The number of P2s for every P1;. This defaults to 1.
 Currently, only values of 1 are supported.}
+
+\item{n_p1s_per_ts}{The number of P1s for every target;. This defaults to 1.
+Currently, only values of 1 are supported.}
+
+\item{n_p2s_per_ts}{The number of P2s for every target;. This defaults to 1.
+Currently, only values of 1 are supported.}
+
+\item{n_ts_per_p1s}{The number of targets for every P1;. This defaults to 1.
+Currently, only values of 1 are supported.}
+
+\item{n_ts_per_p2s}{The number of targets for every P2;. This defaults to 1.
+Currently, only values of 1 are supported.}
 }
 \value{
 The function returns a list containing an

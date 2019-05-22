@@ -31,9 +31,9 @@ data("rep_sim_data")
                                                            groups_eql = "all",
                                                            params_eql = "all")
 
-          ez_elevation_group_table(agree_rep_consensus_grpmod, what = "main")
+          ez_elevation_group_table(agree_rep_consensus_grpmod)
 
-          ez_elevation_group_table(agree_rep_consensus_grpmod, what = "all")
+          ez_elevation_group_table(agree_rep_consensus_grpmod)
 
        # Consensus & Accuracy
 
@@ -43,9 +43,9 @@ data("rep_sim_data")
                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
                                                          group_mod = "study", groups_eql = "all",params_eql = "all")
 
-          ez_elevation_group_table(agree_rep_con_acc_grpmod, what = "main")
+          ez_elevation_group_table(agree_rep_con_acc_grpmod)
 
-          ez_elevation_group_table(agree_rep_con_acc_grpmod, what = "all")
+          ez_elevation_group_table(agree_rep_con_acc_grpmod)
 
       # Consensus, Accuracy, 3rd  Person Meta
 
@@ -59,8 +59,8 @@ agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,
                                                       groups_eql = "all",
                                                       params_eql = "all")
 
-         ez_elevation_group_table(agree_full_3pmeta_grpmod, what = "main")
+         ez_elevation_group_table(agree_full_3pmeta_grpmod)
 
-          ez_elevation_group_table(agree_full_3pmeta_grpmod, what = "all")
+          ez_elevation_group_table(agree_full_3pmeta_grpmod)
 
 }

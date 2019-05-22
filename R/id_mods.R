@@ -39,7 +39,7 @@
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
-#' @param n_r1_per_r2 The number of second ratings for each first rating. Currently, only 1:1 is supported.
+#' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
 #' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
@@ -157,7 +157,7 @@ rep_generic_id_mods_builder <- function(rating_1, rating_2, id_mod_variable,
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
-#' @param n_r1_per_r2 The number of second ratings for each first rating. Currently, only 1:1 is supported.
+#' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
 #' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
@@ -196,12 +196,32 @@ rep_generic_id_mods <- function(data, model = NULL, rating_1, rating_2,
     rep_id_mods_model <- rep_generic_id_mods_builder(rating_1, rating_2, id_mod_variable,
                                                interaction_term, n_triads = length(rating_1),
                                                n_r1_per_r2 = 1,n_r2_per_r1 = 1)
+    if(round(mean(colMeans(data[,rating_2], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
     }
+  else{
+    # save model
+    rep_id_mods_model <- model
+    # Get rating_2 variable labels to check
+    # that data are mean-centered
+    rating_2 <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
+    dplyr::filter(label == "rating_me") %>%
+    dplyr::select(rhs) %>%
+    dplyr::distinct() %>%
+    .$rhs
+    # Fer id_mod variable labels to check
+    # that data were mean-centered
+  id_mod_variable <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
+    dplyr::filter(label == "mod_me") %>%
+    dplyr::select(rhs) %>%
+    dplyr::distinct() %>%
+    .$rhs
 
-  else{rep_id_mods_model <- model}
-  fitted_model <- lavaan::sem(rep_id_mods_model$model, data = data, missing = "FIML")
+  # check that data were mean-centered
   if(round(mean(colMeans(data[,rating_2], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
   if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
+  }
+  fitted_model <- lavaan::sem(rep_id_mods_model$model, data = data, missing = "FIML", fixed.x = FALSE)
   return(fitted_model)
 }
 
@@ -271,10 +291,10 @@ rep_generic_id_mods <- function(data, model = NULL, rating_1, rating_2,
 #'                                                                interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #'
 #'  # view model
-#'    cat(agree_pt_mod_model$model)
+#'    cat(agree_pt_mod_consensus_model$model)
 #'
 #'  # view model Information
-#'    agree_pt_mod_model$rep_model_info
+#'    agree_pt_mod_consensus_model$rep_model_info
 #'
 #' @return The function returns a list containing an
 #' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
@@ -416,12 +436,32 @@ rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id
     rep_id_mods_model <- rep_consensus_id_mods_builder(p1_reports, p2_reports, id_mod_variable,
                                                      interaction_term, n_triads = length(p1_reports),
                                                      n_p1s_per_p2s = n_p1s_per_p2s, n_p2s_per_p1s = n_p1s_per_p2s)
+    if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
   }
+  else{
+    # save model
+    rep_id_mods_model <- model
+    # Get P2 reports variable labels to check
+    # that data are mean-centered
+    p2_reports <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
+      dplyr::filter(label == "hc_me") %>%
+      dplyr::select(rhs) %>%
+      dplyr::distinct() %>%
+      .$rhs
+    # Get id_mod variable labels to check
+    # that data were mean-centered
+    id_mod_variable <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
+      dplyr::filter(label == "mod_me") %>%
+      dplyr::select(rhs) %>%
+      dplyr::distinct() %>%
+      .$rhs
 
-  else{rep_id_mods_model <- model}
+    # check that data were mean-centered
+    if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
+  }
   fitted_model <- lavaan::sem(rep_id_mods_model$model, data = data, missing = "FIML")
-  if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
-  if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
   return(fitted_model)
 }
 
@@ -483,8 +523,7 @@ rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id
 #'                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
 #'                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 #'
-#' agree_pt_mods_hearacc_model <- rep_accuracy_id_mods_builder(data = moderator_data,
-#'                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#' agree_pt_mods_hearacc_model <- rep_accuracy_id_mods_builder(target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
@@ -613,8 +652,7 @@ rep_accuracy_id_mods_builder <- function(target_self, p2_reports, id_mod_variabl
 #'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 #'
 #' # Alternatively, first build the model
-#' agree_pt_mods_hearacc_model <- rep_accuracy_id_mods_builder(data = moderator_data,
-#'                                 target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+#' agree_pt_mods_hearacc_model <- rep_accuracy_id_mods_builder(target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
 #'                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
@@ -633,12 +671,31 @@ rep_accuracy_id_mods <- function(data, model = NULL, target_self, p2_reports, id
                                                       id_mod_variable = id_mod_variable, interaction_term = interaction_term,
                                                       n_triads = length(target_self),
                                                       n_ts_per_p2s = n_ts_per_p2s, n_p2s_per_ts = n_p2s_per_ts)
+    if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
   }
-
-  else{rep_id_mods_model <- model}
+  else{
+    # save model
+    rep_id_mods_model <- model
+    # Get P2 reports variable labels to check
+    # that data are mean-centered
+    p2_reports <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
+      dplyr::filter(label == "ha_me") %>%
+      dplyr::select(rhs) %>%
+      dplyr::distinct() %>%
+      .$rhs
+    # Get id_mod variable labels to check
+    # that data were mean-centered
+    id_mod_variable <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
+      dplyr::filter(label == "mod_me") %>%
+      dplyr::select(rhs) %>%
+      dplyr::distinct() %>%
+      .$rhs
+    # check that data were mean-centered
+    if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
+    if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
+  }
   fitted_model <- lavaan::sem(rep_id_mods_model$model, data = data, missing = "FIML")
-  if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
-  if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
   return(fitted_model)
 }
 
@@ -689,7 +746,7 @@ rep_accuracy_id_mods <- function(data, model = NULL, target_self, p2_reports, id
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
-#' @param n_r1_per_r2 The number of second ratings for each first rating. Currently, only 1:1 is supported.
+#' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
 
 #' @export
 #' @examples data("rep_sim_data")

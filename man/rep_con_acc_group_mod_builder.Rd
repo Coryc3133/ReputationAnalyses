@@ -49,21 +49,13 @@ Currently, only values of 1 are supported.}
 
 \item{n_ts_per_p2s}{The number of targets for every P2;. This defaults to 1.
 Currently, only values of 1 are supported.}
-
-\item{data}{The dataframe.
-Data should be wide, with a row for every group of participants.
-At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
-one for targets' self-ratings.}
-
-\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
-is supplied, no additional arguments need to be specified.}
 }
 \value{
-The function returns a list containing an
-object of class \code{\link[tibble:tibble-class]{tibble}} with model information
-and a string object of the model in lavaan syntax. Model information
-includes the type of model, the number of exchangeable triads, and the number
-of p1s per p2s, and the number of p2s per p1s.
+The function returns a list containing an object of class
+  \linkS4class{tbl_df} with model information and a
+  string object of the model in lavaan syntax. Model information includes the
+  type of model, the number of exchangeable triads, and the number of p1s per
+  p2s, and the number of p2s per p1s.
 }
 \description{
 This builds a model of lavaan syntax for estimating the possible hearsay reputation parameters
@@ -105,9 +97,9 @@ The function can handle up to n exchangeable triads.
                                                               groups = c("Study_1", "Study_2"))
 
  # view the model
- agree_consensus_model_grpmod$model
+ agree_con_acc_model_grpmod$model
 
  # view the model information
- # agree_consensus_model_grpmod$rep_model_info
+ # agree_con_acc_model_grpmod$rep_model_info
 
 }

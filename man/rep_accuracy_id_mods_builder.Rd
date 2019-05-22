@@ -81,8 +81,7 @@ data("rep_sim_data")
                   B_ptXagree_interaction = B_C_agreeableness_cent*B_iri_perspective_cent,
                   D_ptXagree_interaction = D_A_agreeableness_cent*D_iri_perspective_cent)
 
-agree_pt_mods_hearacc_model <- rep_accuracy_id_mods_builder(data = moderator_data,
-                                target_self = c("C_C_agreeableness", "A_A_agreeableness"),
+agree_pt_mods_hearacc_model <- rep_accuracy_id_mods_builder(target_self = c("C_C_agreeableness", "A_A_agreeableness"),
                                 p2_reports = c("B_C_agreeableness_cent", "D_A_agreeableness_cent"),
                                 id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                 interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))

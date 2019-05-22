@@ -4,13 +4,21 @@
 \alias{rep_consensus_group_id_mods}
 \title{Hearsay Consensus Model with Individual-Level and Group Moderators}
 \usage{
-rep_consensus_group_id_mods(data, p1_reports, p2_reports, id_mod_variable,
-  interaction_term, model = NULL, group_mod = NULL, use_labs = TRUE,
+rep_consensus_group_id_mods(data, model = NULL, p1_reports, p2_reports,
+  id_mod_variable, interaction_term, group_mod = NULL, use_labs = TRUE,
   groups_eql = "none", params_eql = "none",
   n_triads = length(p1_reports), n_p1s_per_p2s = 1,
-  n_p2s_per_p1s = 1, n_p1s_per_ts = 1, n_p2s_per_ts = 1)
+  n_p2s_per_p1s = 1)
 }
 \arguments{
+\item{data}{The dataframe.
+Data should be wide, with a row for every group of participants.
+At a minimum, it must contain five columns: one for P1-reports, one for P2-reports, one for the individual
+difference moderator, one for the interaction term, and one for the group moderated variable.}
+
+\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+is supplied, no additional arguments need to be specified.}
+
 \item{p1_reports}{Quoted column names that contain P1 reports,
 or ratings made by the person that knows the target directly.
 If more than one is supplied, the target-wise order must match the other

@@ -6,7 +6,7 @@
 \usage{
 rep_accuracy_group_id_mods_builder(target_self, p2_reports,
   id_mod_variable, interaction_term, groups = NULL, use_labs = TRUE,
-  n_triads = length(p1_reports), n_ts_per_p2s = 1, n_p2s_per_ts = 1)
+  n_triads = length(target_self), n_ts_per_p2s = 1, n_p2s_per_ts = 1)
 }
 \arguments{
 \item{target_self}{Quoted column names that contain target self-reports.
@@ -33,7 +33,7 @@ exchangeable triads, the target-wise order must match the order of the ratings.}
 If FALSE, generic labels (grp1 to grpk, where k is the number of groups) are used.}
 
 \item{n_triads}{The number of exchangeable triads in each group. By default, this is determined by
-counting the number of P1 reports. This parameter rarely needs to be changed.}
+counting the number of Target self-reports. This parameter rarely needs to be changed.}
 
 \item{n_ts_per_p2s}{The number of targets that each P2 rated. This defaults to 1.
 Currently, only values of 1 are supported.}

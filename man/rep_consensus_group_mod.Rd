@@ -14,6 +14,9 @@ rep_consensus_group_mod(data, model = NULL, p1_reports, p2_reports,
 Data should be wide, with a row for every group of participants.
 At a minimum, it must contain three columns: one for P1 reports, one for P2 reports, and one for the group-level moderator.}
 
+\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+is supplied, no additional arguments need to be specified.}
+
 \item{p1_reports}{Quoted column names that contain P1 reports,
 or ratings made by the person that knows the target directly.
 If more than one is supplied, the target-wise order must match the other
@@ -86,7 +89,7 @@ data("rep_sim_data")
                                                                           groups = levels(rep_sim_data$study))
          # then fit it
          agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
-                                                           model = agree_consensus_model,
+                                                           model = agree_consensus_grpmod_model,
                                                            group_mod = "study")
 
          # fit model with group equality constraints:
@@ -97,7 +100,7 @@ data("rep_sim_data")
                                                           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
                                                           group_mod = "study",
                                                           groups_eql = "all",
-                                                          prams_eql = "all")
+                                                          params_eql = "all")
 
         # Or we could constrain just hearsay consensus to be equal
          agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,

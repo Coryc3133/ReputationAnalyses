@@ -35,7 +35,7 @@ agree_pt_mod_fit <- rep_accuracy_group_id_mods(moderator_data,
                                           id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
                                           interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
                                           group_mod = "study")
- ez_group_id_mod_table(agree_ha_p2ptmod_model)
+ ez_group_id_mod_table(agree_pt_mod_fit)
 
  # Example for hearsay accuracy with all parameters equal across all groups
  agree_pt_mod_fit_alleq <- rep_accuracy_group_id_mods(moderator_data,

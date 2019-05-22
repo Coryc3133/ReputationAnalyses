@@ -235,6 +235,8 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
 #' @param data The dataframe that contains P1 & P2 ratings and the group-level moderator.
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain three columns: one for P1 reports, one for P2 reports, and one for the group-level moderator.
+#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' is supplied, no additional arguments need to be specified.
 #' @param p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
@@ -273,7 +275,7 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
 #'                                                                           groups = levels(rep_sim_data$study))
 #'          # then fit it
 #'          agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
-#'                                                            model = agree_consensus_model,
+#'                                                            model = agree_consensus_grpmod_model,
 #'                                                            group_mod = "study")
 #'
 #'          # fit model with group equality constraints:
@@ -284,7 +286,7 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
 #'                                                           p2_reports = c("B_C_agreeableness", "D_A_agreeableness"),
 #'                                                           group_mod = "study",
 #'                                                           groups_eql = "all",
-#'                                                           prams_eql = "all")
+#'                                                           params_eql = "all")
 #'
 #'         # Or we could constrain just hearsay consensus to be equal
 #'          agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
@@ -418,12 +420,6 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
 #' \item{as_sim_1p}{First-person assumed similarity (i.e., interpersonal assumed similarity); correlation betweenP1(T) and P1's self-report (e.g., A(C) <-> A(A))}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param data The dataframe.
-#' Data should be wide, with a row for every group of participants.
-#' At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
-#' one for targets' self-ratings.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
-#' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
@@ -463,16 +459,16 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
 #'                                                               groups = c("Study_1", "Study_2"))
 #'
 #'  # view the model
-#'  agree_consensus_model_grpmod$model
+#'  agree_con_acc_model_grpmod$model
 #'
 #'  # view the model information
-#'  # agree_consensus_model_grpmod$rep_model_info
+#'  # agree_con_acc_model_grpmod$rep_model_info
 #'
-#' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} with model information
-#' and a string object of the model in lavaan syntax. Model information
-#' includes the type of model, the number of exchangeable triads, and the number
-#' of p1s per p2s, and the number of p2s per p1s.
+#' @return The function returns a list containing an object of class
+#'   \linkS4class{tbl_df} with model information and a
+#'   string object of the model in lavaan syntax. Model information includes the
+#'   type of model, the number of exchangeable triads, and the number of p1s per
+#'   p2s, and the number of p2s per p1s.
 rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
                                           groups = NULL, use_labs = TRUE,
                                           n_triads = length(p1_reports),
@@ -1410,7 +1406,7 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
 #' \item{int_interaction}{intercept for interaction term}
 #' }
 #' The function can handle up to n exchangeable triads.
-#' @param  rating_1 Quoted column names that contain  the first rating variable. This might be P1 reports
+#' @param rating_1 Quoted column names that contain  the first rating variable. This might be P1 reports
 #' if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
 #' If more than one is supplied, the target-wise order must match across variables.
 #' @param rating_2 Quoted column names that contain second rating variable. For hearsay consensus or accuracy,
@@ -1428,7 +1424,7 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
-#' @param n_r1_per_r2 The number of second ratings for each first rating. Currently, only 1:1 is supported.
+#' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
 #' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
@@ -1545,7 +1541,7 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
 #' Generic Individual-Level Moderator and Group Moderators
 #'
 #' This is a generic function for fitting a lavaan model for
-#' individual-level moderators on two distinguishable ratings on the same target across multiple groups..
+#' individual-level moderators on two distinguishable ratings on the same target across multiple groups.
 #' This could be P1- and P2- reports, P2- and self-reports, P1- and self-reports, or any other sets of
 #' distinguishable ratings.
 #'
@@ -1567,6 +1563,12 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
 #' \item{int_interaction}{intercept for interaction term}
 #' }
 #' The function can handle up to n exchangeable triads.
+#' @param data The dataframe.
+#' Data should be wide, with a row for every group of participants.
+#' At a minimum, it must contain five columns: one for rating 1, one for rating 2, one for the individual
+#' difference moderator, one for the interaction term, and one for the group moderated variable.
+#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' is supplied, no additional arguments need to be specified.
 #' @param  rating_1 Quoted column names that contain  the first rating variable. This might be P1 reports
 #' if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
 #' If more than one is supplied, the target-wise order must match across variables.
@@ -1592,7 +1594,7 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
-#' @param n_r1_per_r2 The number of second ratings for each first rating. Currently, only 1:1 is supported.
+#' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
 #' @import lavaan
 #' @export
 #' @examples data("rep_sim_data")
@@ -1647,7 +1649,7 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
     # Make sure group labels aren't numbers, which
     # screw up the lavaan syntax. If they are, change use_labs
     # to TRUE, which creates generic labels that will work.
-    if(!(s.numeric(groups)) && use_labs == TRUE){
+    if(!(is.numeric(groups)) && use_labs == TRUE){
       use_labs = FALSE
       message("Labels are numeric variables and use_labs was set to TRUE. This creates
               problems in the underlying lavaan syntax. use_labs is being set to FALSE,
@@ -1659,7 +1661,7 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
                                                                          groups = groups, use_labs = use_labs, n_triads = length(rating_1),
                                                                          n_r1_per_r2 = n_r1_per_r2, n_r2_per_r1 = n_r2_per_r1)}
 
-    else{rep_consensus_group_id_model <- model}
+    else{rep_generic_group_id_model <- model}
 
 
     if(!("none" %in% params_eql) &&
@@ -1883,6 +1885,12 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
 #' \item{int_interaction}{intercept for interaction term}
 #' }
 #' The function can handle up to n exchangeable triads.
+#' @param data The dataframe.
+#' Data should be wide, with a row for every group of participants.
+#' At a minimum, it must contain five columns: one for P1-reports, one for P2-reports, one for the individual
+#' difference moderator, one for the interaction term, and one for the group moderated variable.
+#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
 #' If more than one is supplied, the target-wise order must match the other
@@ -1962,10 +1970,9 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
 #'
 #' @return The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 
-rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_variable, interaction_term, model = NULL,
-                                        group_mod = NULL, use_labs = TRUE,groups_eql = "none", params_eql = "none",
-                                        n_triads = length(p1_reports), n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
-                                        n_p2s_per_ts = 1){
+rep_consensus_group_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id_mod_variable, interaction_term,
+                                        group_mod = NULL, use_labs = TRUE, groups_eql = "none", params_eql = "none",
+                                        n_triads = length(p1_reports), n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
   if(is.null(group_mod)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                                  If you don't have a group moderator, try rep_consensus if you have no moderator or
                                  rep_id_mods_consensus if you have an individual difference moderator.")
@@ -2077,7 +2084,7 @@ rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_var
 #' @param use_labs Logical indicating whether or not to use the group labels to create the parameter labels.
 #' If FALSE, generic labels (grp1 to grpk, where k is the number of groups) are used.
 #' @param n_triads The number of exchangeable triads in each group. By default, this is determined by
-#' counting the number of P1 reports. This parameter rarely needs to be changed.
+#' counting the number of Target self-reports. This parameter rarely needs to be changed.
 #' @param n_ts_per_p2s The number of targets that each P2 rated. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_ts The number of P2s that rated each target;. This defaults to 1.
@@ -2105,7 +2112,7 @@ rep_consensus_group_id_mods <- function(data, p1_reports, p2_reports, id_mod_var
 
 rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_variable,
                                                interaction_term, groups = NULL, use_labs = TRUE,
-                                               n_triads = length(p1_reports),
+                                               n_triads = length(target_self),
                                                n_ts_per_p2s = 1, n_p2s_per_ts = 1){
 
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.

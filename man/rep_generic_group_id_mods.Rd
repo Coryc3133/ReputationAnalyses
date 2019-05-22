@@ -10,6 +10,14 @@ rep_generic_group_id_mods(data, model = NULL, rating_1, rating_2,
   n_triads = length(p1_reports), n_r1_per_r2 = 1, n_r2_per_r1 = 1)
 }
 \arguments{
+\item{data}{The dataframe.
+Data should be wide, with a row for every group of participants.
+At a minimum, it must contain five columns: one for rating 1, one for rating 2, one for the individual
+difference moderator, one for the interaction term, and one for the group moderated variable.}
+
+\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+is supplied, no additional arguments need to be specified.}
+
 \item{rating_1}{Quoted column names that contain  the first rating variable. This might be P1 reports
 if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
 If more than one is supplied, the target-wise order must match across variables.}
@@ -45,14 +53,14 @@ counting the number of P1 reports. This parameter rarely needs to be changed.}
 
 \item{n_r1_per_r2}{The number of first ratings for each second rating. Currently, only 1:1 is supported.}
 
-\item{n_r1_per_r2}{The number of second ratings for each first rating. Currently, only 1:1 is supported.}
+\item{n_r2_per_r1}{The number of second ratings for each first rating. Currently, only 1:1 is supported.}
 }
 \value{
 The function returns an object of class \code{\link[lavaan:lavaan-class]{lavaan}}.
 }
 \description{
 This is a generic function for fitting a lavaan model for
-individual-level moderators on two distinguishable ratings on the same target across multiple groups..
+individual-level moderators on two distinguishable ratings on the same target across multiple groups.
 This could be P1- and P2- reports, P2- and self-reports, P1- and self-reports, or any other sets of
 distinguishable ratings.
 }

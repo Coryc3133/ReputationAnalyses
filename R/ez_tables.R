@@ -391,7 +391,7 @@ ez_id_mod_table <- function(rep_model){
 #'                                           id_mod_variable = c("B_iri_perspective_cent", "D_iri_perspective_cent"),
 #'                                           interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"),
 #'                                           group_mod = "study")
-#'  ez_group_id_mod_table(agree_ha_p2ptmod_model)
+#'  ez_group_id_mod_table(agree_pt_mod_fit)
 #'
 #'  # Example for hearsay accuracy with all parameters equal across all groups
 #'  agree_pt_mod_fit_alleq <- rep_accuracy_group_id_mods(moderator_data,
@@ -644,9 +644,9 @@ ez_elevation_table <- function(rep_model){
 #'                                                            groups_eql = "all",
 #'                                                            params_eql = "all")
 #'
-#'           ez_elevation_group_table(agree_rep_consensus_grpmod, what = "main")
+#'           ez_elevation_group_table(agree_rep_consensus_grpmod)
 #'
-#'           ez_elevation_group_table(agree_rep_consensus_grpmod, what = "all")
+#'           ez_elevation_group_table(agree_rep_consensus_grpmod)
 #'
 #'        # Consensus & Accuracy
 #'
@@ -656,9 +656,9 @@ ez_elevation_table <- function(rep_model){
 #'                                                          target_self = c("C_C_agreeableness", "A_A_agreeableness"),
 #'                                                          group_mod = "study", groups_eql = "all",params_eql = "all")
 #'
-#'           ez_elevation_group_table(agree_rep_con_acc_grpmod, what = "main")
+#'           ez_elevation_group_table(agree_rep_con_acc_grpmod)
 #'
-#'           ez_elevation_group_table(agree_rep_con_acc_grpmod, what = "all")
+#'           ez_elevation_group_table(agree_rep_con_acc_grpmod)
 #'
 #'       # Consensus, Accuracy, 3rd  Person Meta
 #'
@@ -672,9 +672,9 @@ ez_elevation_table <- function(rep_model){
 #'                                                       groups_eql = "all",
 #'                                                       params_eql = "all")
 #'
-#'          ez_elevation_group_table(agree_full_3pmeta_grpmod, what = "main")
+#'          ez_elevation_group_table(agree_full_3pmeta_grpmod)
 #'
-#'           ez_elevation_group_table(agree_full_3pmeta_grpmod, what = "all")
+#'           ez_elevation_group_table(agree_full_3pmeta_grpmod)
 #'
 #' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
 ez_elevation_group_table <- function(rep_model){

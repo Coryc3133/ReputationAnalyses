@@ -217,6 +217,14 @@ rep_consensus <- function(data, model = NULL, p1_reports, p2_reports, n_triads =
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
+#' @param n_p1s_per_ts The number of P1s for every target;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_p2s_per_ts The number of P2s for every target;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_ts_per_p1s The number of targets for every P1;. This defaults to 1.
+#' Currently, only values of 1 are supported.
+#' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
+#' Currently, only values of 1 are supported.
 #' @import lavaan
 #' @export
 #' @examples

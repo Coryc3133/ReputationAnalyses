@@ -89,9 +89,9 @@ agree_pt_mod_consensus_model <- rep_consensus_id_mods_builder (p1_reports = c("A
                                                                interaction_term = c("B_ptXagree_interaction", "D_ptXagree_interaction"))
 
  # view model
-   cat(agree_pt_mod_model$model)
+   cat(agree_pt_mod_consensus_model$model)
 
  # view model Information
-   agree_pt_mod_model$rep_model_info
+   agree_pt_mod_consensus_model$rep_model_info
 
 }
