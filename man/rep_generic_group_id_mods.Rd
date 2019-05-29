@@ -7,7 +7,7 @@
 rep_generic_group_id_mods(data, model = NULL, rating_1, rating_2,
   id_mod_variable, interaction_term, group_mod = NULL, use_labs = TRUE,
   groups_eql = "none", params_eql = "none",
-  n_triads = length(p1_reports), n_r1_per_r2 = 1, n_r2_per_r1 = 1)
+  n_triads = length(rating_1), n_r1_per_r2 = 1, n_r2_per_r1 = 1)
 }
 \arguments{
 \item{data}{The dataframe.

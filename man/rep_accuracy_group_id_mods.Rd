@@ -7,7 +7,7 @@
 rep_accuracy_group_id_mods(data, model = NULL, target_self, p2_reports,
   id_mod_variable, interaction_term, group_mod = NULL, use_labs = TRUE,
   groups_eql = "none", params_eql = "none",
-  n_triads = length(p1_reports), n_ts_per_p2s = 1, n_p2s_per_ts = 1)
+  n_triads = length(target_self), n_ts_per_p2s = 1, n_p2s_per_ts = 1)
 }
 \arguments{
 \item{data}{The dataframe that contains the ratings, moderator variables, and the interaction term.

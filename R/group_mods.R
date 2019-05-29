@@ -40,7 +40,7 @@
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples
 #'  # build the model
@@ -55,13 +55,15 @@
 #'   agree_consensus_model_grpmod$rep_model_info
 #'
 #' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} with model information
+#' object of class \code{\link[tibble:tbl_df-class]{tbl_df}} with model information
 #' and a string object of the model in lavaan syntax. Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
 rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NULL, use_labs = TRUE,
                                             n_triads = length(p1_reports),
                                             n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
+  # Global Variable Binding
+  . <- grp_labs <- label <- NULL
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                             If you don't have a group moderator, try rep_consensus if you have no moderator or
                             rep_id_mods_consensus if you have an individual difference moderator.")
@@ -107,14 +109,14 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
       # specified in the function call.
       param_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         purrr::map(~str_flatten(.)) %>%
         unlist() %>%
         sort(decreasing = TRUE)
@@ -124,14 +126,14 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
       # extract those labels and deal with them separately.
       rel_el_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         tibble::as_tibble() %>%
         dplyr::select(dplyr::contains("rel_el"))
 
@@ -140,14 +142,14 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
       # out a df of those too.
       int_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         tibble::as_tibble() %>%
         dplyr::select(dplyr::contains("int_"))
 
@@ -261,7 +263,7 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           agree_consensus_grpmod <- rep_consensus_group_mod(data = rep_sim_data,
@@ -449,7 +451,7 @@ rep_consensus_group_mod <- function(data, model = NULL, p1_reports, p2_reports,
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples
 #'  # build the model
@@ -474,6 +476,9 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
                                           n_triads = length(p1_reports),
                                           n_p1s_per_p2s = 1, n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
                                           n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
+  # Global Variable Binding
+  . <- grp_labs <- label <- NULL
+
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                               If you don't have a group moderator, try rep_analyses_auto if you have no moderator or
                               rep_auto_id_mods if you have an individual difference moderator.")
@@ -519,14 +524,14 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
       # specified in the function call.
       param_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         purrr::map(~str_flatten(.)) %>%
         unlist() %>%
         sort(decreasing = TRUE)
@@ -536,14 +541,14 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
       # extract those labels and deal with them separately.
       rel_el_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         tibble::as_tibble() %>%
         dplyr::select(dplyr::contains("rel_el"))
 
@@ -552,14 +557,14 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
       # out a df of those too.
       int_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         tibble::as_tibble() %>%
         dplyr::select(dplyr::contains("int_"))
 
@@ -717,7 +722,7 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           agree_con_acc_grpmod <- rep_con_acc_group_mod(data = rep_sim_data,
@@ -935,7 +940,7 @@ rep_con_acc_group_mod <- function(data, model = NULL, p1_reports, p2_reports, ta
 #' Currently, only values of 1 are supported.
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           rep_full_3pmeta_model <- rep_full_3pmeta_group_mod_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
@@ -945,7 +950,7 @@ rep_con_acc_group_mod <- function(data, model = NULL, p1_reports, p2_reports, ta
 #'                                                              p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"),
 #'                                                              groups = c("Study_1", "Study_2"))
 #' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' object of class \code{\link[tibble:tbl_df-class]{tbl_df}} and a string object of the model
 #' in lavaan syntax. Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s, the number of p2s per target, and the number of targets per p2s,
@@ -956,6 +961,9 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
                                               n_triads = length(p1_reports), n_p1s_per_p2s = 1,
                                               n_p2s_per_p1s = 1, n_p1s_per_ts = 1,
                                               n_p2s_per_ts = 1, n_ts_per_p1s = 1, n_ts_per_p2s = 1){
+  # Global Variable Binding
+  label <- grp_labs <- . <- NULL
+
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                               If you don't have a group moderator, try rep_analyses_auto if you have no moderator or
                               rep_auto_id_mods if you have an individual difference moderator.")
@@ -1002,14 +1010,14 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
       # specified in the function call.
       param_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         purrr::map(~str_flatten(.)) %>%
         unlist() %>%
         sort(decreasing = TRUE)
@@ -1019,14 +1027,14 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
       # extract those labels and deal with them separately.
       rel_el_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         tibble::as_tibble() %>%
         dplyr::select(dplyr::contains("rel_el"))
 
@@ -1035,14 +1043,14 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
       # out a df of those too.
       int_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         tibble::as_tibble() %>%
         dplyr::select(dplyr::contains("int_"))
 
@@ -1242,7 +1250,7 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           agree_full_3pmeta_grpmod <- rep_full_3pmeta_group_mod(data = rep_sim_data,
@@ -1425,7 +1433,7 @@ rep_full_3pmeta_group_mod <- function(data, model = NULL, p1_reports, p2_reports
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
 #' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -1450,6 +1458,8 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
                                                interaction_term, groups = NULL, use_labs = TRUE,
                                                n_triads = length(rating_1),
                                                n_r1_per_r2 = 1, n_r2_per_r1 = 1){
+  # Global Variable Binding
+  label <- grp_labs <- . <- NULL
 
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                               If you don't have a group moderator, try try rep_analyses_auto if you have no moderator or
@@ -1497,14 +1507,14 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
       # specified in the function call.
       param_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         purrr::map(~str_flatten(.)) %>%
         unlist() %>%
         sort(decreasing = TRUE)
@@ -1595,7 +1605,7 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
 #' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -1629,7 +1639,7 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
 
 rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id_mod_variable, interaction_term,
                                        group_mod = NULL, use_labs = TRUE, groups_eql = "none", params_eql = "none",
-                                       n_triads = length(p1_reports), n_r1_per_r2 = 1, n_r2_per_r1 = 1){
+                                       n_triads = length(rating_1), n_r1_per_r2 = 1, n_r2_per_r1 = 1){
   if(is.null(group_mod)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                                  If you don't have a group moderator, try rep_consensus if you have no moderator or
                                  rep_id_mods_consensus if you have an individual difference moderator.")
@@ -1745,7 +1755,7 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -1770,6 +1780,8 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
                                                 interaction_term, groups = NULL, use_labs = TRUE,
                                                 n_triads = length(p1_reports),
                                                 n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
+  # Global Variable Binding
+  . <- label <- grp_labs <- NULL
 
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                               If you don't have a group moderator, try rep_analyses_auto if you have no moderator or
@@ -1817,14 +1829,14 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
   # specified in the function call.
   param_labs <- rep_model$model %>%
     lavaanify() %>%
-    dplyr::select(label) %>%
-    dplyr::filter(str_detect(label, "")) %>%
+    dplyr::select(.data$label) %>%
+    dplyr::filter(str_detect(.data$label, "")) %>%
     tidyr::crossing(groups) %>%
-    tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-    dplyr::select(-groups) %>%
+    tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+    dplyr::select(-.data$groups) %>%
     dplyr::distinct() %>%
     split(.$label) %>%
-    purrr::map(~dplyr::select(., -label)) %>%
+    purrr::map(~dplyr::select(., -.data$label)) %>%
     purrr::map(~str_flatten(.)) %>%
     unlist() %>%
     sort(decreasing = TRUE)
@@ -1922,7 +1934,7 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -2089,7 +2101,7 @@ rep_consensus_group_id_mods <- function(data, model = NULL, p1_reports, p2_repor
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_ts The number of P2s that rated each target;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -2114,6 +2126,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
                                                interaction_term, groups = NULL, use_labs = TRUE,
                                                n_triads = length(target_self),
                                                n_ts_per_p2s = 1, n_p2s_per_ts = 1){
+  grp_labs <- . <- NULL
 
   if(is.null(groups)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                               If you don't have a group moderator,try rep_analyses_auto if you have no moderator or
@@ -2161,14 +2174,14 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
       # specified in the function call.
       param_labs <- rep_model$model %>%
         lavaanify() %>%
-        dplyr::select(label) %>%
-        dplyr::filter(str_detect(label, "")) %>%
+        dplyr::select(.data$label) %>%
+        dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
-        tidyr::unite(grp_labs, groups, label, remove = FALSE) %>%
-        dplyr::select(-groups) %>%
+        tidyr::unite(grp_labs, .data$groups, .data$label, remove = FALSE) %>%
+        dplyr::select(-.data$groups) %>%
         dplyr::distinct() %>%
         split(.$label) %>%
-        purrr::map(~dplyr::select(., -label)) %>%
+        purrr::map(~dplyr::select(., -.data$label)) %>%
         purrr::map(~str_flatten(.)) %>%
         unlist() %>%
         sort(decreasing = TRUE)
@@ -2265,7 +2278,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_ts The number of P2s for every target;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -2316,7 +2329,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
 
 rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_reports, id_mod_variable, interaction_term,
                                         group_mod = NULL, use_labs = TRUE,groups_eql = "none", params_eql = "none",
-                                        n_triads = length(p1_reports), n_ts_per_p2s = 1, n_p2s_per_ts = 1){
+                                        n_triads = length(target_self), n_ts_per_p2s = 1, n_p2s_per_ts = 1){
   if(is.null(group_mod)){warning("You need to supply a group variable to run a group-moderator Reputation Model.
                                  If you don't have a group moderator, try try rep_analyses_auto if you have no moderator or
                                  rep_auto_id_mods if you have an individual difference moderator.")
@@ -2445,7 +2458,7 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,

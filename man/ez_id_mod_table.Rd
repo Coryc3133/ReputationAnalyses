@@ -11,7 +11,7 @@ ez_id_mod_table(rep_model)
 individual-level moderator Models (e.g., rep_auto_id_mods).}
 }
 \value{
-The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+The function returns an object of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
 }
 \description{
 This takes output from one of the individual-level moderated reputation models

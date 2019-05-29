@@ -14,6 +14,8 @@
 #' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
 
 #' @export
+#' @import magrittr stringr lavaan
+#' @importFrom rlang .data
 #' @examples data("rep_sim_data")
 #'      # Consensus only Model
 #'           agree_rep_consensus <- rep_analyses_auto(data = rep_sim_data,
@@ -48,7 +50,7 @@
 #'
 #'           ez_differential_table(agree_rep_all, what = "all")
 #'
-#' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+#' @return The function returns an object of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
 
 ez_differential_table <- function(rep_model,
                                   what = "main"){
@@ -57,7 +59,7 @@ ez_differential_table <- function(rep_model,
     labels <-
       rep_model@ParTable %>%
       tibble::as_tibble() %>%
-      dplyr::select(lhs, op, rhs, label)
+      dplyr::select(.data$lhs, .data$op, .data$rhs, .data$label)
 
     # Main parameters only
     if(what == "main"){
@@ -65,79 +67,82 @@ ez_differential_table <- function(rep_model,
         standardizedsolution() %>%
         tibble::as_tibble() %>%
         dplyr::full_join(labels) %>%
-        dplyr::distinct(label, .keep_all = TRUE) %>%
-        dplyr::filter(label == "hc" |
-                        label == "ha" |
-                        label == "da" |
-                        label == "p1ma"|
-                        label == "p2ma") %>%
+        dplyr::distinct(.data$label, .keep_all = TRUE) %>%
+        dplyr::filter(.data$label == "hc" |
+                      .data$label == "ha" |
+                      .data$label == "da" |
+                      .data$label == "p1ma"|
+                      .data$label == "p2ma") %>%
         # give them their substantive labels
-        dplyr::mutate(parameter = ifelse(label == "ha", "hearsay accuracy",
-                                         ifelse(label == "hc", "hearsay consensus",
-                                                ifelse(label == "da", "direct accuracy",
-                                                       ifelse(label == "p1ma", "P1 Meta-Accuracy",
-                                                              ifelse(label == "p2ma", "P2 Meta-Accuracy", NA)))))) %>%
-        dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-        dplyr::rename(r = est.std,
-                      ci_lower = ci.lower,
-                      ci_upper = ci.upper)}
+        dplyr::mutate(parameter = ifelse(.data$label == "ha", "hearsay accuracy",
+                                  ifelse(.data$label == "hc", "hearsay consensus",
+                                  ifelse(.data$label == "da", "direct accuracy",
+                                  ifelse(.data$label == "p1ma", "P1 Meta-Accuracy",
+                                  ifelse(.data$label == "p2ma", "P2 Meta-Accuracy", NA)))))) %>%
+        dplyr::select(.data$parameter, .data$est.std,
+                      .data$ci.lower, .data$ci.upper, .data$pvalue) %>%
+        dplyr::rename(r = .data$est.std,
+                      ci_lower = .data$ci.lower,
+                      ci_upper = .data$ci.upper)}
     if(what == "all"){
       rep_parameter_table <- rep_model %>%
         standardizedsolution() %>%
         tibble::as_tibble() %>%
         dplyr::full_join(labels) %>%
-        dplyr::distinct(label, .keep_all = TRUE) %>%
-        dplyr::filter(label == "ha"|
-                        label == "hc"|
-                        label == "da"|
-                        label == "p1ma"|
-                        label == "p2ma"|
-                        label == "as_ac1"|
-                        label == "as_con1"|
-                        label == "mp_rec"|
-                        label == "as_ac2"|
-                        label == "as_con2"|
-                        label == "rec"|
-                        label == "h"|
-                        label == "m"|
-                        label == "tru_sim"|
-                        label == "as_sim_3p"|
-                        label == "as_sim_1p"|
-                        label == "as_sim_p1m"|
-                        label == "ukp1m1"|
-                        label == "p1meta_sim"|
-                        label == "ukp2m1"|
-                        label == "ukp2m3"|
-                        label == "p2meta_sim"|
-                        label == "ukm1") %>%
+        dplyr::distinct(.data$label, .keep_all = TRUE) %>%
+        dplyr::filter(.data$label == "ha"|
+                      .data$label == "hc"|
+                      .data$label == "da"|
+                      .data$label == "p1ma"|
+                      .data$label == "p2ma"|
+                      .data$label == "as_ac1"|
+                      .data$label == "as_con1"|
+                      .data$label == "mp_rec"|
+                      .data$label == "as_ac2"|
+                      .data$label == "as_con2"|
+                      .data$label == "rec"|
+                      .data$label == "h"|
+                      .data$label == "m"|
+                      .data$label == "tru_sim"|
+                      .data$label == "as_sim_3p"|
+                      .data$label == "as_sim_1p"|
+                      .data$label == "as_sim_p1m"|
+                      .data$label == "ukp1m1"|
+                      .data$label == "p1meta_sim"|
+                      .data$label == "ukp2m1"|
+                      .data$label == "ukp2m3"|
+                      .data$label == "p2meta_sim"|
+                      .data$label == "ukm1") %>%
         # give them their substantive labels
-        dplyr::mutate(parameter = ifelse(label == "ha", "hearsay accuracy",
-                                         ifelse(label == "hc", "hearsay consensus",
-                                                ifelse(label == "da", "direct accuracy",
-                                                       ifelse(label == "p1ma", "P1 Meta-Accuracy",
-                                                              ifelse(label == "p2ma", "P2 Meta-Accuracy",
-                                                                     ifelse(label == "as_ac1", "P1 Assumed Accuracy",
-                                                                            ifelse(label == "as_con1", "P1 Assumed Consensus",
-                                                                                   ifelse(label == "mp_rec", "P1-P2 Meta-Perception Reciprocity",
-                                                                                          ifelse(label == "as_ac2", "P2 Assumed Accuracy",
-                                                                                                 ifelse(label == "as_con2", "P2 Assumed Consensus",
-                                                                                                        ifelse(label == "rec", "direct reciprocity",
-                                                                                                               ifelse(label == "h", "hearsay reciprocity",
-                                                                                                                      ifelse(label == "m", "P2(T) <-> opposite P1(T)",
-                                                                                                                             ifelse(label == "tru_sim", "True Target Similarity",
-                                                                                                                                    ifelse(label == "as_sim_3p", "Third-Person Assumed Similarity",
-                                                                                                                                           ifelse(label == "as_sim_1p", "First-Person Assumed Similarity",
-                                                                                                                                                  ifelse(label == "as_sim_p1m", "P1 Meta- Assumed Similarity",
-                                                                                                                                                         ifelse(label == "ukp1m1", "P1 Meta <-> opposite P1-Report",
-                                                                                                                                                                ifelse(label == "p1meta_sim", "P1 meta-similarity",
-                                                                                                                                                                       ifelse(label == "ukp2m1", "P2 Meta <-> opposite target self-report",
-                                                                                                                                                                              ifelse(label == "ukp2m3", "P2 meta <-> opposite P1-report",
-                                                                                                                                                                                     ifelse(label == "p2meta_sim", "P2 Meta-similarity",
-                                                                                                                                                                                            ifelse(label == "ukm1", "P1 Meta <-> opposite P2 Meta", NA)))))))))))))))))))))))) %>%
-        dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-        dplyr::rename(r = est.std,
-                      ci_lower = ci.lower,
-                      ci_upper = ci.upper)}
+        dplyr::mutate(parameter = ifelse(.data$label == "ha", "hearsay accuracy",
+                                  ifelse(.data$label == "hc", "hearsay consensus",
+                                  ifelse(.data$label == "da", "direct accuracy",
+                                  ifelse(.data$label == "p1ma", "P1 Meta-Accuracy",
+                                  ifelse(.data$label == "p2ma", "P2 Meta-Accuracy",
+                                  ifelse(.data$label == "as_ac1", "P1 Assumed Accuracy",
+                                  ifelse(.data$label == "as_con1", "P1 Assumed Consensus",
+                                  ifelse(.data$label == "mp_rec", "P1-P2 Meta-Perception Reciprocity",
+                                  ifelse(.data$label == "as_ac2", "P2 Assumed Accuracy",
+                                  ifelse(.data$label == "as_con2", "P2 Assumed Consensus",
+                                  ifelse(.data$label == "rec", "direct reciprocity",
+                                  ifelse(.data$label == "h", "hearsay reciprocity",
+                                  ifelse(.data$label == "m", "P2(T) <-> opposite P1(T)",
+                                  ifelse(.data$label == "tru_sim", "True Target Similarity",
+                                  ifelse(.data$label == "as_sim_3p", "Third-Person Assumed Similarity",
+                                  ifelse(.data$label == "as_sim_1p", "First-Person Assumed Similarity",
+                                  ifelse(.data$label == "as_sim_p1m", "P1 Meta- Assumed Similarity",
+                                  ifelse(.data$label == "ukp1m1", "P1 Meta <-> opposite P1-Report",
+                                  ifelse(.data$label == "p1meta_sim", "P1 meta-similarity",
+                                  ifelse(.data$label == "ukp2m1", "P2 Meta <-> opposite target self-report",
+                                  ifelse(.data$label == "ukp2m3", "P2 meta <-> opposite P1-report",
+                                  ifelse(.data$label == "p2meta_sim", "P2 Meta-similarity",
+                                  ifelse(.data$label == "ukm1", "P1 Meta <-> opposite P2 Meta",
+                                         NA)))))))))))))))))))))))) %>%
+        dplyr::select(.data$parameter, .data$est.std,
+                      .data$ci.lower, .data$ci.upper, .data$pvalue) %>%
+        dplyr::rename(r = .data$est.std,
+                      ci_lower = .data$ci.lower,
+                      ci_upper = .data$ci.upper)}
   return(rep_parameter_table)}
 
 #' Easily Table Differential Results from Group Moderated Models
@@ -152,8 +157,8 @@ ez_differential_table <- function(rep_model,
 #' main and all. If what = "main", then just the 'main' model parameters are provided.
 #' This will include, when avaiable, hearsay consensus, hearsay accuracy,
 #' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
-
 #' @export
+#' @import magrittr stringr lavaan
 #' @examples data("rep_sim_data")
 #'      # Consensus only Model
 #'           agree_rep_consensus_grpmod <- rep_auto_group_mod(data = rep_sim_data,
@@ -194,8 +199,9 @@ ez_differential_table <- function(rep_model,
 #'          ez_differential_group_table(agree_full_3pmeta_grpmod, what = "main")
 #'
 #'           ez_differential_group_table(agree_full_3pmeta_grpmod, what = "all")
-#'
-#' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+#' @return The function returns an object of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
+
+
 
 ez_differential_group_table <- function(rep_model,
                                   what = "main"){
@@ -203,9 +209,10 @@ ez_differential_group_table <- function(rep_model,
   # we need these to remove the repeats (from equality constraints)
   labels <- rep_model@ParTable %>%
     tibble::as_tibble() %>%
-    dplyr::select(lhs, op, rhs, group, label) %>%
-    tidyr::separate(label, c("group_label", "param_label"), extra = "merge", fill = "left") %>%
-    dplyr::filter(group_label != "")
+    dplyr::select(.data$lhs, .data$op, .data$rhs, .data$group, .data$label) %>%
+    tidyr::separate(.data$label, c("group_label", "param_label"),
+                    extra = "merge", fill = "left") %>%
+    dplyr::filter(.data$group_label != "")
 
   # Main parameters only
   if(what == "main"){
@@ -213,79 +220,82 @@ ez_differential_group_table <- function(rep_model,
       standardizedsolution() %>%
       tibble::as_tibble() %>%
       dplyr::full_join(labels) %>%
-      dplyr::distinct(group_label, param_label, .keep_all = TRUE) %>%
-      dplyr::filter(param_label == "hc" |
-                      param_label == "ha" |
-                      param_label == "da" |
-                      param_label == "p1ma"|
-                      param_label == "p2ma") %>%
+      dplyr::distinct(.data$group_label, .data$param_label, .keep_all = TRUE) %>%
+      dplyr::filter(.data$param_label == "hc" |
+                    .data$param_label == "ha" |
+                    .data$param_label == "da" |
+                    .data$param_label == "p1ma"|
+                    .data$param_label == "p2ma") %>%
       # give them their substantive labels
-      dplyr::mutate(parameter = ifelse(param_label == "ha", "hearsay accuracy",
-                                       ifelse(param_label == "hc", "hearsay consensus",
-                                              ifelse(param_label == "da", "direct accuracy",
-                                                     ifelse(param_label == "p1ma", "P1 Meta-Accuracy",
-                                                            ifelse(param_label == "p2ma", "P2 Meta-Accuracy", NA)))))) %>%
-      dplyr::select(group_label, parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-      dplyr::rename(r = est.std,
-                    ci_lower = ci.lower,
-                    ci_upper = ci.upper)}
+      dplyr::mutate(parameter = ifelse(.data$param_label == "ha", "hearsay accuracy",
+                                      ifelse(.data$param_label == "hc", "hearsay consensus",
+                                      ifelse(.data$param_label == "da", "direct accuracy",
+                                      ifelse(.data$param_label == "p1ma", "P1 Meta-Accuracy",
+                                      ifelse(.data$param_label == "p2ma", "P2 Meta-Accuracy", NA)))))) %>%
+      dplyr::select(.data$group_label, .data$parameter, .data$est.std,
+                    .data$ci.lower, .data$ci.upper, .data$pvalue) %>%
+      dplyr::rename(r = .data$est.std,
+                    ci_lower = .data$ci.lower,
+                    ci_upper = .data$ci.upper)}
   if(what == "all"){
     rep_parameter_table <- rep_model %>%
       standardizedsolution() %>%
       tibble::as_tibble() %>%
       dplyr::full_join(labels) %>%
-      dplyr::distinct(label, .keep_all = TRUE) %>%
-      dplyr::filter(param_label == "ha"|
-                      param_label == "hc"|
-                      param_label == "da"|
-                      param_label == "p1ma"|
-                      param_label == "p2ma"|
-                      param_label == "as_ac1"|
-                      param_label == "as_con1"|
-                      param_label == "mp_rec"|
-                      param_label == "as_ac2"|
-                      param_label == "as_con2"|
-                      param_label == "rec"|
-                      param_label == "h"|
-                      param_label == "m"|
-                      param_label == "tru_sim"|
-                      param_label == "as_sim_3p"|
-                      param_label == "as_sim_1p"|
-                      param_label == "as_sim_p1m"|
-                      param_label == "ukp1m1"|
-                      param_label == "p1meta_sim"|
-                      param_label == "ukp2m1"|
-                      param_label == "ukp2m3"|
-                      param_label == "p2meta_sim"|
-                      param_label == "ukm1") %>%
+      dplyr::distinct(.data$label, .keep_all = TRUE) %>%
+      dplyr::filter(.data$param_label == "ha"|
+                    .data$param_label == "hc"|
+                    .data$param_label == "da"|
+                    .data$param_label == "p1ma"|
+                    .data$param_label == "p2ma"|
+                    .data$param_label == "as_ac1"|
+                    .data$param_label == "as_con1"|
+                    .data$param_label == "mp_rec"|
+                    .data$param_label == "as_ac2"|
+                    .data$param_label == "as_con2"|
+                    .data$param_label == "rec"|
+                    .data$param_label == "h"|
+                    .data$param_label == "m"|
+                    .data$param_label == "tru_sim"|
+                    .data$param_label == "as_sim_3p"|
+                    .data$param_label == "as_sim_1p"|
+                    .data$param_label == "as_sim_p1m"|
+                    .data$param_label == "ukp1m1"|
+                    .data$param_label == "p1meta_sim"|
+                    .data$param_label == "ukp2m1"|
+                    .data$param_label == "ukp2m3"|
+                    .data$param_label == "p2meta_sim"|
+                    .data$param_label == "ukm1") %>%
       # give them their substantive labels
-      dplyr::mutate(parameter = ifelse(param_label == "ha", "hearsay accuracy",
-                                       ifelse(param_label == "hc", "hearsay consensus",
-                                              ifelse(param_label == "da", "direct accuracy",
-                                                     ifelse(param_label == "p1ma", "P1 Meta-Accuracy",
-                                                            ifelse(param_label == "p2ma", "P2 Meta-Accuracy",
-                                                                   ifelse(param_label == "as_ac1", "P1 Assumed Accuracy",
-                                                                          ifelse(param_label == "as_con1", "P1 Assumed Consensus",
-                                                                                 ifelse(param_label == "mp_rec", "P1-P2 Meta-Perception Reciprocity",
-                                                                                        ifelse(param_label == "as_ac2", "P2 Assumed Accuracy",
-                                                                                               ifelse(param_label == "as_con2", "P2 Assumed Consensus",
-                                                                                                      ifelse(param_label == "rec", "direct reciprocity",
-                                                                                                             ifelse(param_label == "h", "hearsay reciprocity",
-                                                                                                                    ifelse(param_label == "m", "P2(T) <-> opposite P1(T)",
-                                                                                                                           ifelse(param_label == "tru_sim", "True Target Similarity",
-                                                                                                                                  ifelse(param_label == "as_sim_3p", "Third-Person Assumed Similarity",
-                                                                                                                                         ifelse(param_label == "as_sim_1p", "First-Person Assumed Similarity",
-                                                                                                                                                ifelse(param_label == "as_sim_p1m", "P1 Meta- Assumed Similarity",
-                                                                                                                                                       ifelse(param_label == "ukp1m1", "P1 Meta <-> opposite P1-Report",
-                                                                                                                                                              ifelse(param_label == "p1meta_sim", "P1 meta-similarity",
-                                                                                                                                                                     ifelse(param_label == "ukp2m1", "P2 Meta <-> opposite target self-report",
-                                                                                                                                                                            ifelse(param_label == "ukp2m3", "P2 meta <-> opposite P1-report",
-                                                                                                                                                                                   ifelse(param_label == "p2meta_sim", "P2 Meta-similarity",
-                                                                                                                                                                                          ifelse(param_label == "ukm1", "P1 Meta <-> opposite P2 Meta", NA)))))))))))))))))))))))) %>%
-      dplyr::select(group_label, parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-      dplyr::rename(r = est.std,
-                    ci_lower = ci.lower,
-                    ci_upper = ci.upper)
+      dplyr::mutate(parameter = ifelse(.data$param_label == "ha", "hearsay accuracy",
+                                ifelse(.data$param_label == "hc", "hearsay consensus",
+                                ifelse(.data$param_label == "da", "direct accuracy",
+                                ifelse(.data$param_label == "p1ma", "P1 Meta-Accuracy",
+                                ifelse(.data$param_label == "p2ma", "P2 Meta-Accuracy",
+                                ifelse(.data$param_label == "as_ac1", "P1 Assumed Accuracy",
+                                ifelse(.data$param_label == "as_con1", "P1 Assumed Consensus",
+                                ifelse(.data$param_label == "mp_rec", "P1-P2 Meta-Perception Reciprocity",
+                                ifelse(.data$param_label == "as_ac2", "P2 Assumed Accuracy",
+                                ifelse(.data$param_label == "as_con2", "P2 Assumed Consensus",
+                                ifelse(.data$param_label == "rec", "direct reciprocity",
+                                ifelse(.data$param_label == "h", "hearsay reciprocity",
+                                ifelse(.data$param_label == "m", "P2(T) <-> opposite P1(T)",
+                                ifelse(.data$param_label == "tru_sim", "True Target Similarity",
+                                ifelse(.data$param_label == "as_sim_3p", "Third-Person Assumed Similarity",
+                                ifelse(.data$param_label == "as_sim_1p", "First-Person Assumed Similarity",
+                                ifelse(.data$param_label == "as_sim_p1m", "P1 Meta- Assumed Similarity",
+                                ifelse(.data$param_label == "ukp1m1", "P1 Meta <-> opposite P1-Report",
+                                ifelse(.data$param_label == "p1meta_sim", "P1 meta-similarity",
+                                ifelse(.data$param_label == "ukp2m1", "P2 Meta <-> opposite target self-report",
+                                ifelse(.data$param_label == "ukp2m3", "P2 meta <-> opposite P1-report",
+                                ifelse(.data$param_label == "p2meta_sim", "P2 Meta-similarity",
+                                ifelse(.data$param_label == "ukm1", "P1 Meta <-> opposite P2 Meta",
+                                       NA)))))))))))))))))))))))) %>%
+      dplyr::select(.data$group_label, .data$parameter, .data$est.std,
+                    .data$ci.lower, .data$ci.upper, .data$pvalue) %>%
+      dplyr::rename(r = .data$est.std,
+                    ci_lower = .data$ci.lower,
+                    ci_upper = .data$ci.upper)
   }
   # the function above will only get parameters without equality constraints
   # which sort of makes sense for this (it only gives you the results of group moderated analyses).
@@ -303,7 +313,7 @@ ez_differential_group_table <- function(rep_model,
     }
     if(!is.null(rep_parameter_table_eqls) && nrow(rep_parameter_table_eqls) > 0){
       rep_parameter_table <- dplyr::full_join(rep_parameter_table, rep_parameter_table_eqls)
-      rep_parameter_table <- dplyr::mutate(rep_parameter_table, group_label = ifelse(is.na(group_label), "eql", group_label))
+      rep_parameter_table <- dplyr::mutate(rep_parameter_table, group_label = ifelse(is.na(.data$group_label), "eql", .data$group_label))
       message("The Model you provided had some between-group equality constraints.
               Those pooled estimates are in the rows where group is marked eql")
     }
@@ -319,6 +329,7 @@ ez_differential_group_table <- function(rep_model,
 #' individual-level moderator Models (e.g., rep_auto_id_mods).
 
 #' @export
+#' @import magrittr stringr lavaan
 #' @examples data("rep_sim_data")
 #' moderator_data <- rep_sim_data %>%
 #' dplyr::mutate(B_C_agreeableness_cent = scale(B_C_agreeableness, scale = FALSE),
@@ -337,33 +348,34 @@ ez_differential_group_table <- function(rep_model,
 #'  ez_id_mod_table(agree_ha_p2ptmod_model)
 #'
 #'
-#' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+#' @return The function returns an object of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
 
 ez_id_mod_table <- function(rep_model){
   # First save out labels
   # we need these to remove the repeats (from equality constraints)
   labels <- rep_model@ParTable %>%
     tibble::as_tibble() %>%
-    dplyr::select(lhs, op, rhs, label)
+    dplyr::select(.data$lhs, .data$op, .data$rhs, .data$label)
 
   rep_parameter_table <- rep_model %>%
       standardizedsolution() %>%
       tibble::as_tibble() %>%
       dplyr::full_join(labels) %>%
-      dplyr::distinct(label, .keep_all = TRUE) %>%
-      dplyr::filter(label == "hc_me" |
-                    label == "ha_me" |
-                    label == "mod_me" |
-                    label == "interaction") %>%
+      dplyr::distinct(.data$label, .keep_all = TRUE) %>%
+      dplyr::filter(.data$label == "hc_me" |
+                    .data$label == "ha_me" |
+                    .data$label == "mod_me" |
+                    .data$label == "interaction") %>%
       # give them their substantive labels
-      dplyr::mutate(parameter = ifelse(label == "hc_me", "hearsay consensus (main effect)",
-                                       ifelse(label == "ha_me", "hearsay accuracy (main effect)",
-                                              ifelse(label == "mod_me", "moderator (main effect)",
-                                                     ifelse(label == "interaction", "interaction effect",NA))))) %>%
-      dplyr::select(parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-      dplyr::rename(beta = est.std,
-                    ci_lower = ci.lower,
-                    ci_upper = ci.upper)
+      dplyr::mutate(parameter = ifelse(.data$label == "hc_me", "hearsay consensus (main effect)",
+                                ifelse(.data$label == "ha_me", "hearsay accuracy (main effect)",
+                                ifelse(.data$label == "mod_me", "moderator (main effect)",
+                                ifelse(.data$label == "interaction", "interaction effect",NA))))) %>%
+      dplyr::select(.data$parameter, .data$est.std,
+                    .data$ci.lower, .data$ci.upper, .data$pvalue) %>%
+      dplyr::rename(beta = .data$est.std,
+                    ci_lower = .data$ci.lower,
+                    ci_upper = .data$ci.upper)
   return(rep_parameter_table)}
 
 #' Easily Table Model with Group and Individual Difference Moderators
@@ -412,37 +424,38 @@ ez_id_mod_table <- function(rep_model){
 #'                                                          group_mod = "group_var", groups_eql = c(1, 4), params_eql = "all")
 #'
 #' ez_group_id_mod_table(agree_pt_mod_fit_someeql)
-#' @return The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+#' @return The function returns an object of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
 
 ez_group_id_mod_table <- function(rep_model){
   # First save out labels
   # we need these to remove the repeats (from equality constraints)
   labels <- rep_model@ParTable%>%
     tibble::as_tibble() %>%
-    dplyr::select(lhs, op, rhs, group, label) %>%
-    tidyr::separate(label, c("group_label", "param_label"), extra = "merge", fill = "left") %>%
-    dplyr::filter(group_label != "")
+    dplyr::select(.data$lhs, .data$op, .data$rhs, .data$group, .data$label) %>%
+    tidyr::separate(.data$label, c("group_label", "param_label"), extra = "merge", fill = "left") %>%
+    dplyr::filter(.data$group_label != "")
 
   rep_parameter_table <- rep_model %>%
     standardizedsolution() %>%
     tibble::as_tibble() %>%
     dplyr::full_join(labels) %>%
-    dplyr::filter(lhs != rhs &
-                  op != "~1") %>%
-    dplyr::distinct(group_label, param_label, .keep_all = TRUE) %>%
-    dplyr::filter(param_label == "hc_me" |
-                  param_label == "ha_me" |
-                  param_label == "mod_me" |
-                  param_label == "interaction") %>%
+    dplyr::filter(.data$lhs != .data$rhs &
+                    .data$op != "~1") %>%
+    dplyr::distinct(.data$group_label, .data$param_label, .keep_all = TRUE) %>%
+    dplyr::filter(.data$param_label == "hc_me" |
+                  .data$param_label == "ha_me" |
+                  .data$param_label == "mod_me" |
+                  .data$param_label == "interaction") %>%
     # give them their substantive labels
-    dplyr::mutate(parameter = ifelse(param_label == "hc_me", "hearsay consensus (main effect)",
-                              ifelse(param_label == "ha_me", "hearsay accuracy (main effect)",
-                              ifelse(param_label == "mod_me", "moderator (main effect)",
-                              ifelse(param_label == "interaction", "interaction effect",NA))))) %>%
-    dplyr::select(group_label, parameter, est.std, ci.lower, ci.upper, pvalue) %>%
-    dplyr::rename(beta = est.std,
-                  ci_lower = ci.lower,
-                  ci_upper = ci.upper)
+    dplyr::mutate(parameter = ifelse(.data$param_label == "hc_me", "hearsay consensus (main effect)",
+                              ifelse(.data$param_label == "ha_me", "hearsay accuracy (main effect)",
+                              ifelse(.data$param_label == "mod_me", "moderator (main effect)",
+                              ifelse(.data$param_label == "interaction", "interaction effect",NA))))) %>%
+    dplyr::select(.data$group_label, .data$parameter, .data$est.std,
+                  .data$ci.lower, .data$ci.upper, .data$pvalue) %>%
+    dplyr::rename(beta = .data$est.std,
+                  ci_lower = .data$ci.lower,
+                  ci_upper = .data$ci.upper)
 
   # the function above will only get parameters without equality constraints
   # which sort of makes sense for this (it only gives you the results of group moderated analyses).
@@ -458,7 +471,7 @@ ez_group_id_mod_table <- function(rep_model){
     }
     if(!is.null(rep_parameter_table_eqls) && nrow(rep_parameter_table_eqls) > 0){
       rep_parameter_table <- dplyr::full_join(rep_parameter_table, rep_parameter_table_eqls)
-      rep_parameter_table <- dplyr::mutate(rep_parameter_table, group_label = ifelse(is.na(group_label), "eql", group_label))
+      rep_parameter_table <- dplyr::mutate(rep_parameter_table, group_label = ifelse(is.na(.data$group_label), "eql", .data$group_label))
       message("The Model you provided had some between-group equality constraints.
               Those pooled estimates are in the rows where group is marked eql")
     }
@@ -475,7 +488,7 @@ ez_group_id_mod_table <- function(rep_model){
 #'
 #' @param rep_model The results from one of the ReputationAnalyses
 #' Models (e.g., rep_analyses_auto).
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'
@@ -506,117 +519,122 @@ ez_group_id_mod_table <- function(rep_model){
 #'
 #'          ez_elevation_table(agree_rep_all)
 #'
-#' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
+#' @return The function returns a list of 2 objects of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
 
 ez_elevation_table <- function(rep_model){
+  # dealing with global binding issue
+  label <- cohen_d <- variable <- value <- NULL
+
   rep_elevation_table <- rep_model %>%
     parameterestimates() %>%
     tibble::as_tibble() %>%
-    dplyr::distinct(label, .keep_all = TRUE) %>%
-    dplyr::filter(label == "p1_p2_rel_el"|
-                    label == "self_p2_rel_el"|
-                    label == "self_p1_rel_el"|
-                    label == "p1_meta_rel_el"|
-                    label == "p2_meta_rel_el"|
-                    # and get the variances for calculating a
-                    # cohen's d
-                    stringr::str_detect(label, "v_") |
-                    stringr::str_detect(label, "int_")) %>%
-    dplyr::select(label, est) %>%
-    tidyr::spread(label, est)
+    dplyr::distinct(.data$label, .keep_all = TRUE) %>%
+    dplyr::filter(.data$label == "p1_p2_rel_el"|
+                  .data$label == "self_p2_rel_el"|
+                  .data$label == "self_p1_rel_el"|
+                  .data$label == "p1_meta_rel_el"|
+                  .data$label == "p2_meta_rel_el"|
+                  # and get the variances for calculating a
+                  # cohen's d
+                  stringr::str_detect(.data$label, "v_") |
+                  stringr::str_detect(.data$label, "int_")) %>%
+    dplyr::select(.data$label, .data$est) %>%
+    tidyr::spread(.data$label, .data$est)
   # calculate d's
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
     rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         p1_p2_std_d = p1_p2_rel_el / sqrt((v_p1 + v_p2) / 2))}
+                                         p1_p2_std_d = .data$p1_p2_rel_el / sqrt((.data$v_p1 + .data$v_p2) / 2))}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p2_rel_el"))) > 0){
     rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         self_p2_std_d = self_p2_rel_el / sqrt((v_self + v_p2) / 2))}
+                                         self_p2_std_d = .data$self_p2_rel_el / sqrt((.data$v_self + .data$v_p2) / 2))}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p1_rel_el"))) > 0){
     rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         self_p1_std_d = self_p1_rel_el / sqrt((v_self + v_p1) / 2))}
+                                         self_p1_std_d = .data$self_p1_rel_el / sqrt((.data$v_self + .data$v_p1) / 2))}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_meta_rel_el"))) > 0){
     rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         p1_meta_std_d = p1_meta_rel_el / sqrt((v_mp1 + v_p2) / 2))}
+                                         p1_meta_std_d = .data$p1_meta_rel_el / sqrt((.data$v_mp1 + .data$v_p2) / 2))}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p2_meta_rel_el"))) > 0){
     rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                         p2_meta_std_d = p2_meta_rel_el / sqrt((v_mp2 + v_p1) / 2))}
+                                         p2_meta_std_d = .data$p2_meta_rel_el / sqrt((.data$v_mp2 + .data$v_p1) / 2))}
 
   rep_elevation_table <- rep_elevation_table %>%
     dplyr::select(dplyr::ends_with("std_d")) %>%
     tidyr::gather(label, cohen_d) %>%
-    dplyr::mutate(label = stringr::str_replace_all(label, "std_d", "rel_el")) %>%
+    dplyr::mutate(label = stringr::str_replace_all(.data$label, "std_d", "rel_el")) %>%
     dplyr::left_join(parameterestimates(rep_model)) %>%
     # give them their substantive labels
-    dplyr::mutate(parameter = ifelse(label == "p1_p2_rel_el", "P1-P2 Relative Elevation",
-                                     ifelse(label == "self_p2_rel_el", "Self-P2 Relative Elevation",
-                                            ifelse(label == "self_p1_rel_el", "Self-P1 Relative Elevation",
-                                                   ifelse(label == "p1_meta_rel_el", "P1 Meta-Elevation",
-                                                          ifelse(label == "p2_meta_rel_el", "P2 Meta-Elevation", NA)))))) %>%
-    dplyr::select(parameter, est, ci.lower, ci.upper, cohen_d, z, pvalue) %>%
-    dplyr::rename(raw_diff = est,
-                  ci_lower = ci.lower,
-                  ci_upper = ci.upper) %>%
-    dplyr::distinct(parameter, .keep_all = TRUE)
+    dplyr::mutate(parameter = ifelse(.data$label == "p1_p2_rel_el", "P1-P2 Relative Elevation",
+                              ifelse(.data$label == "self_p2_rel_el", "Self-P2 Relative Elevation",
+                              ifelse(.data$label == "self_p1_rel_el", "Self-P1 Relative Elevation",
+                              ifelse(.data$label == "p1_meta_rel_el", "P1 Meta-Elevation",
+                              ifelse(.data$label == "p2_meta_rel_el", "P2 Meta-Elevation", NA)))))) %>%
+    dplyr::select(.data$parameter, .data$est,
+                  .data$ci.lower, .data$ci.upper,
+                  .data$cohen_d, .data$z, .data$pvalue) %>%
+    dplyr::rename(raw_diff =.data$est,
+                  ci_lower = .data$ci.lower,
+                  ci_upper = .data$ci.upper) %>%
+    dplyr::distinct(.data$parameter, .keep_all = TRUE)
 
   rep_descrips <- rep_model %>%
     parameterestimates() %>%
-    dplyr::distinct(label, .keep_all = TRUE) %>%
-    dplyr::select(label, est) %>%
-    tidyr::spread(label, est)
+    dplyr::distinct(.data$label, .keep_all = TRUE) %>%
+    dplyr::select(.data$label, .data$est) %>%
+    tidyr::spread(.data$label, .data$est)
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
     rep_descrips <- dplyr::mutate(rep_descrips,
-                                  self_sd = sqrt(v_self))}
+                                  self_sd = sqrt(.data$v_self))}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p1"))) > 0){
     rep_descrips <- dplyr::mutate(rep_descrips,
-                                  p1_sd = sqrt(v_p1))}
+                                  p1_sd = sqrt(.data$v_p1))}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p2"))) > 0){
     rep_descrips <- dplyr::mutate(rep_descrips,
-                                  p2_sd = sqrt(v_p2))}
+                                  p2_sd = sqrt(.data$v_p2))}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
     rep_descrips <- dplyr::mutate(rep_descrips,
-                                  mp1_sd = sqrt(v_mp1))}
+                                  mp1_sd = sqrt(.data$v_mp1))}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
     rep_descrips <- dplyr::mutate(rep_descrips,
-                                  mp2_sd = sqrt(v_mp2))}
+                                  mp2_sd = sqrt(.data$v_mp2))}
 
   rep_descrips <- rep_descrips %>%
     dplyr::select(dplyr::starts_with("int"), dplyr::ends_with("sd"))
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
     rep_descrips <- dplyr::rename(rep_descrips,
-                                  p1_t_mean = int_p1,
-                                  p1_t_sd = p1_sd,
-                                  p2_t_mean = int_p2,
-                                  p2_t_sd = p2_sd)}
+                                  p1_t_mean = .data$int_p1,
+                                  p1_t_sd = .data$p1_sd,
+                                  p2_t_mean = .data$int_p2,
+                                  p2_t_sd = .data$p2_sd)}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
     rep_descrips <- dplyr::rename(rep_descrips,
-                                  t_t_mean  = int_self,
-                                  t_t_sd    = self_sd)}
+                                  t_t_mean  = .data$int_self,
+                                  t_t_sd    = .data$self_sd)}
 
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
     rep_descrips <- dplyr::rename(rep_descrips,
-                                  p1_p2t_mean = int_mp1,
-                                  p1_p2t_sd = mp1_sd)}
+                                  p1_p2t_mean = .data$int_mp1,
+                                  p1_p2t_sd = .data$mp1_sd)}
   if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
     rep_descrips <- dplyr::rename(rep_descrips,
-                                  p2_p1t_mean = int_mp2,
-                                  p2_p1t_sd = mp2_sd)}
+                                  p2_p1t_mean = .data$int_mp2,
+                                  p2_p1t_sd = .data$mp2_sd)}
 
   rep_descrips <- rep_descrips %>%
     tidyr::gather(variable, value) %>%
-    tidyr::separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
-    dplyr::mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
-                  target = stringr::str_replace(target, "p2t", "p2_t")) %>%
-    tidyr::spread(stat, value)
+    tidyr::separate(.data$variable, c("perceiver", "target", "stat"), extra = "merge") %>%
+    dplyr::mutate(target = stringr::str_replace(.data$target, "p1t", "p1_t"),
+                  target = stringr::str_replace(.data$target, "p2t", "p2_t")) %>%
+    tidyr::spread(.data$stat, .data$value)
 
 
   return(list(elevation_table = rep_elevation_table,
@@ -632,7 +650,7 @@ ez_elevation_table <- function(rep_model){
 #'
 #' @param rep_model The results from one of the ReputationAnalyses group moderated models
 #' Models (e.g., rep_auto_group_mod).
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'
@@ -676,24 +694,29 @@ ez_elevation_table <- function(rep_model){
 #'
 #'           ez_elevation_group_table(agree_full_3pmeta_grpmod)
 #'
-#' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
+#' @return The function returns a list of 2 objects of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
+
 ez_elevation_group_table <- function(rep_model){
+  # dealing with binding issue
+  label <- cohen_d <- variable <- value <- parameter <- NULL
+
   rep_elevation_table <- rep_model %>%
     parameterestimates() %>%
     tibble::as_tibble() %>%
-    tidyr::separate(label, c("group_label", "parameter"), extra = "merge", fill = "left") %>%
-    dplyr::distinct(group_label, parameter, .keep_all = TRUE) %>%
-    dplyr::filter(parameter == "p1_p2_rel_el"|
-                    parameter == "self_p2_rel_el"|
-                    parameter == "self_p1_rel_el"|
-                    parameter == "p1_meta_rel_el"|
-                    parameter == "p2_meta_rel_el"|
+    tidyr::separate(.data$label, c("group_label", "parameter"),
+                    extra = "merge", fill = "left") %>%
+    dplyr::distinct(.data$group_label, .data$parameter, .keep_all = TRUE) %>%
+    dplyr::filter(.data$parameter == "p1_p2_rel_el"|
+                  .data$parameter == "self_p2_rel_el"|
+                  .data$parameter == "self_p1_rel_el"|
+                  .data$parameter == "p1_meta_rel_el"|
+                  .data$parameter == "p2_meta_rel_el"|
                     # and get the variances for calculating a
                     # cohen's d
-                    stringr::str_detect(parameter, "v_") |
-                    stringr::str_detect(parameter, "int_")) %>%
-    dplyr::select(group_label, parameter, est) %>%
-    tidyr::spread(parameter, est)
+                    stringr::str_detect(.data$parameter, "v_") |
+                    stringr::str_detect(.data$parameter, "int_")) %>%
+    dplyr::select(.data$group_label, .data$parameter, .data$est) %>%
+    tidyr::spread(.data$parameter, .data$est)
   # When all parameters are constrained to be equal, the above
   # will produce an empty tibble. In that case, we just want to
   # run the non-group elevation table function.
@@ -704,71 +727,75 @@ ez_elevation_group_table <- function(rep_model){
     if(max(rep_model@ParTable[["group"]]) > 1){
       rep_elevation_table <- rep_elevation_table %>%
         dplyr::mutate(group_label = "eql") %>%
-        dplyr::select(group_label, dplyr::everything())
+        dplyr::select(.data$group_label, dplyr::everything())
 
       rep_descrips <- rep_descrips %>%
         dplyr::mutate(group_label = "eql") %>%
-        dplyr::select(group_label, dplyr::everything())
+        dplyr::select(.data$group_label, dplyr::everything())
     }
     else{
       rep_elevation_table <- rep_elevation_table %>%
         dplyr::mutate(group_label = "No Group Moderator in Model") %>%
-        dplyr::select(group_label, dplyr::everything())
+        dplyr::select(.data$group_label, dplyr::everything())
 
       rep_descrips <- rep_descrips %>%
         dplyr::mutate(group_label = "No Group Moderator in Model") %>%
-        dplyr::select(group_label, dplyr::everything())
+        dplyr::select(.data$group_label, dplyr::everything())
     }
   }
   else{
     # calculate d's
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
       rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                           p1_p2_std_d = p1_p2_rel_el / sqrt((v_p1 + v_p2) / 2))}
+                                           p1_p2_std_d = .data$p1_p2_rel_el / sqrt((.data$v_p1 + .data$v_p2) / 2))}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p2_rel_el"))) > 0){
       rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                           self_p2_std_d = self_p2_rel_el / sqrt((v_self + v_p2) / 2))}
+                                           self_p2_std_d = .data$self_p2_rel_el / sqrt((.data$v_self + .data$v_p2) / 2))}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "self_p1_rel_el"))) > 0){
       rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                           self_p1_std_d = self_p1_rel_el / sqrt((v_self + v_p1) / 2))}
+                                           self_p1_std_d = .data$self_p1_rel_el / sqrt((.data$v_self + .data$v_p1) / 2))}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_meta_rel_el"))) > 0){
       rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                           p1_meta_std_d = p1_meta_rel_el / sqrt((v_mp1 + v_p2) / 2))}
+                                           p1_meta_std_d = .data$p1_meta_rel_el / sqrt((.data$v_mp1 + .data$v_p2) / 2))}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p2_meta_rel_el"))) > 0){
       rep_elevation_table <- dplyr::mutate(rep_elevation_table,
-                                           p2_meta_std_d = p2_meta_rel_el / sqrt((v_mp2 + v_p1) / 2))}
+                                           p2_meta_std_d = .data$p2_meta_rel_el / sqrt((.data$v_mp2 + .data$v_p1) / 2))}
     rel_el_only <- rep_model %>%
       parameterestimates() %>%
       tibble::as_tibble() %>%
-      tidyr::separate(label, c("group_label", "parameter"), extra = "merge", fill = "left") %>%
-      dplyr::distinct(group_label, parameter, .keep_all = TRUE) %>%
-      dplyr::filter(parameter == "p1_p2_rel_el"|
-                      parameter == "self_p2_rel_el"|
-                      parameter == "self_p1_rel_el"|
-                      parameter == "p1_meta_rel_el"|
-                      parameter == "p2_meta_rel_el") %>%
-      dplyr::select(group_label, parameter, est, se, z, pvalue, ci.lower, ci.upper)
+      tidyr::separate(.data$label, c("group_label", "parameter"),
+                      extra = "merge", fill = "left") %>%
+      dplyr::distinct(.data$group_label, .data$parameter, .keep_all = TRUE) %>%
+      dplyr::filter(.data$parameter == "p1_p2_rel_el"|
+                    .data$parameter == "self_p2_rel_el"|
+                    .data$parameter == "self_p1_rel_el"|
+                    .data$parameter == "p1_meta_rel_el"|
+                    .data$parameter == "p2_meta_rel_el") %>%
+      dplyr::select(.data$group_label, .data$parameter, .data$est,
+                    .data$se, .data$z, .data$pvalue, .data$ci.lower, .data$ci.upper)
 
     rep_elevation_table <-
       rep_elevation_table %>%
-      dplyr::select(group_label, dplyr::ends_with("std_d")) %>%
-      tidyr::gather(parameter, cohen_d, -group_label) %>%
-      dplyr::mutate(parameter = stringr::str_replace_all(parameter, "std_d", "rel_el")) %>%
+      dplyr::select(.data$group_label, dplyr::ends_with("std_d")) %>%
+      tidyr::gather(parameter, cohen_d, -.data$group_label) %>%
+      dplyr::mutate(parameter = stringr::str_replace_all(.data$parameter, "std_d", "rel_el")) %>%
       dplyr::left_join(rel_el_only) %>%
       # give them their substantive labels
-      dplyr::mutate(parameter = ifelse(parameter == "p1_p2_rel_el", "P1-P2 Relative Elevation",
-                                       ifelse(parameter == "self_p2_rel_el", "Self-P2 Relative Elevation",
-                                              ifelse(parameter == "self_p1_rel_el", "Self-P1 Relative Elevation",
-                                                     ifelse(parameter == "p1_meta_rel_el", "P1 Meta-Elevation",
-                                                            ifelse(parameter == "p2_meta_rel_el", "P2 Meta-Elevation", NA)))))) %>%
-      dplyr::select(group_label, parameter, est, ci.lower, ci.upper, cohen_d, z, pvalue) %>%
-      dplyr::rename(raw_diff = est,
-                    ci_lower = ci.lower,
-                    ci_upper = ci.upper)
+      dplyr::mutate(parameter = ifelse(.data$parameter == "p1_p2_rel_el", "P1-P2 Relative Elevation",
+                                ifelse(.data$parameter == "self_p2_rel_el", "Self-P2 Relative Elevation",
+                                ifelse(.data$parameter == "self_p1_rel_el", "Self-P1 Relative Elevation",
+                                ifelse(.data$parameter == "p1_meta_rel_el", "P1 Meta-Elevation",
+                                ifelse(.data$parameter == "p2_meta_rel_el", "P2 Meta-Elevation", NA)))))) %>%
+      dplyr::select(.data$group_label, .data$parameter,
+                    .data$est, .data$ci.lower, .data$ci.upper,
+                    .data$cohen_d, .data$z, .data$pvalue) %>%
+      dplyr::rename(raw_diff = .data$est,
+                    ci_lower = .data$ci.lower,
+                    ci_upper = .data$ci.upper)
 
     rep_elevation_table_eqls <- NULL
     if(max(rep_model@ParTable[["group"]]) != nrow(unique(rep_elevation_table["group_label"]))){
@@ -776,74 +803,86 @@ ez_elevation_group_table <- function(rep_model){
     }
     if(!is.null(rep_elevation_table_eqls) && nrow(rep_elevation_table_eqls) > 0){
       rep_elevation_table <- dplyr::full_join(rep_elevation_table, rep_elevation_table_eqls)
-      rep_elevation_table <- dplyr::mutate(rep_elevation_table, group_label = ifelse(is.na(group_label), "eql", group_label))
+      rep_elevation_table <- dplyr::mutate(rep_elevation_table, group_label = ifelse(is.na(.data$group_label), "eql", .data$group_label))
       message("The Model you provided had some between-group equality constraints.
               Those pooled estimates are in the rows where group is marked eql")
     }
     rep_descrips <- rep_model %>%
       parameterestimates() %>%
       tibble::as_tibble() %>%
-      dplyr::filter(str_detect(label, "int") | str_detect(label, "v")) %>%
-      dplyr::mutate(label = ifelse(str_detect(label, "^int"), str_replace_all(label, label, paste("eql", label, sep = "_")),
-                                   ifelse(str_detect(label, "^v"), str_replace_all(label, label, paste("eql", label, sep = "_")), label))) %>%
-      tidyr::separate(label, c("group_label", "parameter"), extra = "merge", fill = "left") %>%
-      dplyr::distinct(group_label, parameter, .keep_all = TRUE) %>%
-      dplyr::select(group_label, parameter, est) %>%
-      tidyr::spread(parameter, est)
+      dplyr::filter(str_detect(.data$label, "int") | str_detect(.data$label, "v")) %>%
+      dplyr::mutate(label = ifelse(str_detect(.data$label, "^int"),
+                                   str_replace_all(.data$label,
+                                                   .data$label,
+                                                   paste("eql", .data$label, sep = "_")),
+                            ifelse(str_detect(.data$label, "^v"),
+                                   str_replace_all(.data$label,
+                                                   .data$label,
+                                                   paste("eql", .data$label, sep = "_")),
+                                   .data$label))) %>%
+      tidyr::separate(.data$label, c("group_label", "parameter"),
+                      extra = "merge", fill = "left") %>%
+      dplyr::distinct(.data$group_label, .data$parameter, .keep_all = TRUE) %>%
+      dplyr::select(.data$group_label, .data$parameter, .data$est) %>%
+      tidyr::spread(.data$parameter, .data$est)
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
       rep_descrips <- dplyr::mutate(rep_descrips,
-                                    self_sd = sqrt(v_self))}
+                                    self_sd = sqrt(.data$v_self))}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p1"))) > 0){
       rep_descrips <- dplyr::mutate(rep_descrips,
-                                    p1_sd = sqrt(v_p1))}
+                                    p1_sd = sqrt(.data$v_p1))}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_p2"))) > 0){
       rep_descrips <- dplyr::mutate(rep_descrips,
-                                    p2_sd = sqrt(v_p2))}
+                                    p2_sd = sqrt(.data$v_p2))}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
       rep_descrips <- dplyr::mutate(rep_descrips,
-                                    mp1_sd = sqrt(v_mp1))}
+                                    mp1_sd = sqrt(.data$v_mp1))}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
       rep_descrips <- dplyr::mutate(rep_descrips,
-                                    mp2_sd = sqrt(v_mp2))}
+                                    mp2_sd = sqrt(.data$v_mp2))}
 
     rep_descrips <- rep_descrips %>%
-      dplyr::select(group_label, dplyr::starts_with("int"), dplyr::ends_with("sd"))
+      dplyr::select(.data$group_label,
+                    dplyr::starts_with("int"),
+                    dplyr::ends_with("sd"))
+
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "p1_p2_rel_el"))) > 0){
       rep_descrips <- dplyr::rename(rep_descrips,
-                                    p1_t_mean = int_p1,
-                                    p1_t_sd = p1_sd,
-                                    p2_t_mean = int_p2,
-                                    p2_t_sd = p2_sd)}
+                                    p1_t_mean = .data$int_p1,
+                                    p1_t_sd = .data$p1_sd,
+                                    p2_t_mean = .data$int_p2,
+                                    p2_t_sd = .data$p2_sd)}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_self"))) > 0){
       rep_descrips <- dplyr::rename(rep_descrips,
-                                    t_t_mean  = int_self,
-                                    t_t_sd    = self_sd)}
+                                    t_t_mean  = .data$int_self,
+                                    t_t_sd    = .data$self_sd)}
 
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp1"))) > 0){
       rep_descrips <- dplyr::rename(rep_descrips,
-                                    p1_p2t_mean = int_mp1,
-                                    p1_p2t_sd = mp1_sd)}
+                                    p1_p2t_mean = .data$int_mp1,
+                                    p1_p2t_sd = .data$mp1_sd)}
     if(sum(as.numeric(stringr::str_detect(parameterestimates(rep_model)$label, "v_mp2"))) > 0){
       rep_descrips <- dplyr::rename(rep_descrips,
-                                    p2_p1t_mean = int_mp2,
-                                    p2_p1t_sd = mp2_sd)}
+                                    p2_p1t_mean = .data$int_mp2,
+                                    p2_p1t_sd = .data$mp2_sd)}
 
     rep_descrips <- rep_descrips %>%
-      tidyr::gather(variable, value, -group_label) %>%
-      tidyr::separate(variable, c("perceiver", "target", "stat"), extra = "merge") %>%
-      dplyr::mutate(target = stringr::str_replace(target, "p1t", "p1_t"),
-                    target = stringr::str_replace(target, "p2t", "p2_t")) %>%
-      tidyr::spread(stat, value)
+      tidyr::gather(variable, value, -.data$group_label) %>%
+      tidyr::separate(.data$variable,
+                      c("perceiver", "target", "stat"), extra = "merge") %>%
+      dplyr::mutate(target = stringr::str_replace(.data$target, "p1t", "p1_t"),
+                    target = stringr::str_replace(.data$target, "p2t", "p2_t")) %>%
+      tidyr::spread(.data$stat, .data$value)
   }
 
 
-  return(list(elevation_table = dplyr::arrange(rep_elevation_table, group_label),
+  return(list(elevation_table = dplyr::arrange(rep_elevation_table, .data$group_label),
               pooled_means_sd = rep_descrips))}
 
 #' Easy Differential & Elevation Tables
@@ -861,7 +900,7 @@ ez_elevation_group_table <- function(rep_model){
 #' This will include, when avaiable, hearsay consensus, hearsay accuracy,
 #' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
 #'
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'
@@ -895,7 +934,7 @@ ez_elevation_group_table <- function(rep_model){
 #'          ez_tables(agree_rep_all, what = "main")
 #'          ez_tables(agree_rep_all, what = "all")
 #'
-#' @return The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
+#' @return The function returns a list of 2 objects of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
 
 ez_tables <- function(rep_model, what = "main"){
   if(max(rep_model@ParTable[["group"]]) > 1){

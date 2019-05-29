@@ -16,7 +16,7 @@ This will include, when avaiable, hearsay consensus, hearsay accuracy,
 direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.}
 }
 \value{
-The function returns an object of class \code{\link[ggplot2::ggplot()]{ggplot}}.
+The function returns an object of class \code{\link[ggplot2:ggplot2-package]{ggplot}}.
 }
 \description{
 This takes output from one of the reputational analysis models
@@ -63,4 +63,7 @@ data("rep_sim_data")
 
           ez_differential_plot(agree_rep_all, what = "all")
 
+}
+\seealso{
+\code{\link[ggplot2]{ggplot}}
 }

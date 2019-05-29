@@ -40,7 +40,7 @@
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
 #' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -64,7 +64,7 @@
 #'          agree_pt_mod_model$rep_model_info
 #'
 #' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' object of class \code{\link[tibble:tbl_df-class]{tbl_df}} and a string object of the model
 #' in lavaan syntax. Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
@@ -158,7 +158,7 @@ rep_generic_id_mods_builder <- function(rating_1, rating_2, id_mod_variable,
 #' counting the number of P1 reports. This parameter rarely needs to be changed.
 #' @param n_r1_per_r2 The number of first ratings for each second rating. Currently, only 1:1 is supported.
 #' @param n_r2_per_r1 The number of second ratings for each first rating. Currently, only 1:1 is supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -192,6 +192,8 @@ rep_generic_id_mods <- function(data, model = NULL, rating_1, rating_2,
                                 id_mod_variable,
                                 interaction_term, n_triads = length(rating_1),
                                 n_r1_per_r2 = 1,n_r2_per_r1 = 1){
+  # Global Variable Binding Issue
+  . <- NULL
   if(is.null(model)){
     rep_id_mods_model <- rep_generic_id_mods_builder(rating_1, rating_2, id_mod_variable,
                                                interaction_term, n_triads = length(rating_1),
@@ -205,15 +207,15 @@ rep_generic_id_mods <- function(data, model = NULL, rating_1, rating_2,
     # Get rating_2 variable labels to check
     # that data are mean-centered
     rating_2 <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
-    dplyr::filter(label == "rating_me") %>%
-    dplyr::select(rhs) %>%
+    dplyr::filter(.data$label == "rating_me") %>%
+    dplyr::select(.data$rhs) %>%
     dplyr::distinct() %>%
     .$rhs
     # Fer id_mod variable labels to check
     # that data were mean-centered
   id_mod_variable <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
-    dplyr::filter(label == "mod_me") %>%
-    dplyr::select(rhs) %>%
+    dplyr::filter(.data$label == "mod_me") %>%
+    dplyr::select(.data$rhs) %>%
     dplyr::distinct() %>%
     .$rhs
 
@@ -272,7 +274,7 @@ rep_generic_id_mods <- function(data, model = NULL, rating_1, rating_2,
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -297,7 +299,7 @@ rep_generic_id_mods <- function(data, model = NULL, rating_1, rating_2,
 #'    agree_pt_mod_consensus_model$rep_model_info
 #'
 #' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' object of class \code{\link[tibble:tbl_df-class]{tbl_df}} and a string object of the model
 #' in lavaan syntax. Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
@@ -398,7 +400,7 @@ rep_consensus_id_mods_builder <- function(p1_reports, p2_reports, id_mod_variabl
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -432,6 +434,8 @@ rep_consensus_id_mods_builder <- function(p1_reports, p2_reports, id_mod_variabl
 rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id_mod_variable,
                                   interaction_term, n_triads = length(p1_reports),
                                   n_p1s_per_p2s = 1, n_p2s_per_p1s = 1){
+  # dealing with global variable binding issue
+  . <- NULL
   if(is.null(model)){
     rep_id_mods_model <- rep_consensus_id_mods_builder(p1_reports, p2_reports, id_mod_variable,
                                                      interaction_term, n_triads = length(p1_reports),
@@ -445,15 +449,15 @@ rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id
     # Get P2 reports variable labels to check
     # that data are mean-centered
     p2_reports <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
-      dplyr::filter(label == "hc_me") %>%
-      dplyr::select(rhs) %>%
+      dplyr::filter(.data$label == "hc_me") %>%
+      dplyr::select(.data$rhs) %>%
       dplyr::distinct() %>%
       .$rhs
     # Get id_mod variable labels to check
     # that data were mean-centered
     id_mod_variable <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
-      dplyr::filter(label == "mod_me") %>%
-      dplyr::select(rhs) %>%
+      dplyr::filter(.data$label == "mod_me") %>%
+      dplyr::select(.data$rhs) %>%
       dplyr::distinct() %>%
       .$rhs
 
@@ -511,7 +515,7 @@ rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_ts The number of P2s that rated each target;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -534,7 +538,7 @@ rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id
 #'  agree_pt_mods_hearacc_model$rep_model_info
 #'
 #' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' object of class \code{\link[tibble:tbl_df-class]{tbl_df}} and a string object of the model
 #' in lavaan syntax. Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
@@ -632,7 +636,7 @@ rep_accuracy_id_mods_builder <- function(target_self, p2_reports, id_mod_variabl
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_ts The number of P2s that rated each target;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           # Prepare data
@@ -666,6 +670,8 @@ rep_accuracy_id_mods_builder <- function(target_self, p2_reports, id_mod_variabl
 rep_accuracy_id_mods <- function(data, model = NULL, target_self, p2_reports, id_mod_variable,
                                  interaction_term, n_triads = length(target_self),
                                  n_ts_per_p2s = 1, n_p2s_per_ts = 1){
+  # dealing with global variable binding issue
+  . <- NULL
   if(is.null(model)){
     rep_id_mods_model <- rep_accuracy_id_mods_builder(target_self = target_self, p2_reports = p2_reports,
                                                       id_mod_variable = id_mod_variable, interaction_term = interaction_term,
@@ -680,15 +686,15 @@ rep_accuracy_id_mods <- function(data, model = NULL, target_self, p2_reports, id
     # Get P2 reports variable labels to check
     # that data are mean-centered
     p2_reports <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
-      dplyr::filter(label == "ha_me") %>%
-      dplyr::select(rhs) %>%
+      dplyr::filter(.data$label == "ha_me") %>%
+      dplyr::select(.data$rhs) %>%
       dplyr::distinct() %>%
       .$rhs
     # Get id_mod variable labels to check
     # that data were mean-centered
     id_mod_variable <- lavaanify(rep_id_mods_model$model, fixed.x = FALSE) %>%
-      dplyr::filter(label == "mod_me") %>%
-      dplyr::select(rhs) %>%
+      dplyr::filter(.data$label == "mod_me") %>%
+      dplyr::select(.data$rhs) %>%
       dplyr::distinct() %>%
       .$rhs
     # check that data were mean-centered
@@ -817,7 +823,7 @@ rep_auto_id_mods <- function(data, target_self = NULL, p1_reports = NULL, p2_rep
     fitted_model <- rep_generic_id_mods(data = data, rating_1 = target_self, rating_2 = p1_reports,
                                         id_mod_variable = id_mod_variable,
                                         interaction_term = interaction_term,
-                                        n_triads = length(rating_1),
+                                        n_triads = length(target_self),
                                         n_r1_per_r2 = n_r1_per_r2, n_r2_per_r1 = n_r1_per_r2)
   } else{
     stop("There is no default for the variables you entered.")

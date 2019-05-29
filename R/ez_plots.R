@@ -16,6 +16,8 @@
 #' direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.
 
 #' @export
+#' @import magrittr stringr lavaan
+#' @seealso \code{\link[ggplot2]{ggplot}}
 #' @examples data("rep_sim_data")
 #'      # Consensus only Model
 #'           agree_rep_consensus <- rep_analyses_auto(data = rep_sim_data,
@@ -50,27 +52,27 @@
 #'
 #'           ez_differential_plot(agree_rep_all, what = "all")
 #'
-#' @return The function returns an object of class \code{\link[ggplot2::ggplot()]{ggplot}}.
+#' @return The function returns an object of class \code{\link[ggplot2:ggplot2-package]{ggplot}}.
 ez_differential_plot <- function(rep_model, what = "main"){
   param_tbl <- ez_tables(rep_model, what = what)$differential_table
     if(length(unique(param_tbl$parameter)) == 1){
       param_tbl <- param_tbl %>%
-        dplyr::mutate(parameter = stringr::str_to_title(parameter),
-                      parameter = forcats::fct_relevel(parameter,
+        dplyr::mutate(parameter = stringr::str_to_title(.data$parameter),
+                      parameter = forcats::fct_relevel(.data$parameter,
                                                        "Hearsay Consensus"))
     }
   if(length(unique(param_tbl$parameter)) == 2){
     param_tbl <- param_tbl %>%
-      dplyr::mutate(parameter = stringr::str_to_title(parameter),
-                    parameter = forcats::fct_relevel(parameter,
+      dplyr::mutate(parameter = stringr::str_to_title(.data$parameter),
+                    parameter = forcats::fct_relevel(.data$parameter,
                                                      "Direct Accuracy",
                                                      "Hearsay Accuracy",
                                                      "Hearsay Consensus"))
   }
   if(length(unique(param_tbl$parameter)) == 5){
   param_tbl <- param_tbl %>%
-    dplyr::mutate(parameter = stringr::str_to_title(parameter),
-                  parameter = forcats::fct_relevel(parameter,
+    dplyr::mutate(parameter = stringr::str_to_title(.data$parameter),
+                  parameter = forcats::fct_relevel(.data$parameter,
                                                    "P2 Meta-Accuracy",
                                                    "P1 Meta-Accuracy",
                                                    "Direct Accuracy",
@@ -79,8 +81,8 @@ ez_differential_plot <- function(rep_model, what = "main"){
   }
 
   if(!("group_label" %in% colnames(ez_tables(rep_model)$differential_table))){
-    ggplot2::ggplot(param_tbl, ggplot2::aes(x = parameter, y = r)) +
-      ggplot2::geom_pointrange(ggplot2::aes(ymin = ci_lower, ymax = ci_upper)) +
+    ggplot2::ggplot(param_tbl, ggplot2::aes(x = .data$parameter, y = .data$r)) +
+      ggplot2::geom_pointrange(ggplot2::aes(ymin = .data$ci_lower, ymax = .data$ci_upper)) +
       ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
       ggplot2::coord_flip() +
       ggplot2::theme_minimal() +
@@ -88,8 +90,8 @@ ez_differential_plot <- function(rep_model, what = "main"){
                     x = NULL)
   }
   else{
-    ggplot2::ggplot(param_tbl, ggplot2::aes(x = parameter, y = r, shape = forcats::fct_rev(group_label))) +
-      ggplot2::geom_pointrange(ggplot2::aes(ymin = ci_lower, ymax = ci_upper),
+    ggplot2::ggplot(param_tbl, ggplot2::aes(x = .data$parameter, y = .data$r, shape = forcats::fct_rev(.data$group_label))) +
+      ggplot2::geom_pointrange(ggplot2::aes(ymin = .data$ci_lower, ymax = .data$ci_upper),
                                position = ggplot2::position_dodge(width = .5)) +
       ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = .5) +
       ggplot2::coord_flip() +

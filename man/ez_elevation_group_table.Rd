@@ -11,7 +11,7 @@ ez_elevation_group_table(rep_model)
 Models (e.g., rep_auto_group_mod).}
 }
 \value{
-The function returns a list of 2 objects of class \code{\link[tibble::tibble()]{tibble}}.
+The function returns a list of 2 objects of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
 }
 \description{
 This takes output from one of the reputation group moderated models

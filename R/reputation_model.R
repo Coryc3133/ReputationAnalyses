@@ -34,7 +34,7 @@
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples
 #'          # build the model
@@ -48,7 +48,7 @@
 #'          # agree_consensus_model$rep_model_info
 #'
 #' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' object of class \code{\link[tibble:tbl_df-class]{tbl_df}} and a string object of the model
 #' in lavaan syntax. Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s.
@@ -151,7 +151,7 @@ rep_consensus_builder <- function(p1_reports, p2_reports, n_triads = length(p1_r
 #' Currently, only values of 1 are supported.
 #' @param n_p2s_per_p1s The number of P2s for every P1;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           agree_consensus <- rep_consensus(data = rep_sim_data,
@@ -225,7 +225,7 @@ rep_consensus <- function(data, model = NULL, p1_reports, p2_reports, n_triads =
 #' Currently, only values of 1 are supported.
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples
 #' agree_con_acc_model <- rep_consensus_accuracy_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
@@ -238,7 +238,7 @@ rep_consensus <- function(data, model = NULL, p1_reports, p2_reports, n_triads =
 #' agree_con_acc_model$rep_model_info
 #'
 #' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' object of class \code{\link[tibble:tbl_df-class]{tbl_df}} and a string object of the model
 #' in lavaan syntax.  Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s, the number of p2s per target, and the number of targets per p2s,
@@ -395,7 +395,7 @@ rep_consensus_accuracy_builder <- function(p1_reports, p2_reports, target_self, 
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
 #'
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           agree_con_acc <- rep_consensus_accuracy(data = rep_sim_data,
@@ -511,7 +511,7 @@ rep_consensus_accuracy <- function(data, model = NULL, p1_reports, p2_reports, t
 #' Currently, only values of 1 are supported.
 #' @param n_ts_per_p2s The number of targets for every P2;. This defaults to 1.
 #' Currently, only values of 1 are supported.
-#' @import lavaan
+#' @import magrittr stringr lavaan
 #' @export
 #' @examples data("rep_sim_data")
 #'           rep_full_3pmeta_model <- rep_full_w_3pmeta_builder(p1_reports = c("A_C_agreeableness", "C_A_agreeableness"),
@@ -520,7 +520,7 @@ rep_consensus_accuracy <- function(data, model = NULL, p1_reports, p2_reports, t
 #'                             p1_meta = c("A_B_C_agree_meta", "C_D_A_agree_meta"),
 #'                             p2_meta = c("B_A_C_agree_meta", "D_C_A_agree_meta"))
 #' @return The function returns a list containing an
-#' object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+#' object of class \code{\link[tibble:tbl_df-class]{tbl_df}} and a string object of the model
 #' in lavaan syntax. Model information
 #' includes the type of model, the number of exchangeable triads, and the number
 #' of p1s per p2s, and the number of p2s per p1s, the number of p2s per target, and the number of targets per p2s,

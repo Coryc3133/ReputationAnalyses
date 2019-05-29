@@ -17,7 +17,7 @@ This will include, when avaiable, hearsay consensus, hearsay accuracy,
 direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.}
 }
 \value{
-The function returns an object of class \code{\link[tibble::tibble()]{tibble}}.
+The function returns an object of class \code{\link[tibble:tbl_df-class]{tbl_df}}.
 }
 \description{
 This takes output from one of the group moderated reputation models
@@ -65,5 +65,4 @@ agree_full_3pmeta_grpmod <- rep_auto_group_mod(data = rep_sim_data,
          ez_differential_group_table(agree_full_3pmeta_grpmod, what = "main")
 
           ez_differential_group_table(agree_full_3pmeta_grpmod, what = "all")
-
 }

@@ -34,7 +34,7 @@ counting the number of P1 reports. This parameter rarely needs to be changed.}
 }
 \value{
 The function returns a list containing an
-object of class \code{\link[tibble:tibble-class]{tibble}} and a string object of the model
+object of class \code{\link[tibble:tbl_df-class]{tbl_df}} and a string object of the model
 in lavaan syntax. Model information
 includes the type of model, the number of exchangeable triads, and the number
 of p1s per p2s, and the number of p2s per p1s.

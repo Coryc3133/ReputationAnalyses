@@ -35,7 +35,7 @@ Currently, only values of 1 are supported.}
 }
 \value{
 The function returns a list containing an
-object of class \code{\link[tibble:tibble-class]{tibble}} with model information
+object of class \code{\link[tibble:tbl_df-class]{tbl_df}} with model information
 and a string object of the model in lavaan syntax. Model information
 includes the type of model, the number of exchangeable triads, and the number
 of p1s per p2s, and the number of p2s per p1s.
