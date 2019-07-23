@@ -237,7 +237,7 @@ rep_consensus_group_mod_builder <- function(p1_reports, p2_reports, groups = NUL
 #' @param data The dataframe that contains P1 & P2 ratings and the group-level moderator.
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain three columns: one for P1 reports, one for P2 reports, and one for the group-level moderator.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
@@ -684,7 +684,7 @@ rep_con_acc_group_mod_builder <- function(p1_reports, p2_reports, target_self,
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
 #' one for targets' self-ratings.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
@@ -1204,7 +1204,7 @@ rep_full_3pmeta_group_mod_builder <- function(p1_reports, p2_reports, target_sel
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
 #' one for targets' self-ratings.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
@@ -1577,7 +1577,7 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain five columns: one for rating 1, one for rating 2, one for the individual
 #' difference moderator, one for the interaction term, and one for the group moderated variable.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  rating_1 Quoted column names that contain  the first rating variable. This might be P1 reports
 #' if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
@@ -1901,7 +1901,7 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain five columns: one for P1-reports, one for P2-reports, one for the individual
 #' difference moderator, one for the interaction term, and one for the group moderated variable.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
@@ -2246,7 +2246,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain five columns: one for target self-reports, one for mean-centered P2 reports,
 #' one for the mean-centered individual-level moderator variable, one for the interaction term, and one for the group variable.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the order must match the other
@@ -2412,7 +2412,7 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
 #' one for targets' self-ratings.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Optional. Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.

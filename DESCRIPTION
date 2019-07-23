@@ -1,5 +1,5 @@
-Package: ReputationAnalyses
-Title: Functions to analyze triadic (T-P1-P2) reputational data
+Package: ReputationModelR
+Title: Functions to model and analyze triadic (T-P1-P2) reputational data
 Version: 0.0.0.9001
 Authors@R: person("Cory", "Costello", email = "costell@uoregon.edu", role = c("aut", "cre"))
 Description: This package contains functions to analyze triadic reputational data (T-P1-P2).

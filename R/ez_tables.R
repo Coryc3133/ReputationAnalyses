@@ -1,12 +1,12 @@
 #' Easily Table Differential Results
 #'
-#' This takes output from one of the reputational analysis models
+#' This takes output from one of the ReputationModelR model functions
 #' (e.g., rep_analyses_auto) and returns a tibble of differential
 #' (correlational) parameters. It works with any combination of P1-,
 #' P2-, and 3rd person Meta-perceptions.
 #'
 #' The function can handle up to n exchangeable triads.
-#' @param rep_model The results from one of the ReputationAnalyses
+#' @param rep_model The results from one of the ReputationModelR
 #' Models (e.g., rep_analyses_auto).
 #' @param what The parameters you want in the table. Current options are
 #' main and all. If what = "main", then just the 'main' model parameters are provided.
@@ -150,7 +150,7 @@ ez_differential_table <- function(rep_model,
 #' This takes output from one of the group moderated reputation models
 #' (e.g., rep_analyses_auto) and returns a tibble of differential
 #' (correlational) parameters. It works with any of the group moderated models.
-#' @param rep_model The results from one of the ReputationAnalyses
+#' @param rep_model The results from one of the ReputationModelR
 #' group Models (e.g., rep_auto_group_mod). The model can have between-group equality
 #' constraints; those are marked by missing values (NA) in the group_label column.
 #' @param what The parameters you want in the table. Current options are
@@ -325,7 +325,7 @@ ez_differential_group_table <- function(rep_model,
 #' This takes output from one of the individual-level moderated reputation models
 #' (e.g., rep_auto_id_mods) and returns a tibble of model
 #' (regression) parameters. It works with any of the Individual-level moderated models.
-#' @param rep_model The results from one of the ReputationAnalyses
+#' @param rep_model The results from one of the ReputationModelR
 #' individual-level moderator Models (e.g., rep_auto_id_mods).
 
 #' @export
@@ -383,7 +383,7 @@ ez_id_mod_table <- function(rep_model){
 #' This takes output from one of the group- and individual-level moderated reputation models
 #' (e.g., rep_accuracy_group_id_mods) and returns a tibble of model
 #' (regression) parameters. It works with any of the Group- and Individual-level moderated models.
-#' @param rep_model The results from one of the ReputationAnalyses
+#' @param rep_model The results from one of the ReputationModelR
 #' group- and individual-level moderator Models (e.g., rep_accuracy_group_id_mods).
 
 #' @export
@@ -486,7 +486,7 @@ ez_group_id_mod_table <- function(rep_model){
 #' The elevation table contains the raw difference, 95% CI around the raw difference,
 #' z scores, p values, and a cohen's d (difference / pooled SD). It has only 1 parameter.
 #'
-#' @param rep_model The results from one of the ReputationAnalyses
+#' @param rep_model The results from one of the ReputationModelR
 #' Models (e.g., rep_analyses_auto).
 #' @import magrittr stringr lavaan
 #' @export
@@ -648,7 +648,7 @@ ez_elevation_table <- function(rep_model){
 #' The elevation table contains the raw difference, 95% CI around the raw difference,
 #' z scores, p values, and a cohen's d (difference / pooled SD). It has only 1 parameter.
 #'
-#' @param rep_model The results from one of the ReputationAnalyses group moderated models
+#' @param rep_model The results from one of the ReputationModelR group moderated models
 #' Models (e.g., rep_auto_group_mod).
 #' @import magrittr stringr lavaan
 #' @export
@@ -893,7 +893,7 @@ ez_elevation_group_table <- function(rep_model){
 #'  The second element is a table of elevation results. The third element is a tibble containing
 #'  the table of descriptives (means and SDs, pooling across exchangeable roles).
 #'
-#' @param rep_model The results from one of the ReputationAnalyses
+#' @param rep_model The results from one of the ReputationModelR
 #' Models (e.g., rep_analyses_auto).
 #' @param what The parameters you want in the differential table. Current options are
 #' main and all. If what = "main", then just the 'main' model parameters are provided.

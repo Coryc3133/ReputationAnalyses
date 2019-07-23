@@ -140,7 +140,7 @@ rep_generic_id_mods_builder <- function(rating_1, rating_2, id_mod_variable,
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain four columns: two for ratings (of the same target),
 #' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  rating_1 Quoted column names that contain  the first rating variable. This might be P1 reports
 #' if investigating moderation of hearsay consensus or self-reports for moderation of hearsay accuracy.
@@ -377,7 +377,7 @@ rep_consensus_id_mods_builder <- function(p1_reports, p2_reports, id_mod_variabl
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain four columns: one for P1 reports, one for mean-centered P2 reports,
 #' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
@@ -614,7 +614,7 @@ rep_accuracy_id_mods_builder <- function(target_self, p2_reports, id_mod_variabl
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain four columns: one for target self-reports, one for mean-centered P2 reports,
 #' one for the mean-centered moderator variable, and one for the interaction term.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param target_self Quoted column names that contain target self-reports.
 #' If more than one is supplied, the order must match the other

@@ -1,14 +1,14 @@
 
 #' Easily Plot Differential Results
 #'
-#' This takes output from one of the reputational analysis models
+#' This takes output from one of the reputation models
 #' (e.g., rep_analyses_auto) and returns a plot of differential
 #' (correlational) parameters. It works with any combination of P1-,
 #' P2-, and 3rd person Meta-perceptions. it returns a `ggplot()` object, and
 #' can thus be edited with ggplot2 functions.
 #'
 #' The function can handle up to n exchangeable triads.
-#' @param rep_model The results from one of the ReputationAnalyses
+#' @param rep_model The results from one of the ReputationModelR
 #' Models (e.g., rep_analyses_auto).
 #' @param what The parameters you want in the plot Current options are
 #' main and all. If what = "main", then just the 'main' model parameters are provided.

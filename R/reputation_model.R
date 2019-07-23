@@ -135,7 +135,7 @@ rep_consensus_builder <- function(p1_reports, p2_reports, n_triads = length(p1_r
 #' @param data The dataframe that contains P1 and P2 ratings.
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
@@ -336,7 +336,7 @@ rep_consensus_accuracy_builder <- function(p1_reports, p2_reports, target_self, 
 #' Reputation Consensus & Accuracy Model
 #'
 #' This takes a dataset containing P1-, P2-, and target self-reports and either the
-#' names of columns containing those reports or a model from one of the ReputationAnalyses
+#' names of columns containing those reports or a model from one of the ReputationModelR
 #' model builder function, and fits a model estimating the possible hearsay reputation parameters.
 #' Those parameters are:
 #' \describe{
@@ -367,7 +367,7 @@ rep_consensus_accuracy_builder <- function(p1_reports, p2_reports, target_self, 
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
 #' one for targets' self-ratings.
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
@@ -712,7 +712,7 @@ rep_full_w_3pmeta_builder <- function(p1_reports, p2_reports, target_self, p1_me
 #' Data should be wide, with a row for every group of participants.
 #' At a minimum, it must contain 5 columns: 1 for each of the five rating types (P1-, P2-, self-,
 #' P1-meta-, P2-meta-perceptions).
-#' @param model Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+#' @param model Optional. A model from the corresponding ReputationModelR model builder function. If this
 #' is supplied, no additional arguments need to be specified.
 #' @param  p1_reports Quoted column names that contain P1 reports,
 #' or ratings made by the person that knows the target directly.
