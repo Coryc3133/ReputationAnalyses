@@ -59,11 +59,11 @@ level of moderator variable (if data were properly mean-centered).}
 target self-reports related to differences in the individual-level moderator variable.}
 \item{interaction}{This is the interaction term. It indicates the extent to which hearsay accuracy,
 depends on the moderator variable}
-\item{v_t}{variance for T(T)}
+\item{v_self}{variance for T(T)}
 \item{v_p2}{variance for P2(T)}
 \item{v_mod}{variance for moderator variable}
 \item{v_interaction}{variance for interaction term}
-\item{int_t}{intercept for T(T)}
+\item{int_self}{intercept for T(T)}
 \item{int_p2}{intercept for P2(T)}
 \item{int_mod}{intercept for moderator variable}
 \item{int_interaction}{intercept for interaction term}

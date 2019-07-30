@@ -2072,7 +2072,7 @@ rep_consensus_group_id_mods <- function(data, model = NULL, p1_reports, p2_repor
 #' \item{v_p2}{variance for P2(T)}
 #' \item{v_mod}{variance for moderator variable}
 #' \item{v_interaction}{variance for interaction term}
-#' \item{int_t}{intercept for T(T)}
+#' \item{int_self}{intercept for T(T)}
 #' \item{int_p2}{intercept for P2(T)}
 #' \item{int_mod}{intercept for moderator variable}
 #' \item{int_interaction}{intercept for interaction term}
@@ -2199,7 +2199,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
               paste(interaction_term, "~~", param_labs["v_interaction"], "*", interaction_term),
 
               # intercepts
-              paste(target_self,       "~", param_labs["int_t"], "*1"),
+              paste(target_self,       "~", param_labs["int_self"], "*1"),
               paste(p2_reports,       "~", param_labs["int_p2"], "*1"),
               paste(id_mod_variable,  "~", param_labs["int_mod"], "*1"),
               paste(interaction_term, "~", param_labs["int_interaction"], "*1"),
@@ -2236,7 +2236,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
 #' \item{v_p2}{variance for P2(T)}
 #' \item{v_mod}{variance for moderator variable}
 #' \item{v_interaction}{variance for interaction term}
-#' \item{int_t}{intercept for T(T)}
+#' \item{int_self}{intercept for T(T)}
 #' \item{int_p2}{intercept for P2(T)}
 #' \item{int_mod}{intercept for moderator variable}
 #' \item{int_interaction}{intercept for interaction term}
