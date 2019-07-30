@@ -13,7 +13,7 @@ rep_consensus(data, model = NULL, p1_reports, p2_reports,
 Data should be wide, with a row for every group of participants.
 At a minimum, it must contain two columns: one for P1 reports and one for P2 reports.}
 
-\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+\item{model}{Optional. A model from the corresponding ReputationModelR model builder function. If this
 is supplied, no additional arguments need to be specified.}
 
 \item{p1_reports}{Quoted column names that contain P1 reports,

@@ -7,7 +7,7 @@
 ez_elevation_group_table(rep_model)
 }
 \arguments{
-\item{rep_model}{The results from one of the ReputationAnalyses group moderated models
+\item{rep_model}{The results from one of the ReputationModelR group moderated models
 Models (e.g., rep_auto_group_mod).}
 }
 \value{

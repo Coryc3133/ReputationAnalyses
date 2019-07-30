@@ -15,7 +15,7 @@ Data should be wide, with a row for every group of participants.
 At a minimum, it must contain 5 columns: 1 for each of the five rating types (P1-, P2-, self-,
 P1-meta-, P2-meta-perceptions).}
 
-\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+\item{model}{Optional. A model from the corresponding ReputationModelR model builder function. If this
 is supplied, no additional arguments need to be specified.}
 
 \item{p1_reports}{Quoted column names that contain P1 reports,

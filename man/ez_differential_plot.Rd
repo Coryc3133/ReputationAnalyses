@@ -7,7 +7,7 @@
 ez_differential_plot(rep_model, what = "main")
 }
 \arguments{
-\item{rep_model}{The results from one of the ReputationAnalyses
+\item{rep_model}{The results from one of the ReputationModelR
 Models (e.g., rep_analyses_auto).}
 
 \item{what}{The parameters you want in the plot Current options are
@@ -19,7 +19,7 @@ direct accuracy (P1-P1 agreement), P1 Meta-Accuracy, and P2 Meta-Accuracy.}
 The function returns an object of class \code{\link[ggplot2:ggplot2-package]{ggplot}}.
 }
 \description{
-This takes output from one of the reputational analysis models
+This takes output from one of the reputation models
 (e.g., rep_analyses_auto) and returns a plot of differential
 (correlational) parameters. It works with any combination of P1-,
 P2-, and 3rd person Meta-perceptions. it returns a `ggplot()` object, and

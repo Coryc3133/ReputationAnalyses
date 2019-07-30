@@ -7,7 +7,7 @@
 ez_group_id_mod_table(rep_model)
 }
 \arguments{
-\item{rep_model}{The results from one of the ReputationAnalyses
+\item{rep_model}{The results from one of the ReputationModelR
 group- and individual-level moderator Models (e.g., rep_accuracy_group_id_mods).}
 }
 \value{

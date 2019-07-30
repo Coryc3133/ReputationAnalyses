@@ -27,7 +27,7 @@
 data(rep_sim_data)
 }
 \description{
-Simulated data to be used for examples with the ReputationAnalyses package.
+Simulated data to be used for examples with the ReputationModelR package.
 The data were simulate based on results from Costello & Srivastava (in prep).
 We used the mvtnorm package to simulate a dataset based on the cariance-covariance matrix
 and vector of means for variables across the 2 reputation studies. At present, it includes

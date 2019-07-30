@@ -485,7 +485,7 @@ rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id
 #' target self-reports related to differences in the individual-level moderator variable.}
 #' \item{interaction}{This is the interaction term. It indicates the extent to which hearsay accuracy,
 #' depends on the moderator variable}
-#' \item{v_t}{variance for T(T)}
+#' \item{v_self}{variance for T(T)}
 #' \item{v_p2}{variance for P2(T)}
 #' \item{v_mod}{variance for moderator variable}
 #' \item{v_interaction}{variance for interaction term}
@@ -557,7 +557,7 @@ rep_accuracy_id_mods_builder <- function(target_self, p2_reports, id_mod_variabl
                     "interaction*", interaction_term),
 
               # variances
-              paste(target_self, "~~ v_t*", target_self),
+              paste(target_self, "~~ v_self*", target_self),
 
               paste(p2_reports, " ~~ v_p2*", p2_reports),
 
@@ -600,7 +600,7 @@ rep_accuracy_id_mods_builder <- function(target_self, p2_reports, id_mod_variabl
 #' target self-reports related to differences in the individual-level moderator variable.}
 #' \item{interaction}{This is the interaction term. It indicates the extent to which hearsay accuracy,
 #' depends on the moderator variable}
-#' \item{v_t}{variance for T(T)}
+#' \item{v_self}{variance for T(T)}
 #' \item{v_p2}{variance for P2(T)}
 #' \item{v_mod}{variance for moderator variable}
 #' \item{v_interaction}{variance for interaction term}

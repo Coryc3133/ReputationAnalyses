@@ -2068,7 +2068,7 @@ rep_consensus_group_id_mods <- function(data, model = NULL, p1_reports, p2_repor
 #' target self-reports related to differences in the individual-level moderator variable.}
 #' \item{interaction}{This is the interaction term. It indicates the extent to which hearsay accuracy,
 #' depends on the moderator variable}
-#' \item{v_t}{variance for T(T)}
+#' \item{v_self}{variance for T(T)}
 #' \item{v_p2}{variance for P2(T)}
 #' \item{v_mod}{variance for moderator variable}
 #' \item{v_interaction}{variance for interaction term}
@@ -2199,7 +2199,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
               paste(interaction_term, "~~", param_labs["v_interaction"], "*", interaction_term),
 
               # intercepts
-              paste(target_self,       "~", param_labs["int_self"], "*1"),
+              paste(target_self,       "~", param_labs["int_t"], "*1"),
               paste(p2_reports,       "~", param_labs["int_p2"], "*1"),
               paste(id_mod_variable,  "~", param_labs["int_mod"], "*1"),
               paste(interaction_term, "~", param_labs["int_interaction"], "*1"),
@@ -2213,7 +2213,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
   }
   return(list(model = model,
               rep_model_info = rep_model_info))
-  }
+}
 
 #' Hearsay Accuracy Model with Individual-Level and Group Moderators
 #'
@@ -2232,7 +2232,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
 #' target self-reports related to differences in the individual-level moderator variable.}
 #' \item{interaction}{This is the interaction term. It indicates the extent to which hearsay accuracy,
 #' depends on the moderator variable}
-#' \item{v_t}{variance for T(T)}
+#' \item{v_self}{variance for T(T)}
 #' \item{v_p2}{variance for P2(T)}
 #' \item{v_mod}{variance for moderator variable}
 #' \item{v_interaction}{variance for interaction term}

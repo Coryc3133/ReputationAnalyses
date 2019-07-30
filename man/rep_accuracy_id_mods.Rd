@@ -14,7 +14,7 @@ Data should be wide, with a row for every group of participants.
 At a minimum, it must contain four columns: one for target self-reports, one for mean-centered P2 reports,
 one for the mean-centered moderator variable, and one for the interaction term.}
 
-\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+\item{model}{Optional. A model from the corresponding ReputationModelR model builder function. If this
 is supplied, no additional arguments need to be specified.}
 
 \item{target_self}{Quoted column names that contain target self-reports.

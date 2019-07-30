@@ -7,7 +7,7 @@
 ez_differential_group_table(rep_model, what = "main")
 }
 \arguments{
-\item{rep_model}{The results from one of the ReputationAnalyses
+\item{rep_model}{The results from one of the ReputationModelR
 group Models (e.g., rep_auto_group_mod). The model can have between-group equality
 constraints; those are marked by missing values (NA) in the group_label column.}
 

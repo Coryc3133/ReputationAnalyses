@@ -14,7 +14,7 @@ Data should be wide, with a row for every group of participants.
 At a minimum, it must contain four columns: two for ratings (of the same target),
 one for the mean-centered moderator variable, and one for the interaction term.}
 
-\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+\item{model}{Optional. A model from the corresponding ReputationModelR model builder function. If this
 is supplied, no additional arguments need to be specified.}
 
 \item{rating_1}{Quoted column names that contain  the first rating variable. This might be P1 reports

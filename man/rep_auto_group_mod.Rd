@@ -17,7 +17,7 @@ Data should be wide, with a row for every group of participants.
 At a minimum, it must contain three columns: one for P1-reports, one for P2-reports, and
 one for targets' self-ratings.}
 
-\item{model}{Optional. A model from the corresponding ReputationAnalyses model builder function. If this
+\item{model}{Optional. A model from the corresponding ReputationModelR model builder function. If this
 is supplied, no additional arguments need to be specified.}
 
 \item{p1_reports}{Optional. Quoted column names that contain P1 reports,
