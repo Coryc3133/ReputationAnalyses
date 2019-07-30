@@ -1702,7 +1702,7 @@ rep_generic_group_id_mods <- function(data, model = NULL, rating_1, rating_2, id
       names(new_labs) <- old_labs
       rep_generic_group_id_model$model <- str_replace_all(rep_generic_group_id_model$model, new_labs)
     }
-    fitted_model <- lavaan::sem(rep_generic_group_id_model$model, data = data, missing = "FIML", group = group_mod)
+    fitted_model <- lavaan::sem(rep_generic_group_id_model$model, data = data, missing = "FIML", group = group_mod, fixed.x = FALSE)
     return(fitted_model)}
   }
 
@@ -2047,7 +2047,7 @@ rep_consensus_group_id_mods <- function(data, model = NULL, p1_reports, p2_repor
       names(new_labs) <- old_labs
       rep_consensus_group_id_model$model <- str_replace_all(rep_consensus_group_id_model$model, new_labs)
     }
-    fitted_model <- lavaan::sem(rep_consensus_group_id_model$model, data = data, missing = "FIML", group = group_mod)
+    fitted_model <- lavaan::sem(rep_consensus_group_id_model$model, data = data, missing = "FIML", group = group_mod, fixed.x = FALSE)
     return(fitted_model)}
   }
 
@@ -2392,7 +2392,7 @@ rep_accuracy_group_id_mods <- function(data, model = NULL, target_self, p2_repor
       names(new_labs) <- old_labs
       rep_accuracy_group_id_model$model <- str_replace_all(rep_accuracy_group_id_model$model, new_labs)
     }
-    fitted_model <- lavaan::sem(rep_accuracy_group_id_model$model, data = data, missing = "FIML", group = group_mod)
+    fitted_model <- lavaan::sem(rep_accuracy_group_id_model$model, data = data, missing = "FIML", group = group_mod, fixed.x = FALSE)
     return(fitted_model)}
 }
 
