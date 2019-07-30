@@ -1506,7 +1506,7 @@ rep_generic_group_id_mods_builder <- function(rating_1, rating_2, id_mod_variabl
       # in unmoderated model with the group labels
       # specified in the function call.
       param_labs <- rep_model$model %>%
-        lavaanify() %>%
+        lavaanify(fixed.x = FALSE) %>%
         dplyr::select(.data$label) %>%
         dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
@@ -1828,7 +1828,7 @@ rep_consensus_group_id_mods_builder <- function(p1_reports, p2_reports, id_mod_v
   # in unmoderated model with the group labels
   # specified in the function call.
   param_labs <- rep_model$model %>%
-    lavaanify() %>%
+    lavaanify(fixed.x = FALSE) %>%
     dplyr::select(.data$label) %>%
     dplyr::filter(str_detect(.data$label, "")) %>%
     tidyr::crossing(groups) %>%
@@ -2173,7 +2173,7 @@ rep_accuracy_group_id_mods_builder <- function(target_self, p2_reports, id_mod_v
       # in unmoderated model with the group labels
       # specified in the function call.
       param_labs <- rep_model$model %>%
-        lavaanify() %>%
+        lavaanify(fixed.x = FALSE) %>%
         dplyr::select(.data$label) %>%
         dplyr::filter(str_detect(.data$label, "")) %>%
         tidyr::crossing(groups) %>%
