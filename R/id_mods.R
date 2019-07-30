@@ -465,7 +465,7 @@ rep_consensus_id_mods <- function(data, model = NULL, p1_reports, p2_reports, id
     if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
     if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
   }
-  fitted_model <- lavaan::sem(rep_id_mods_model$model, data = data, missing = "FIML")
+  fitted_model <- lavaan::sem(rep_id_mods_model$model, data = data, missing = "FIML", fixed.x = FALSE)
   return(fitted_model)
 }
 
@@ -701,7 +701,7 @@ rep_accuracy_id_mods <- function(data, model = NULL, target_self, p2_reports, id
     if(round(mean(colMeans(data[,p2_reports], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center P2 reports. You might want to for interpretability's sake.")}
     if(round(mean(colMeans(data[,id_mod_variable], na.rm = TRUE)), 4) != 0){warning("It looks like you didn't center the moderator variable. You might want to for interpretability's sake.")}
   }
-  fitted_model <- lavaan::sem(rep_id_mods_model$model, data = data, missing = "FIML")
+  fitted_model <- lavaan::sem(rep_id_mods_model$model, data = data, missing = "FIML", fixed.x = FALSE)
   return(fitted_model)
 }
 
